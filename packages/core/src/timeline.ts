@@ -15,8 +15,11 @@ export interface TimelineNote {
 
 export interface TimelineEvent {
   id: string;
+  /** Index of the measure in the score (not in play order). */
   measureIndex: number;
-  /** Onset in quarter notes from the start of the score. A grace note sits on its principal's onset. */
+  /** 0 the first time this event is played, 1 on the repeat, ... */
+  occurrence: number;
+  /** Onset in quarter notes from the start, repeats unfolded. A grace note sits on its principal's onset. */
   q: number;
   /** Sounding length in quarter notes; 0 for grace notes. */
   dq: number;
@@ -28,8 +31,11 @@ export interface TimelineEvent {
 
 export interface TimelineMeasure {
   id: string;
+  /** Index of the measure in the score. */
   index: number;
+  /** Printed bar number. */
   number: number;
+  occurrence: number;
   q: number;
   dq: number;
   unmetered: boolean;
@@ -39,19 +45,61 @@ export interface TimelineMeasure {
 }
 
 export interface Timeline {
+  /** Every event in play order, repeats unfolded. */
   events: TimelineEvent[];
+  /** Every measure in play order, repeats unfolded. */
   measures: TimelineMeasure[];
   totalQ: number;
+  /** The first occurrence of each event. */
   byId: Map<string, TimelineEvent>;
+  /** Every occurrence of each event, in play order. */
+  occurrences: Map<string, TimelineEvent[]>;
 }
 
 /**
- * Lay the score out in quarter-note time and resolve what every note sounds like.
- * No repeats exist in the v1 model, so this is already the "unfolded" order.
+ * The order measures are played in. A backward repeat returns once to the last forward repeat (or to
+ * the start, or to just after the previous backward repeat); a measure with `ending` n is played only on
+ * pass n. Returns score indices.
+ */
+export function playOrder(score: Score): number[] {
+  const ms = score.measures;
+  const order: number[] = [];
+  const taken = new Set<number>();
+  let from = 0;
+  let pass = 1;
+  let lastTakenEnd = -1;
+  let i = 0;
+  let guard = 0;
+  while (i < ms.length && guard++ < ms.length * 8) {
+    const m = ms[i]!;
+    if (m.repeatStart && i > lastTakenEnd) from = i;
+    if (!m.ending && i > lastTakenEnd) pass = 1;
+    if (m.ending && m.ending !== pass) {
+      i++;
+      continue;
+    }
+    order.push(i);
+    if (m.repeatEnd && !taken.has(i)) {
+      taken.add(i);
+      lastTakenEnd = i;
+      pass++;
+      i = from;
+      continue;
+    }
+    if (m.repeatEnd) from = i + 1;
+    i++;
+  }
+  return order;
+}
+
+/**
+ * Lay the score out in quarter-note time, repeats unfolded, and resolve what every note sounds like.
  */
 export function buildTimeline(score: Score): Timeline {
   const events: TimelineEvent[] = [];
   const measures: TimelineMeasure[] = [];
+  const seen = new Map<string, number>();
+  const seenMeasure = new Map<string, number>();
   let clef: Clef = 'treble';
   let key: KeySignature = { accidentals: [] };
   let time: TimeSignature | undefined;
@@ -59,7 +107,8 @@ export function buildTimeline(score: Score): Timeline {
   // Sounding accidental per step+octave carried from the previous event through a tie.
   let tiedIn = new Map<string, Accidental | undefined>();
 
-  score.measures.forEach((m, index) => {
+  for (const index of playOrder(score)) {
+    const m = score.measures[index]!;
     if (m.clef) clef = m.clef;
     if (m.key) key = m.key;
     if (m.time) time = m.time;
@@ -96,9 +145,12 @@ export function buildTimeline(score: Score): Timeline {
           tiedFromPrevious: fromTie,
         };
       });
+      const occurrence = seen.get(e.id) ?? 0;
+      seen.set(e.id, occurrence + 1);
       const te: TimelineEvent = {
         id: e.id,
         measureIndex: index,
+        occurrence,
         q,
         dq,
         grace,
@@ -119,10 +171,13 @@ export function buildTimeline(score: Score): Timeline {
     // Grace notes at the end of a measure attach to the next measure's first onset, which is `q`.
     for (const g of pendingGrace) g.q = q;
 
+    const occurrence = seenMeasure.get(m.id) ?? 0;
+    seenMeasure.set(m.id, occurrence + 1);
     measures.push({
       id: m.id,
       index,
       number: index + 1,
+      occurrence,
       q: start,
       dq: q - start,
       unmetered: !!m.unmetered,
@@ -130,9 +185,26 @@ export function buildTimeline(score: Score): Timeline {
       key,
       time,
     });
-  });
+  }
 
-  return { events, measures, totalQ: q, byId: new Map(events.map((e) => [e.id, e])) };
+  const occurrences = new Map<string, TimelineEvent[]>();
+  for (const e of events) {
+    const list = occurrences.get(e.id);
+    if (list) list.push(e);
+    else occurrences.set(e.id, [e]);
+  }
+  const byId = new Map<string, TimelineEvent>();
+  for (const [id, list] of occurrences) byId.set(id, list[0]!);
+  return { events, measures, totalQ: q, byId, occurrences };
+}
+
+/** The occurrence of an event nearest to position q — where a click on a repeated note should go. */
+export function nearestOccurrence(tl: Timeline, id: string, q: number): TimelineEvent | undefined {
+  const list = tl.occurrences.get(id);
+  if (!list) return undefined;
+  let best = list[0]!;
+  for (const e of list) if (Math.abs(e.q - q) < Math.abs(best.q - q)) best = e;
+  return best;
 }
 
 /**

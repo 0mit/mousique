@@ -15,5 +15,6 @@
     "typescript": "^7.0.2",
     "verovio": "^6.3.0",
     "vitest": "^5.0.1"
-  }
+  },
+  "license": "AGPL-3.0-only"
 }

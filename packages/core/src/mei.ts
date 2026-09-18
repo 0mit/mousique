@@ -1,4 +1,4 @@
-import { writtenQ } from './duration.ts';
+import { durationQ, writtenQ } from './duration.ts';
 import type {
   Accidental,
   BaseDuration,
@@ -117,23 +117,48 @@ function eventXml(e: ScoreEvent, tiedIn: Set<string>): string {
   return body;
 }
 
+const BEAMABLE = new Set<BaseDuration>(['eighth', '16th', '32nd', '64th']);
+
+/** Beam groups follow the beat: a quarter in x/4 and x/2, a dotted quarter in compound x/8, else a quarter. */
+function beamSpanQ(time: TimeSignature | undefined): number {
+  if (!time) return 1;
+  if (time.beatType === 8 && time.beats % 3 === 0 && time.beats > 3) return 1.5;
+  if (time.beatType === 2) return 1;
+  return Math.max(1, 4 / time.beatType);
+}
+
 /**
- * Group consecutive events carrying the same tuplet ratio into <tuplet> elements. A group closes once
- * its written length equals `actual` times its shortest written value (three eighths, or quarter + eighth
- * for a triplet), so two triplets in a row get two brackets rather than one of six.
+ * The layer's content. Consecutive events with the same tuplet ratio become a <tuplet> (closing once its
+ * written length is `actual` times its shortest value, so two triplets in a row get two brackets), and
+ * notes shorter than a quarter are beamed together within each beat, as printed music does.
  */
-function layerXml(m: Measure, tiedIn: Set<string>): { xml: string; tiedOut: Set<string> } {
+function layerXml(m: Measure, tiedIn: Set<string>, time: TimeSignature | undefined): { xml: string; tiedOut: Set<string> } {
+  const span = beamSpanQ(time);
   let xml = '';
-  let group: string[] = [];
+  let tied = tiedIn;
+  let pos = 0;
+
+  // The open tuplet group.
+  let group: Array<{ x: string; beamable: boolean }> = [];
   let groupRatio: string | undefined;
   let groupWritten = 0;
   let groupMin = Infinity;
-  let tied = tiedIn;
 
-  const flush = () => {
+  // The open beam run (outside tuplets).
+  let run: string[] = [];
+  let runBeat = -1;
+
+  const flushRun = () => {
+    xml += run.length >= 2 ? `<beam>${run.join('')}</beam>` : run.join('');
+    run = [];
+    runBeat = -1;
+  };
+  const flushGroup = () => {
     if (group.length === 0) return;
     const [num, numbase] = groupRatio!.split(':');
-    xml += `<tuplet num="${num}" numbase="${numbase}">${group.join('')}</tuplet>`;
+    const inner = group.map((g) => g.x).join('');
+    const beam = group.filter((g) => g.beamable).length >= 2 && group.every((g) => g.beamable);
+    xml += `<tuplet num="${num}" numbase="${numbase}">${beam ? `<beam>${inner}</beam>` : inner}</tuplet>`;
     group = [];
     groupRatio = undefined;
     groupWritten = 0;
@@ -142,30 +167,47 @@ function layerXml(m: Measure, tiedIn: Set<string>): { xml: string; tiedOut: Set<
 
   for (const e of m.events) {
     const x = eventXml(e, tied);
-    if (!e.grace) {
-      tied = new Set(e.tie ? (e.pitches ?? []).map(pitchKey) : []);
+    if (e.grace) {
+      // A grace note joins an open tuplet; otherwise it stands alone before its principal.
+      if (groupRatio) group.push({ x, beamable: true });
+      else {
+        flushRun();
+        xml += x;
+      }
+      continue;
     }
+    tied = new Set(e.tie ? (e.pitches ?? []).map(pitchKey) : []);
+    const dq = durationQ(e.duration);
     const tuplet = e.duration.tuplet;
     const ratio = tuplet ? `${tuplet.actual}:${tuplet.normal}` : undefined;
-    if (e.grace) {
-      // A grace note belongs with whatever follows it, so it joins the open group if there is one.
-      if (groupRatio) group.push(x);
-      else xml += x;
+    const beamable = BEAMABLE.has(e.duration.base) && !!e.pitches?.length;
+
+    if (ratio !== groupRatio) flushGroup();
+    if (ratio) {
+      flushRun();
+      groupRatio = ratio;
+      group.push({ x, beamable });
+      const w = writtenQ(e.duration);
+      groupWritten += w;
+      groupMin = Math.min(groupMin, w);
+      if (Math.abs(groupWritten - tuplet!.actual * groupMin) < 1e-9) flushGroup();
+      pos += dq;
       continue;
     }
-    if (ratio !== groupRatio) flush();
-    if (!ratio) {
+
+    const beat = Math.floor(pos / span + 1e-9);
+    const fitsBeat = pos + dq <= (beat + 1) * span + 1e-9;
+    if (!beamable || !fitsBeat || beat !== runBeat) flushRun();
+    if (beamable && fitsBeat) {
+      run.push(x);
+      runBeat = beat;
+    } else {
       xml += x;
-      continue;
     }
-    groupRatio = ratio;
-    group.push(x);
-    const w = writtenQ(e.duration);
-    groupWritten += w;
-    groupMin = Math.min(groupMin, w);
-    if (Math.abs(groupWritten - tuplet!.actual * groupMin) < 1e-9) flush();
+    pos += dq;
   }
-  flush();
+  flushRun();
+  flushGroup();
   return { xml, tiedOut: tied };
 }
 
@@ -180,26 +222,39 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
   const first = score.measures[0];
   const clef0: Clef = first?.clef ?? 'treble';
   let clef = clef0;
+  let time: TimeSignature | undefined;
   let tiedIn = new Set<string>();
 
   let section = '';
+  let openEnding: number | undefined;
   score.measures.forEach((m, i) => {
+    if (m.ending !== openEnding) {
+      if (openEnding !== undefined) section += '</ending>';
+      if (m.ending !== undefined) section += `<ending n="${m.ending}" label="${m.ending}.">`;
+      openEnding = m.ending;
+    }
     if (i > 0 && (m.clef || m.key || m.time)) {
       const newClef = m.clef ?? clef;
       section += `<scoreDef><staffGrp>${staffDefXml(newClef, m.key, m.time)}</staffGrp></scoreDef>`;
     }
     if (m.clef) clef = m.clef;
-    const { xml, tiedOut } = layerXml(m, tiedIn);
+    if (m.time) time = m.time;
+    const { xml, tiedOut } = layerXml(m, tiedIn, time);
     tiedIn = tiedOut;
+    // An empty measure still needs something to draw and to click on.
+    const content = xml || `<mRest xml:id="${escapeXml(m.id)}-empty"/>`;
     const dirs = m.events
       .filter((e) => e.text)
       .map((e) => `<dir staff="1" place="above" startid="#${escapeXml(e.id)}">${escapeXml(e.text!)}</dir>`)
       .join('');
     const metcon = m.unmetered ? ' metcon="false"' : '';
+    const left = m.repeatStart ? ' left="rptstart"' : '';
+    const right = m.repeatEnd ? ' right="rptend"' : i === score.measures.length - 1 ? ' right="end"' : '';
     section +=
-      `<measure xml:id="${escapeXml(m.id)}" n="${i + 1}"${metcon}>` +
-      `<staff n="1"><layer n="1">${xml}</layer></staff>${dirs}</measure>`;
+      `<measure xml:id="${escapeXml(m.id)}" n="${i + 1}"${metcon}${left}${right}>` +
+      `<staff n="1"><layer n="1">${content}</layer></staff>${dirs}</measure>`;
   });
+  if (openEnding !== undefined) section += '</ending>';
 
   const title = header
     ? `<title>${escapeXml(score.meta.title)}</title>` +

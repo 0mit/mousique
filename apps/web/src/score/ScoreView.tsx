@@ -1,4 +1,4 @@
-import { eventIndexAt, scoreToMei, type Score, type Timeline } from '@mousique/core';
+import { eventIndexAt, nearestOccurrence, scoreToMei, type Score, type Selection, type Timeline } from '@mousique/core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { measureLayout, type Layout } from './layout.ts';
 import { loadVerovio } from './verovio.ts';
@@ -10,18 +10,23 @@ interface Props {
   getQ: () => number;
   /** Zoom as a Verovio scale percentage. */
   zoom: number;
-  onSeek: (q: number) => void;
+  selection: Selection;
+  /** Measures to outline as wrong (too full or not full enough). */
+  badMeasures: Set<string>;
+  /** A click on a note or an empty spot in a bar. `q` is where that note sounds, nearest the cursor. */
+  onSelect: (sel: Selection, q: number | undefined) => void;
 }
 
 const PLAYING_CLASS = 'm-playing';
 
-export function ScoreView({ score, timeline, getQ, zoom, onSeek }: Props) {
+export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pagesRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
   const layoutRef = useRef<Layout>({ events: new Map(), systems: [] });
   const [width, setWidth] = useState(0);
   const [status, setStatus] = useState<'loading' | 'ready' | string>('loading');
+  const [renderCount, setRenderCount] = useState(0);
 
   // Track the container width so the score reflows like text.
   useLayoutEffect(() => {
@@ -62,6 +67,7 @@ export function ScoreView({ score, timeline, getQ, zoom, onSeek }: Props) {
         pagesRef.current!.innerHTML = pages.map((svg) => `<div class="m-page">${svg}</div>`).join('');
         layoutRef.current = measureLayout(scrollRef.current!, timeline.byId.keys());
         setStatus('ready');
+        setRenderCount((n) => n + 1);
       } catch (err) {
         setStatus(`Renderer failed: ${String(err)}`);
       }
@@ -119,16 +125,44 @@ export function ScoreView({ score, timeline, getQ, zoom, onSeek }: Props) {
     return () => cancelAnimationFrame(raf);
   }, [getQ, timeline]);
 
+  // Mark the selection and the measures that do not add up. Runs after every render, since a render
+  // replaces the SVG.
+  useEffect(() => {
+    const root = pagesRef.current;
+    if (!root || status !== 'ready') return;
+    root.querySelectorAll('.m-selected, .m-bad').forEach((el) => el.classList.remove('m-selected', 'm-bad'));
+    for (const id of badMeasures) root.querySelector(`[id="${CSS.escape(id)}"]`)?.classList.add('m-bad');
+    if (!selection) return;
+    const el = root.querySelector(`[id="${CSS.escape(selection.id)}"]`);
+    el?.classList.add('m-selected');
+    // Keep the selection in view while editing.
+    const r = el?.getBoundingClientRect();
+    const box = scrollRef.current!.getBoundingClientRect();
+    if (r && (r.top < box.top || r.bottom > box.bottom)) el!.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [selection, badMeasures, status, renderCount]);
+
   const onClick = (e: React.MouseEvent) => {
     let el = e.target as Element | null;
     while (el && el !== pagesRef.current) {
       const id = el.getAttribute('id');
       // A chord's note ids are `<event>-n<i>`; the chord group itself carries the event id.
       if (id && timeline.byId.has(id)) {
-        onSeek(timeline.byId.get(id)!.q);
+        onSelect({ kind: 'event', id }, nearestOccurrence(timeline, id, getQ())?.q);
+        return;
+      }
+      if (el.classList.contains('measure') && id) {
+        onSelect({ kind: 'measure', id }, undefined);
         return;
       }
       el = el.parentElement;
+    }
+    // Blank paper between staff lines is not painted, so nothing was hit: find the bar under the pointer.
+    for (const m of pagesRef.current!.querySelectorAll('g.measure')) {
+      const r = m.getBoundingClientRect();
+      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top - 12 && e.clientY <= r.bottom + 12) {
+        onSelect({ kind: 'measure', id: m.id }, undefined);
+        return;
+      }
     }
   };
 

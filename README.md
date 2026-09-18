@@ -3,7 +3,8 @@
 Practise an instrument from sheet music that follows a master's recording — made first for Persian
 classical music, so **koron** and **sori** are part of the notation and sound at their real pitch.
 
-- Enter or import a score, or photograph one and correct an AI draft *(planned)*.
+- Write a score with the keyboard or the on-screen palette, import one *(planned)*, or photograph one and
+  correct an AI draft *(planned)*.
 - Hear it played with the current note animated, at any tempo and practice speed.
 - Attach a recording, map the score to it, and practise against it slowed down, looped, with the
   master's actual tempo shown *(planned)*.
@@ -15,9 +16,10 @@ it, [`DECISIONS.md`](DECISIONS.md) says so and why. Milestone notes are in [`doc
 
 | Milestone | State |
 |---|---|
-| M0 spikes | Verovio and synth held; the handwriting/OCR spike waits for real pages |
+| M0 spikes | Verovio, synth and a first transcription test on printed pages held |
 | M1 model, rendering, playback with cursor | working |
-| M2 editor | next |
+| M2 editor | working: keyboard and palette entry, repeats, autosave |
+| Rhythm words (وزن‌خوانی واژگانی) | [proposed](docs/proposals/vazn-khani.md) |
 | M3 media overlay and manual sync | the sync-map maths is done and tested |
 | M4 automatic alignment · M5 AI transcription · M6 interchange | not started |
 
@@ -50,5 +52,4 @@ offset and the size of koron and sori in cents. See `packages/core/src/model.ts`
 
 ## Licence
 
-Not chosen yet. Until it is, the dependencies are kept to permissive licences and LGPL (Verovio), and no
-GPL or AGPL code is bundled.
+[AGPL-3.0](LICENSE). Verovio, which renders the notation, is LGPL-3.0.

@@ -4,3 +4,7 @@ dist/
 .venv/
 __pycache__/
 spikes/**/out*
+# Scans of published scores used as test material. They are other people's editions, so they stay local.
+test_sheets/
+test_weights/
+fixtures/private/

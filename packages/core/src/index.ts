@@ -7,3 +7,4 @@ export * from './mei.ts';
 export * from './syncmap.ts';
 export * from './demo.ts';
 export * from './playback.ts';
+export * from './edit.ts';

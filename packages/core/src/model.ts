@@ -95,6 +95,12 @@ export interface Measure {
   time?: TimeSignature;
   /** Free rhythm (avaz): the duration check is skipped. */
   unmetered?: boolean;
+  /** A forward repeat sign at the start of this measure. */
+  repeatStart?: boolean;
+  /** A backward repeat sign at the end of this measure: play back to the last repeatStart, once. */
+  repeatEnd?: boolean;
+  /** Volta bracket: this measure is played only on this pass of the repeat (1 or 2). */
+  ending?: number;
   events: ScoreEvent[];
 }
 

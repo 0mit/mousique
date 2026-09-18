@@ -27,6 +27,8 @@ describe('Verovio on generated MEI', () => {
     expect(svg).toMatch(/href="#E460/); // accidentalKoron
     expect(svg).toMatch(/href="#E461/); // accidentalSori
     expect(svg).toContain('bTrem');
+    // Four eighths in 2/4 beam as two pairs; the triplet beams inside its bracket.
+    expect((svg.match(/class="beam"/g) ?? []).length).toBeGreaterThanOrEqual(5);
     expect(svg).toContain('آزاد');
   });
 
