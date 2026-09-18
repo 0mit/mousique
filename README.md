@@ -18,11 +18,23 @@ it, [`DECISIONS.md`](DECISIONS.md) says so and why. Milestone notes are in [`doc
 |---|---|
 | M0 spikes | Verovio, synth and a first transcription test on printed pages held |
 | M1 model, rendering, playback with cursor | working |
-| M2 editor | working: keyboard and palette entry, repeats, autosave |
-| Rhythm words (وزن‌خوانی واژگانی) | working for quarter-note beats ([design](docs/proposals/vazn-khani.md)) |
+| M2 editor | working: keyboard and palette entry, repeats and endings, slurs, finger lines, bar-repeat signs, fingering, autosave |
+| Rhythm words (وزن‌خوانی واژگانی) | working for quarter-note beats, rests included ([design](docs/proposals/vazn-khani.md)) |
 | Note names for beginners | working: Persian solfège, Do Re Mi, letters |
-| M3 media overlay and manual sync | the sync-map maths is done and tested |
+| M3 media overlay and manual sync | next; the sync-map maths is done and tested |
 | M4 automatic alignment · M5 AI transcription · M6 interchange | not started |
+
+## What it does today
+
+- **Write and change notes** from the keyboard (MuseScore-style keys; K and S for koron and sori) or the
+  on-screen palette. The Keyboard panel in the app lists every key.
+- **Notation** for the repertoire it was tested on: mixed key signatures (B♭ E♭ A-koron), koron and sori,
+  ties, slurs, grace notes, triplets, riz, repeats with first and second endings, bar-repeat signs,
+  finger lines, fingering below the staff, marks and gusheh names above it.
+- **Playback** at exact quarter-tone pitches, with the cursor on the sounding note (through repeats and
+  bar-repeat signs too), tempo, practice speed, metronome and count-in, and a tuning block per score.
+- **Reading aids**, each optional: Tahmasbi's rhythm words above the notes, and note names below them.
+- **Autosave** in the browser; scores open from and save to JSON files.
 
 ## Run it
 
