@@ -51,10 +51,19 @@ export function validateScore(score: Score): Problem[] {
       if (e.grace && (!e.pitches || e.pitches.length === 0)) {
         problems.push({ measureIndex, eventId: e.id, message: 'a grace note cannot be a rest' });
       }
+      if (e.lineTo !== undefined && !((order.get(e.lineTo) ?? -1) > order.get(e.id)!)) {
+        problems.push({ measureIndex, eventId: e.id, message: `a line from ${e.id} ends on ${e.lineTo}, which is not a later note` });
+      }
       if (e.slurTo !== undefined && !((order.get(e.slurTo) ?? -1) > order.get(e.id)!)) {
         problems.push({ measureIndex, eventId: e.id, message: `a slur from ${e.id} ends on ${e.slurTo}, which is not a later note` });
       }
       if (!e.grace) total += durationQ(e.duration);
+    }
+    if (m.repeatPrevious) {
+      if (measureIndex === 0) problems.push({ measureIndex, message: 'the first bar cannot repeat a previous bar' });
+      if (m.events.length) problems.push({ measureIndex, message: `bar ${measureIndex + 1} repeats the previous bar but also has notes` });
+      // Its length is the repeated bar's, which is checked where it is written.
+      return;
     }
     if (!m.unmetered) {
       if (!time) {

@@ -187,3 +187,27 @@ describe('slurs and fingering', () => {
     expect(validateScore(s)).toEqual([]);
   });
 });
+
+describe('bar-repeat signs, lines and double bars', () => {
+  const s: Score = newScore();
+  s.measures = [
+    { id: 'm1', time: { beats: 2, beatType: 4 }, events: [{ id: 'e1', duration: quarter, pitches: [{ step: 'E', octave: 5 }], lineTo: 'e2' }, { id: 'e2', duration: quarter, pitches: [{ step: 'F', octave: 5, accidental: 'sharp' }] }] },
+    { id: 'm2', repeatPrevious: true, events: [] },
+    { id: 'm3', repeatPrevious: true, doubleBar: true, events: [] },
+    { id: 'm4', events: [{ id: 'e3', duration: { base: 'half' }, pitches: [{ step: 'E', octave: 5 }] }] },
+  ];
+
+  it('plays the repeated bar again, shown at the sign', () => {
+    const tl = buildTimeline(s);
+    expect(tl.events.map((e) => `${e.id}${e.display ? '@' + e.display : ''}`)).toEqual(['e1', 'e2', 'e1@m2-rpt', 'e2@m2-rpt', 'e1@m3-rpt', 'e2@m3-rpt', 'e3']);
+    expect(tl.totalQ).toBe(8);
+    expect(validateScore(s)).toEqual([]);
+  });
+
+  it('refuses notes in a repeat bar, and a repeat as the first bar', () => {
+    const t: Score = JSON.parse(JSON.stringify(s));
+    t.measures[1]!.events = [{ id: 'x', duration: quarter }];
+    t.measures[0]!.repeatPrevious = true;
+    expect(validateScore(t).map((p) => p.message).join(' ')).toMatch(/first bar cannot repeat.*repeats the previous bar but also has notes/);
+  });
+});

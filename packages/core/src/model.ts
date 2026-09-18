@@ -74,6 +74,8 @@ export interface ScoreEvent {
   below?: string;
   /** A slur from this note to the event with this id (later in the score). */
   slurTo?: string;
+  /** A straight line from this note to a later one: a finger sliding along the string. */
+  lineTo?: string;
 }
 
 export type Clef = 'treble' | 'treble-8vb' | 'bass' | 'alto' | 'tenor';
@@ -106,6 +108,10 @@ export interface Measure {
   repeatEnd?: boolean;
   /** Volta bracket: this measure is played only on this pass of the repeat (1 or 2). */
   ending?: number;
+  /** A bar-repeat sign (𝄎): play the previous bar again. The measure itself holds no events. */
+  repeatPrevious?: boolean;
+  /** A double bar line at the end of the measure (a section boundary without a repeat). */
+  doubleBar?: boolean;
   events: ScoreEvent[];
 }
 

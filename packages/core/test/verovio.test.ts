@@ -96,3 +96,18 @@ describe('Verovio on slurs, fingering and stacked text', () => {
     expect(svg).toContain('rit.');
   });
 });
+
+describe('Verovio on bar repeats, finger lines and double bars', () => {
+  it('draws the bar-repeat sign, a straight line between notes and a double bar', () => {
+    const s = JSON.parse(JSON.stringify(demoScore)) as Score;
+    s.measures[0]!.events[1]!.lineTo = 'e3';
+    s.measures[1]!.doubleBar = true;
+    s.measures.splice(2, 0, { id: 'mr', repeatPrevious: true, events: [] });
+    tk.loadData(scoreToMei(s));
+    expect(tk.getLog().replace(/\s+/g, '')).toBe('');
+    const svg = tk.renderToSVG(1);
+    expect(svg).toContain('id="mr-rpt"');
+    expect(svg).toContain('class="gliss"');
+    expect(buildTimeline(s).totalQ).toBeCloseTo(15, 9);
+  });
+});

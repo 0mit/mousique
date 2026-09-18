@@ -12,6 +12,7 @@ const ROWS: Array<[string, string]> = [
   ['Ctrl+← →', 'Previous / next bar'],
   ['T', 'Tie'],
   ['L', 'Slur one note further (Shift: back)'],
+  ['J', 'Finger line one note further (Shift: back)'],
   ['/', 'Grace note'],
   ['Alt+3', 'Triplet'],
   ['Z', 'Riz (tremolo)'],

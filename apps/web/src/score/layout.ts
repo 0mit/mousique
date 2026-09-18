@@ -43,7 +43,8 @@ export function measureLayout(container: HTMLElement, ids: Iterable<string>): La
   for (const id of ids) {
     const el = container.querySelector(`[id="${CSS.escape(id)}"]`);
     if (!el) continue;
-    const head = el.querySelector('.notehead') ?? el;
+    // A note is placed by its head; a rest or a bar-repeat sign by its drawn glyph.
+    const head = el.querySelector('.notehead') ?? el.querySelector('use') ?? el;
     const r = head.getBoundingClientRect();
     const sys = el.closest('g.system');
     const si = sys ? (systemIndex.get(sys) ?? 0) : 0;

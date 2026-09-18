@@ -39,7 +39,7 @@ export function describeEvent(e: ScoreEvent): string {
   const tup = e.duration.tuplet ? ` (${e.duration.tuplet.actual}:${e.duration.tuplet.normal})` : '';
   if (!e.pitches?.length) return `${d} rest${tup}`;
   const ps = e.pitches.map((p) => `${p.step}${p.octave}${p.accidental ? ` ${ACC_NAME[p.accidental]}` : ''}`).join(' + ');
-  const extras = [e.grace && 'grace', e.tie && 'tied', e.slurTo && 'slurred', e.tremolo && `riz ×${e.tremolo}`].filter(Boolean).join(', ');
+  const extras = [e.grace && 'grace', e.tie && 'tied', e.slurTo && 'slurred', e.lineTo && 'finger line', e.tremolo && `riz ×${e.tremolo}`].filter(Boolean).join(', ');
   return `${ps}, ${d}${tup}${extras ? ` — ${extras}` : ''}`;
 }
 
@@ -216,6 +216,14 @@ export function BarPanel({ api, measureIndex }: { api: EditorApi; measureIndex: 
         </label>
         <label className="m-check">
           <input type="checkbox" checked={!!m.repeatEnd} onChange={(e) => patch({ repeatEnd: e.target.checked })} /> Repeat back 𝄇
+        </label>
+      </div>
+      <div className="m-row m-checks">
+        <label className="m-check" title={m.events.length ? 'Delete the notes in this bar first' : 'Play the previous bar again'}>
+          <input type="checkbox" checked={!!m.repeatPrevious} disabled={first || (!m.repeatPrevious && m.events.length > 0)} onChange={(e) => patch({ repeatPrevious: e.target.checked })} /> 𝄎 Repeat the previous bar
+        </label>
+        <label className="m-check">
+          <input type="checkbox" checked={!!m.doubleBar} onChange={(e) => patch({ doubleBar: e.target.checked })} /> Double bar line
         </label>
       </div>
       <label className="m-row">

@@ -28,6 +28,11 @@ export interface TimelineEvent {
   tremolo: 1 | 2 | 3 | undefined;
   /** Inside a slur, after its first note: played without a new stroke. */
   legato: boolean;
+  /**
+   * The id of what to show for this event when it is not drawn itself: the bar-repeat sign of the measure
+   * that plays it again. Undefined when the event is drawn in place.
+   */
+  display?: string;
   notes: TimelineNote[];
 }
 
@@ -113,6 +118,8 @@ export function buildTimeline(score: Score): Timeline {
 
   for (const index of playOrder(score)) {
     const m = score.measures[index]!;
+    const source = sourceMeasure(score, index);
+    const display = source === m ? undefined : `${m.id}-rpt`;
     if (m.clef) clef = m.clef;
     if (m.key) key = m.key;
     if (m.time) time = m.time;
@@ -121,7 +128,7 @@ export function buildTimeline(score: Score): Timeline {
     const start = q;
     const pendingGrace: TimelineEvent[] = [];
 
-    for (const e of m.events) {
+    for (const e of source.events) {
       const grace = !!e.grace;
       const dq = grace ? 0 : durationQ(e.duration);
       const nextTied = new Map<string, Accidental | undefined>();
@@ -165,6 +172,7 @@ export function buildTimeline(score: Score): Timeline {
         tremolo: e.tremolo,
         legato,
         notes,
+        ...(display ? { display } : {}),
       };
       if (grace) {
         pendingGrace.push(te);
@@ -204,6 +212,13 @@ export function buildTimeline(score: Score): Timeline {
   const byId = new Map<string, TimelineEvent>();
   for (const [id, list] of occurrences) byId.set(id, list[0]!);
   return { events, measures, totalQ: q, byId, occurrences };
+}
+
+/** The measure whose notes a measure plays: itself, or for a bar-repeat sign the bar it repeats. */
+export function sourceMeasure(score: Score, index: number): Score['measures'][number] {
+  let i = index;
+  while (i > 0 && score.measures[i]!.repeatPrevious) i--;
+  return score.measures[i]!;
 }
 
 /** The occurrence of an event nearest to position q — where a click on a repeated note should go. */

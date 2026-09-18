@@ -143,6 +143,7 @@ export function useEditor(initial: Score, onEdited?: (sel: Selection, score: Sco
       text: (t: string | undefined) => apply((s, sel) => ed.setText(s, sel, t), false),
       below: (t: string | undefined) => apply((s, sel) => ed.setBelow(s, sel, t), false),
       slur: (shrink = false) => apply((s, sel) => ed.extendSlur(s, sel, shrink), false),
+      line: (shrink = false) => apply((s, sel) => ed.extendLine(s, sel, shrink), false),
       remove: () => apply((s, sel) => ed.deleteSelected(s, sel), false),
       addMeasure: (before = false) => apply((s, sel) => ed.insertMeasure(s, sel, before), false),
       removeMeasure: () => apply((s, sel) => ed.deleteMeasure(s, sel), false),
@@ -239,6 +240,9 @@ export function handleEditorKey(e: KeyboardEvent, api: EditorApi): boolean {
       return true;
     case 'KeyL':
       a.slur(e.shiftKey);
+      return true;
+    case 'KeyJ':
+      a.line(e.shiftKey);
       return true;
     case 'Slash':
       a.grace();

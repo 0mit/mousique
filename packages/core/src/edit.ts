@@ -17,6 +17,7 @@ import {
   type TimeSignature,
   DEFAULT_TUNING,
 } from './model.ts';
+import { sourceMeasure } from './timeline.ts';
 
 export type Selection = { kind: 'event'; id: string } | { kind: 'measure'; id: string } | null;
 
@@ -156,7 +157,7 @@ export function measureFillQ(m: Measure): number {
 /** How full a measure is: its content, its capacity (undefined when unmetered), and whether it is full. */
 export function measureFill(score: Score, mi: number): { filled: number; capacity: number | undefined; full: boolean } {
   const m = score.measures[mi]!;
-  const filled = measureFillQ(m);
+  const filled = measureFillQ(sourceMeasure(score, mi));
   const t = timeAt(score, mi);
   if (m.unmetered || !t) return { filled, capacity: undefined, full: false };
   const capacity = measureCapacityQ(t);
@@ -413,17 +414,27 @@ function slurrable(score: Score): ScoreEvent[] {
  * one note further. `shrink` pulls the end back by one note, and removes the slur at its last step.
  */
 export function extendSlur(score: Score, sel: Selection, shrink = false): EditResult {
+  return extendLink(score, sel, 'slurTo', shrink);
+}
+
+/** The same for a straight line between notes (a finger slide). */
+export function extendLine(score: Score, sel: Selection, shrink = false): EditResult {
+  return extendLink(score, sel, 'lineTo', shrink);
+}
+
+function extendLink(score: Score, sel: Selection, key: 'slurTo' | 'lineTo', shrink: boolean): EditResult {
   return onSelectedEvent(score, sel, (e, s) => {
     if (!e.pitches?.length || e.grace) return;
     const notes = slurrable(s);
     const start = notes.findIndex((x) => x.id === e.id);
-    const end = e.slurTo ? notes.findIndex((x) => x.id === e.slurTo) : start;
+    const target = e[key];
+    const end = target ? notes.findIndex((x) => x.id === target) : start;
     const next = shrink ? end - 1 : end + 1;
     if (next <= start || !notes[next]) {
-      if (shrink) delete e.slurTo;
+      if (shrink) delete e[key];
       return;
     }
-    e.slurTo = notes[next]!.id;
+    e[key] = notes[next]!.id;
   });
 }
 
@@ -436,7 +447,11 @@ export function deleteSelected(score: Score, sel: Selection): EditResult {
   const m = s.measures[loc.mi]!;
   m.events.splice(loc.ei, 1);
   // A slur that ended on the deleted note is removed with it.
-  for (const mm of s.measures) for (const e of mm.events) if (e.slurTo === sel.id) delete e.slurTo;
+  for (const mm of s.measures)
+    for (const e of mm.events) {
+      if (e.slurTo === sel.id) delete e.slurTo;
+      if (e.lineTo === sel.id) delete e.lineTo;
+    }
   const prev = m.events[loc.ei - 1] ?? m.events[0];
   return { score: s, selection: prev ? { kind: 'event', id: prev.id } : { kind: 'measure', id: m.id } };
 }
@@ -470,7 +485,9 @@ export function deleteMeasure(score: Score, sel: Selection): EditResult {
   return { score: s, selection: { kind: 'measure', id: target.id } };
 }
 
-export type MeasurePatch = Partial<Pick<Measure, 'clef' | 'key' | 'time' | 'unmetered' | 'repeatStart' | 'repeatEnd' | 'ending'>>;
+export type MeasurePatch = Partial<
+  Pick<Measure, 'clef' | 'key' | 'time' | 'unmetered' | 'repeatStart' | 'repeatEnd' | 'ending' | 'repeatPrevious' | 'doubleBar'>
+>;
 
 /** Set or clear measure properties. A key whose value is undefined is removed from the measure. */
 export function setMeasure(score: Score, measureId: string, patch: MeasurePatch): Score {

@@ -70,7 +70,9 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
         for (let p = 1; p <= n; p++) pages.push(tk.renderToSVG(p));
         if (cancelled) return;
         pagesRef.current!.innerHTML = pages.map((svg) => `<div class="m-page">${svg}</div>`).join('');
-        layoutRef.current = measureLayout(scrollRef.current!, timeline.byId.keys());
+        // Bar-repeat signs stand in for the notes they replay, so the cursor needs their positions too.
+        const displays = timeline.events.flatMap((e) => (e.display ? [e.display] : []));
+        layoutRef.current = measureLayout(scrollRef.current!, [...timeline.byId.keys(), ...displays]);
         setStatus('ready');
         setRenderCount((n) => n + 1);
       } catch (err) {
@@ -99,24 +101,27 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
         lastId = undefined;
         return;
       }
-      if (ev.id !== lastId) {
+      const shownId = ev.display ?? ev.id;
+      if (shownId !== lastId) {
         if (lastId) root.querySelector(`[id="${CSS.escape(lastId)}"]`)?.classList.remove(PLAYING_CLASS);
-        root.querySelector(`[id="${CSS.escape(ev.id)}"]`)?.classList.add(PLAYING_CLASS);
+        root.querySelector(`[id="${CSS.escape(shownId)}"]`)?.classList.add(PLAYING_CLASS);
         const words = wordsRef.current;
         if (lastId) words?.querySelector(`[data-id="${CSS.escape(lastId)}"]`)?.classList.remove(PLAYING_CLASS);
         words?.querySelector(`[data-id="${CSS.escape(ev.id)}"]`)?.classList.add(PLAYING_CLASS);
-        lastId = ev.id;
+        lastId = shownId;
       }
       const L = layoutRef.current;
-      const box = L.events.get(ev.id);
+      const box = L.events.get(shownId);
       if (!box) return;
       let next = timeline.events[idx + 1];
       while (next && next.grace) next = timeline.events[timeline.events.indexOf(next) + 1];
-      const nbox = next ? L.events.get(next.id) : undefined;
+      // Across a bar-repeat sign the playhead holds on the sign instead of gliding.
+      const nextShown = next ? (next.display ?? next.id) : undefined;
+      const nbox = nextShown && nextShown !== shownId && !ev.display ? L.events.get(nextShown) : undefined;
       const sys = L.systems[box.systemIndex];
       const endQ = next ? next.q : timeline.totalQ;
       const frac = endQ > ev.q ? Math.min(1, Math.max(0, (q - ev.q) / (endQ - ev.q))) : 0;
-      const targetX = nbox && nbox.systemIndex === box.systemIndex ? nbox.x : (sys?.right ?? box.x);
+      const targetX = ev.display ? box.x : nbox && nbox.systemIndex === box.systemIndex ? nbox.x : (sys?.right ?? box.x);
       const x = box.x + (targetX - box.x) * frac;
       head.style.opacity = '1';
       head.style.transform = `translate(${x}px, ${box.top - 6}px)`;

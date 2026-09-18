@@ -263,19 +263,30 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
     const { xml, tiedOut } = layerXml(m, tiedIn, time);
     tiedIn = tiedOut;
     // An empty measure still needs something to draw and to click on.
-    const content = xml || `<mRest xml:id="${escapeXml(m.id)}-empty"/>`;
+    const content = m.repeatPrevious
+      ? `<mRpt xml:id="${escapeXml(m.id)}-rpt" num.visible="false"/>`
+      : xml || `<mRest xml:id="${escapeXml(m.id)}-empty"/>`;
     const dirs = m.events
       .map(
         (e) =>
           textAbove(e) + textBelow(e) +
           (e.slurTo && ids.has(e.slurTo)
             ? `<slur startid="#${escapeXml(e.id)}" endid="#${escapeXml(e.slurTo)}"/>`
+            : '') +
+          (e.lineTo && ids.has(e.lineTo)
+            ? `<gliss startid="#${escapeXml(e.id)}" endid="#${escapeXml(e.lineTo)}" lform="solid"/>`
             : ''),
       )
       .join('');
     const metcon = m.unmetered ? ' metcon="false"' : '';
     const left = m.repeatStart ? ' left="rptstart"' : '';
-    const right = m.repeatEnd ? ' right="rptend"' : i === score.measures.length - 1 ? ' right="end"' : '';
+    const right = m.repeatEnd
+      ? ' right="rptend"'
+      : i === score.measures.length - 1
+        ? ' right="end"'
+        : m.doubleBar
+          ? ' right="dbl"'
+          : '';
     section +=
       `<measure xml:id="${escapeXml(m.id)}" n="${i + 1}"${metcon}${left}${right}>` +
       `<staff n="1"><layer n="1">${content}</layer></staff>${dirs}</measure>`;
