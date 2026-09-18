@@ -20,13 +20,14 @@ interface Props {
 }
 
 const PLAYING_CLASS = 'm-playing';
+const ECHO_CLASS = 'm-echo';
 
 export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect, words }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pagesRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
   const wordsRef = useRef<HTMLDivElement>(null);
-  const layoutRef = useRef<Layout>({ events: new Map(), systems: [] });
+  const layoutRef = useRef<Layout>({ events: new Map(), systems: [], measures: new Map() });
   const [width, setWidth] = useState(0);
   const [status, setStatus] = useState<'loading' | 'ready' | string>('loading');
   const [renderCount, setRenderCount] = useState(0);
@@ -88,6 +89,7 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
   useEffect(() => {
     let raf = 0;
     let lastId: string | undefined;
+    let lastEcho: string | undefined;
     const frame = () => {
       raf = requestAnimationFrame(frame);
       const q = getQ();
@@ -115,14 +117,35 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
       if (!box) return;
       let next = timeline.events[idx + 1];
       while (next && next.grace) next = timeline.events[timeline.events.indexOf(next) + 1];
-      // Across a bar-repeat sign the playhead holds on the sign instead of gliding.
-      const nextShown = next ? (next.display ?? next.id) : undefined;
-      const nbox = nextShown && nextShown !== shownId && !ev.display ? L.events.get(nextShown) : undefined;
       const sys = L.systems[box.systemIndex];
       const endQ = next ? next.q : timeline.totalQ;
       const frac = endQ > ev.q ? Math.min(1, Math.max(0, (q - ev.q) / (endQ - ev.q))) : 0;
-      const targetX = ev.display ? box.x : nbox && nbox.systemIndex === box.systemIndex ? nbox.x : (sys?.right ?? box.x);
-      const x = box.x + (targetX - box.x) * frac;
+      // Where an event is drawn. A note replayed by a bar-repeat sign is placed in the sign's bar at the
+      // same proportion of the bar as it has in the bar being repeated, so the playhead walks through the
+      // repeat bar note by note instead of standing on the sign.
+      const xOf = (e: typeof ev): { x: number; systemIndex: number } | undefined => {
+        if (e.replay) {
+          const src = L.events.get(e.id);
+          const sm = L.measures.get(e.replay.sourceMeasureId);
+          const tm = L.measures.get(e.replay.measureId);
+          if (src && sm && tm && sm.right > sm.left) {
+            return { x: tm.left + ((src.x - sm.left) / (sm.right - sm.left)) * (tm.right - tm.left), systemIndex: tm.systemIndex };
+          }
+        }
+        const b = L.events.get(e.display ?? e.id);
+        return b ? { x: b.x, systemIndex: b.systemIndex } : undefined;
+      };
+      const here = xOf(ev) ?? { x: box.x, systemIndex: box.systemIndex };
+      const there = next ? xOf(next) : undefined;
+      const targetX = there && there.systemIndex === here.systemIndex && there.x > here.x ? there.x : (sys?.right ?? here.x);
+      const x = here.x + (targetX - here.x) * frac;
+      // Show which written note is sounding while a bar-repeat sign plays it.
+      const echoId = ev.replay ? ev.id : undefined;
+      if (echoId !== lastEcho) {
+        if (lastEcho) root.querySelector(`[id="${CSS.escape(lastEcho)}"]`)?.classList.remove(ECHO_CLASS);
+        if (echoId) root.querySelector(`[id="${CSS.escape(echoId)}"]`)?.classList.add(ECHO_CLASS);
+        lastEcho = echoId;
+      }
       head.style.opacity = '1';
       head.style.transform = `translate(${x}px, ${box.top - 6}px)`;
       head.style.height = `${box.height + 12}px`;

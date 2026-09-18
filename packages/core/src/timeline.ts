@@ -33,6 +33,8 @@ export interface TimelineEvent {
    * that plays it again. Undefined when the event is drawn in place.
    */
   display?: string;
+  /** For an event replayed by a bar-repeat sign: the bar that shows the sign, and the bar it repeats. */
+  replay?: { measureId: string; sourceMeasureId: string };
   notes: TimelineNote[];
 }
 
@@ -172,7 +174,7 @@ export function buildTimeline(score: Score): Timeline {
         tremolo: e.tremolo,
         legato,
         notes,
-        ...(display ? { display } : {}),
+        ...(display ? { display, replay: { measureId: m.id, sourceMeasureId: source.id } } : {}),
       };
       if (grace) {
         pendingGrace.push(te);

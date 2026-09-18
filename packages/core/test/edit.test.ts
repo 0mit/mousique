@@ -199,6 +199,8 @@ describe('bar-repeat signs, lines and double bars', () => {
 
   it('plays the repeated bar again, shown at the sign', () => {
     const tl = buildTimeline(s);
+    expect(tl.events[2]!.replay).toEqual({ measureId: 'm2', sourceMeasureId: 'm1' });
+    expect(tl.events[4]!.replay).toEqual({ measureId: 'm3', sourceMeasureId: 'm1' });
     expect(tl.events.map((e) => `${e.id}${e.display ? '@' + e.display : ''}`)).toEqual(['e1', 'e2', 'e1@m2-rpt', 'e2@m2-rpt', 'e1@m3-rpt', 'e2@m3-rpt', 'e3']);
     expect(tl.totalQ).toBe(8);
     expect(validateScore(s)).toEqual([]);

@@ -33,9 +33,14 @@ describe('rhythm words', () => {
     expect(syl(bar([note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('eighth')), note(d('16th'))]))).toBe('بِـ زَ دَ مُ رُ با بُ');
   });
 
-  it('gives no words to a beat with a rest, a tie or a tuplet, nor to a half note', () => {
-    const rest: ScoreEvent = { id: 'r1', duration: d('eighth') };
-    expect(syl(bar([rest, note(d('eighth')), note(d('eighth')), note(d('eighth'))]))).toBe('· · می زد');
+  it('reads rests like sounded notes of the same length', () => {
+    const r8: ScoreEvent = { id: 'r1', duration: d('eighth') };
+    const r4: ScoreEvent = { id: 'r2', duration: d('quarter') };
+    expect(syl(bar([r8, note(d('eighth')), note(d('eighth')), note(d('eighth'))]))).toBe('می زد می زد');
+    expect(syl(bar([note(d('quarter')), r4]))).toBe('راست راست');
+  });
+
+  it('gives no words to a beat with a tie or a tuplet, nor to a half note', () => {
     expect(syl(bar([note(d('quarter'), { tie: true }), note(d('eighth')), note(d('eighth'))]))).toBe('· · ·');
     const t = { actual: 3, normal: 2 };
     expect(syl(bar([note({ base: 'eighth', tuplet: t }), note({ base: 'eighth', tuplet: t }), note({ base: 'eighth', tuplet: t }), note(d('quarter'))]))).toBe('· · · راست');

@@ -19,9 +19,17 @@ export interface SystemBox {
   inkTop: number;
 }
 
+export interface MeasureBox {
+  /** Left and right of the bar's staff lines. */
+  left: number;
+  right: number;
+  systemIndex: number;
+}
+
 export interface Layout {
   events: Map<string, EventBox>;
   systems: SystemBox[];
+  measures: Map<string, MeasureBox>;
 }
 
 export function measureLayout(container: HTMLElement, ids: Iterable<string>): Layout {
@@ -37,6 +45,15 @@ export function measureLayout(container: HTMLElement, ids: Iterable<string>): La
     const all = g.getBoundingClientRect();
     systemIndex.set(g, systems.length);
     systems.push({ left: r.left - ox, right: r.right - ox, top: r.top - oy, height: r.height, inkTop: Math.min(all.top, r.top) - oy });
+  });
+
+  const measures = new Map<string, MeasureBox>();
+  container.querySelectorAll('g.measure').forEach((g) => {
+    const staff = g.querySelector('g.staff');
+    if (!staff || !g.id) return;
+    const r = staff.getBoundingClientRect();
+    const sys = g.closest('g.system');
+    measures.set(g.id, { left: r.left - ox, right: r.right - ox, systemIndex: sys ? (systemIndex.get(sys) ?? 0) : 0 });
   });
 
   const events = new Map<string, EventBox>();
@@ -56,5 +73,5 @@ export function measureLayout(container: HTMLElement, ids: Iterable<string>): La
       height: s?.height ?? r.height,
     });
   }
-  return { events, systems };
+  return { events, systems, measures };
 }

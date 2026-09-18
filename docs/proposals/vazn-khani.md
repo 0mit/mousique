@@ -1,6 +1,6 @@
 # Proposal: rhythm words over the notes (وزن‌خوانی واژگانی, Arshad Tahmasbi)
 
-Status: **built for quarter-beat meters**, 2026-09-18. The operator answered the open questions: rests and ties get no words for now; beats longer than one word, and eighth-note meters, are not done now; the words go above the staff. Words are drawn as an HTML layer, not MEI lyrics (see `DECISIONS.md`).
+Status: **built for quarter-beat meters**, 2026-09-18. The operator answered the open questions: ties get no words for now, and rests are read like sounded notes of the same length (changed the same day from "no words"); beats longer than one word, and eighth-note meters, are not done now; the words go above the staff. Words are drawn as an HTML layer, not MEI lyrics (see `DECISIONS.md`).
 
 ## What the method is
 
@@ -47,7 +47,7 @@ is a guess to check.
 1. **A pure function in `packages/core`**, `rhythmWords(timeline, dictionary, unit)`: split every metered
    measure into beats, express each note in the beat as a whole number of units, and look the pattern up
    in the dictionary (for example `1-1-2` → بزدم). Each note gets its syllable.
-   - Rests: shown in brackets and dimmed, spoken silently.
+   - Rests: read like a sounded note of the same length (the operator's decision).
    - Ties: the continuation gets a lengthening mark (ـــ) instead of a new syllable.
    - Grace notes: none.
    - Tuplets and free-rhythm bars: no words, rather than wrong ones.

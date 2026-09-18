@@ -88,6 +88,8 @@ body { background: var(--bg); }
 .m-page svg { display: block; }
 .m-pages g.note, .m-pages g.rest, .m-pages g.chord { cursor: pointer; }
 .m-pages .m-playing, .m-pages .m-playing * { fill: var(--playing); stroke: var(--playing); }
+/* The written note a bar-repeat sign is replaying. */
+.m-pages .m-echo, .m-pages .m-echo * { fill: #e8a27f; stroke: #e8a27f; }
 .m-pages g.note.m-selected, .m-pages g.note.m-selected *, .m-pages g.rest.m-selected, .m-pages g.rest.m-selected *,
 .m-pages g.chord.m-selected, .m-pages g.chord.m-selected * { fill: var(--select); stroke: var(--select); }
 .m-pages g.measure.m-selected > g.staff > path { stroke: var(--select); stroke-width: 22px; }

@@ -3,8 +3,9 @@
 // words below cover every way of filling a quarter beat with sixteenths, eighths, dotted eighths and
 // quarters; a teacher can replace or extend it.
 //
-// Scope, by the operator's decision of 2026-09-18: meters with a quarter-note beat only; a beat holding a
-// rest, a tie, a tuplet, a note longer than the beat or a value off the sixteenth grid gets no words.
+// Scope, by the operator's decisions of 2026-09-18: meters with a quarter-note beat only. A rest is read like
+// a sounded note of the same length. A beat holding a tie, a tuplet, a note longer than the beat or a value
+// off the sixteenth grid gets no words.
 
 import { durationQ, measureCapacityQ } from './duration.ts';
 import type { Score, TimeSignature } from './model.ts';
@@ -82,7 +83,7 @@ export function rhythmWords(score: Score, dictionary: RhythmDictionary = TAHMASB
       const units = dq / UNIT_Q;
       const fits = pos + dq <= b + 1 + 1e-9;
       const onGrid = Math.abs(units - Math.round(units)) < 1e-9 && Math.abs(pos / UNIT_Q - Math.round(pos / UNIT_Q)) < 1e-9;
-      if (!e.pitches?.length || e.tie || tiedIn || e.duration.tuplet || !fits || !onGrid) ok = false;
+      if (e.tie || tiedIn || e.duration.tuplet || !fits || !onGrid) ok = false;
       tiedIn = !!e.tie;
       beat.push(e);
       pos += dq;
