@@ -16,6 +16,7 @@ const ROWS: Array<[string, string]> = [
   ['/', 'Grace note'],
   ['Alt+3', 'Triplet'],
   ['Z', 'Riz (tremolo)'],
+  ['M', 'Mezrab: راست ∧, چپ ∨, none'],
   ['Delete', 'Delete note'],
   ['Ctrl+B', 'Add a bar (Shift: before)'],
   ['Ctrl+Z', 'Undo (Shift: redo)'],

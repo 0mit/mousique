@@ -10,6 +10,7 @@ import type {
   ScoreEvent,
   TimeSignature,
 } from './model.ts';
+import { MEZRAB_GLYPH, type MezrabMark } from './mezrab.ts';
 import { pitchKey } from './tuning.ts';
 
 const MEI_DUR: Record<BaseDuration, string> = {
@@ -211,6 +212,13 @@ function layerXml(m: Measure, tiedIn: Set<string>, time: TimeSignature | undefin
   return { xml, tiedOut: tied };
 }
 
+/** A plectrum stroke, drawn upright; a suggested one carries the `auto` type so it can be styled lighter. */
+function mezrabXml(id: string, mark: MezrabMark | undefined): string {
+  if (!mark) return '';
+  const type = mark.suggested ? 'mezrab auto' : 'mezrab';
+  return `<dir staff="1" place="above" startid="#${escapeXml(id)}" type="${type}"><rend fontstyle="normal">${MEZRAB_GLYPH[mark.stroke]}</rend></dir>`;
+}
+
 /** Text above a note; each line is its own direction, so a gusheh name and a mark can stack. */
 function textAbove(e: ScoreEvent): string {
   if (!e.text) return '';
@@ -234,6 +242,8 @@ function textBelow(e: ScoreEvent): string {
 export interface MeiOptions {
   /** Include the title and composer in the MEI header so Verovio draws them. Default true. */
   header?: boolean;
+  /** Plectrum strokes to draw, by event id: written ones, plus suggested ones when the reader wants them. */
+  mezrabs?: Map<string, MezrabMark>;
 }
 
 /** Generate an MEI document from the score. Every event's id becomes its xml:id. */
@@ -246,6 +256,10 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
   let tiedIn = new Set<string>();
 
   const ids = new Set(score.measures.flatMap((m) => m.events.map((e) => e.id)));
+  // Written strokes are notation and always drawn; suggested ones only when passed in.
+  const strokes = opts.mezrabs ?? new Map(
+    score.measures.flatMap((m) => m.events.flatMap((e) => (e.mezrab ? [[e.id, { stroke: e.mezrab, suggested: false }] as const] : []))),
+  );
   let section = '';
   let openEnding: number | undefined;
   score.measures.forEach((m, i) => {
@@ -269,7 +283,9 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
     const dirs = m.events
       .map(
         (e) =>
-          textAbove(e) + textBelow(e) +
+          mezrabXml(e.id, strokes.get(e.id)) +
+          textAbove(e) +
+          textBelow(e) +
           (e.slurTo && ids.has(e.slurTo)
             ? `<slur startid="#${escapeXml(e.id)}" endid="#${escapeXml(e.slurTo)}"/>`
             : '') +

@@ -1,4 +1,4 @@
-import { eventIndexAt, nearestOccurrence, scoreToMei, type RhythmWord, type Score, type Selection, type Timeline } from '@mousique/core';
+import { eventIndexAt, nearestOccurrence, scoreToMei, type MezrabMark, type RhythmWord, type Score, type Selection, type Timeline } from '@mousique/core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { measureLayout, type Layout } from './layout.ts';
 import { loadVerovio } from './verovio.ts';
@@ -19,12 +19,14 @@ interface Props {
   words?: Map<string, RhythmWord>;
   /** Note names to draw below the notes, by event id; undefined hides them. */
   names?: Map<string, string>;
+  /** Plectrum strokes to draw: written ones, plus suggested ones when the reader asked for them. */
+  mezrabs?: Map<string, MezrabMark>;
 }
 
 const PLAYING_CLASS = 'm-playing';
 const ECHO_CLASS = 'm-echo';
 
-export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect, words, names }: Props) {
+export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect, words, names, mezrabs }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pagesRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
@@ -67,7 +69,7 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
           pageMarginBottom: 40,
           svgViewBox: false,
         });
-        tk.loadData(scoreToMei(score, { header: false }));
+        tk.loadData(scoreToMei(score, { header: false, ...(mezrabs ? { mezrabs } : {}) }));
         const pages: string[] = [];
         const n = tk.getPageCount();
         for (let p = 1; p <= n; p++) pages.push(tk.renderToSVG(p));
@@ -85,7 +87,7 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
     return () => {
       cancelled = true;
     };
-  }, [score, timeline, width, zoom, !!words, !!names]);
+  }, [score, timeline, width, zoom, !!words, !!names, mezrabs]);
 
   // Cursor: highlight the sounding event and glide the playhead between onsets.
   useEffect(() => {

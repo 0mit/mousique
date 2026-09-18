@@ -21,6 +21,7 @@ it, [`DECISIONS.md`](DECISIONS.md) says so and why. Milestone notes are in [`doc
 | M2 editor | working: keyboard and palette entry, repeats and endings, slurs, finger lines, bar-repeat signs, fingering, autosave |
 | Rhythm words (وزن‌خوانی واژگانی) | working for quarter-note beats, rests included ([design](docs/proposals/vazn-khani.md)) |
 | Note names for beginners | working: Persian solfège, Do Re Mi, letters |
+| Mezrab (راست ∧ / چپ ∨) | working: written strokes, and optional suggestions from the beat |
 | M3 media overlay and manual sync | next; the sync-map maths is done and tested |
 | M4 automatic alignment · M5 AI transcription · M6 interchange | not started |
 
@@ -33,7 +34,8 @@ it, [`DECISIONS.md`](DECISIONS.md) says so and why. Milestone notes are in [`doc
   finger lines, fingering below the staff, marks and gusheh names above it.
 - **Playback** at exact quarter-tone pitches, with the cursor on the sounding note (through repeats and
   bar-repeat signs too), tempo, practice speed, metronome and count-in, and a tuning block per score.
-- **Reading aids**, each optional: Tahmasbi's rhythm words above the notes, and note names below them.
+- **Reading aids**, each optional: Tahmasbi's rhythm words above the notes, note names below them, and
+  suggested mezrab strokes (راست ∧ / چپ ∨) where none is written.
 - **Autosave** in the browser; scores open from and save to JSON files.
 
 ## Run it

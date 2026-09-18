@@ -76,7 +76,11 @@ export interface ScoreEvent {
   slurTo?: string;
   /** A straight line from this note to a later one: a finger sliding along the string. */
   lineTo?: string;
+  /** Plectrum stroke on the tar and setar: راست (down, ∧) or چپ (up, ∨). */
+  mezrab?: Mezrab;
 }
+
+export type Mezrab = 'rast' | 'chap';
 
 export type Clef = 'treble' | 'treble-8vb' | 'bass' | 'alto' | 'tenor';
 

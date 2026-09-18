@@ -7,6 +7,7 @@ import {
   nearestOccurrence,
   newScore,
   playbackNotes,
+  mezrabs,
   noteNames,
   rhythmWords,
   selectedEvent,
@@ -88,6 +89,21 @@ export function App() {
   const timeline = useMemo(() => buildTimeline(score), [score]);
   const problems = useMemo(() => validateScore(score), [score]);
   const words = useMemo(() => (showWords ? rhythmWords(score) : undefined), [score, showWords]);
+  const [suggestMezrab, setSuggestMezrab] = useState(() => {
+    try {
+      return localStorage.getItem('mousique.mezrab') === '1';
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('mousique.mezrab', suggestMezrab ? '1' : '0');
+    } catch {
+      // A per-viewer preference only.
+    }
+  }, [suggestMezrab]);
+  const strokes = useMemo(() => mezrabs(score, suggestMezrab), [score, suggestMezrab]);
   const names = useMemo(() => (nameSystem === 'off' ? undefined : noteNames(score, nameSystem)), [score, nameSystem]);
   const badMeasures = useMemo(
     () => new Set(problems.filter((p) => p.measureIndex !== undefined).map((p) => score.measures[p.measureIndex!]!.id)),
@@ -260,6 +276,9 @@ export function App() {
         <label className="m-check" title="Tahmasbi's rhythm words (وزن‌خوانی واژگانی) over the notes, for beats in quarter-note meters">
           <input type="checkbox" checked={showWords} onChange={(e) => setShowWords(e.target.checked)} /> <span lang="fa">وزن‌خوانی</span> words
         </label>
+        <label className="m-check" title="Suggest مضراب راست ∧ and چپ ∨ from each note's place in the beat, where none is written">
+          <input type="checkbox" checked={suggestMezrab} onChange={(e) => setSuggestMezrab(e.target.checked)} /> <span lang="fa">مضراب</span> ∧∨
+        </label>
         <label className="m-field" title="Note names under the notes, for beginners">
           Names
           <select value={nameSystem} onChange={(e) => setNameSystem(e.target.value as NameSystem | 'off')}>
@@ -288,6 +307,7 @@ export function App() {
             badMeasures={badMeasures}
             words={words}
             names={names}
+            mezrabs={strokes}
             onSelect={(sel, q) => {
               api.select(sel);
               if (q !== undefined) player.seek(q);

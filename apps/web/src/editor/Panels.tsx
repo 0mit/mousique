@@ -39,7 +39,7 @@ export function describeEvent(e: ScoreEvent): string {
   const tup = e.duration.tuplet ? ` (${e.duration.tuplet.actual}:${e.duration.tuplet.normal})` : '';
   if (!e.pitches?.length) return `${d} rest${tup}`;
   const ps = e.pitches.map((p) => `${p.step}${p.octave}${p.accidental ? ` ${ACC_NAME[p.accidental]}` : ''}`).join(' + ');
-  const extras = [e.grace && 'grace', e.tie && 'tied', e.slurTo && 'slurred', e.lineTo && 'finger line', e.tremolo && `riz ×${e.tremolo}`].filter(Boolean).join(', ');
+  const extras = [e.grace && 'grace', e.tie && 'tied', e.slurTo && 'slurred', e.lineTo && 'finger line', e.mezrab && (e.mezrab === 'rast' ? 'mezrab راست ∧' : 'mezrab چپ ∨'), e.tremolo && `riz ×${e.tremolo}`].filter(Boolean).join(', ');
   return `${ps}, ${d}${tup}${extras ? ` — ${extras}` : ''}`;
 }
 

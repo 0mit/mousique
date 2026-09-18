@@ -396,6 +396,16 @@ export function setText(score: Score, sel: Selection, text: string | undefined):
   });
 }
 
+/** Cycle the written plectrum stroke: none → راست (∧) → چپ (∨) → none. */
+export function cycleMezrab(score: Score, sel: Selection): EditResult {
+  return onSelectedEvent(score, sel, (e) => {
+    if (!e.pitches?.length) return;
+    const next = e.mezrab === undefined ? 'rast' : e.mezrab === 'rast' ? 'chap' : undefined;
+    if (next) e.mezrab = next;
+    else delete e.mezrab;
+  });
+}
+
 /** Text below the note — fingering. */
 export function setBelow(score: Score, sel: Selection, text: string | undefined): EditResult {
   return onSelectedEvent(score, sel, (e) => {

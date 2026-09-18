@@ -140,6 +140,7 @@ export function useEditor(initial: Score, onEdited?: (sel: Selection, score: Sco
       grace: () => apply((s, sel) => ed.toggleGrace(s, sel), false),
       tuplet: () => apply((s, sel) => ed.toggleTuplet(s, sel), false),
       tremolo: () => apply((s, sel) => ed.cycleTremolo(s, sel), false),
+      mezrab: () => apply((s, sel) => ed.cycleMezrab(s, sel), false),
       text: (t: string | undefined) => apply((s, sel) => ed.setText(s, sel, t), false),
       below: (t: string | undefined) => apply((s, sel) => ed.setBelow(s, sel, t), false),
       slur: (shrink = false) => apply((s, sel) => ed.extendSlur(s, sel, shrink), false),
@@ -249,6 +250,9 @@ export function handleEditorKey(e: KeyboardEvent, api: EditorApi): boolean {
       return true;
     case 'KeyZ':
       a.tremolo();
+      return true;
+    case 'KeyM':
+      a.mezrab();
       return true;
     case 'Period':
       a.dot();

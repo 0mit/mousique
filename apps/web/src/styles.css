@@ -88,6 +88,9 @@ body { background: var(--bg); }
 .m-page svg { display: block; }
 .m-pages g.note, .m-pages g.rest, .m-pages g.chord { cursor: pointer; }
 .m-pages .m-playing, .m-pages .m-playing * { fill: var(--playing); stroke: var(--playing); }
+/* Plectrum strokes: written ones in ink, suggested ones lighter. */
+.m-pages g.dir.mezrab text { font-size: 115%; }
+.m-pages g.dir.mezrab.auto, .m-pages g.dir.mezrab.auto * { fill: #8a7fb8; }
 /* The written note a bar-repeat sign is replaying. */
 .m-pages .m-echo, .m-pages .m-echo * { fill: #e8a27f; stroke: #e8a27f; }
 .m-pages g.note.m-selected, .m-pages g.note.m-selected *, .m-pages g.rest.m-selected, .m-pages g.rest.m-selected *,

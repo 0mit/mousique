@@ -137,6 +137,7 @@ export function Palette({ api, event }: Props) {
         <Btn active={!!event?.lineTo} disabled={!hasNote} title="Finger line (slide) to the next note: each press reaches one note further (J); Shift+J pulls it back" label={<span className="m-small">line</span>} onClick={() => a.line(false)} />
         <Btn active={!!event?.grace} disabled={!hasNote} title="Grace note (/)" label={<span className="m-small">grace</span>} onClick={a.grace} />
         <Btn active={!!event?.duration.tuplet} disabled={!event} title="Triplet (Alt+3)" label="³" onClick={a.tuplet} />
+        <Btn active={!!event?.mezrab} disabled={!hasNote} title="Mezrab: راست ∧ (down), then چپ ∨ (up), then none (M)" label={<span className="m-big">{event?.mezrab === 'chap' ? '∨' : '∧'}</span>} onClick={a.mezrab} />
         <Btn active={!!event?.tremolo} disabled={!hasNote} title="Riz / tremolo: 3, 2, 1 strokes, off (Z)" label={<span className="m-small">riz{event?.tremolo ? ` ${event.tremolo}` : ''}</span>} onClick={a.tremolo} />
       </div>
 

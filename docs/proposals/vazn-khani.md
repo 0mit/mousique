@@ -54,7 +54,7 @@ is a guess to check.
    - A pattern with no word in the dictionary (a triplet, a thirty-second, a beat starting with a rest)
      falls back to syllables by weight (رُ / را / راس / راست), shown in a lighter style, so the reader can
      still read it and knows it is not one of the method's words.
-   - Mezrab: ∧ or ∨ from the note's position in the beat, as a separate switch.
+   - Mezrab: ∧ or ∨ from the note's position in the beat, as a separate switch. **Built** 2026-09-18 (see `DECISIONS.md`), with written strokes that override it.
 2. **The dictionary is data, not code.** It ships with the eight words above. A teacher can add the
    book's variants in the app, and the dictionary is saved with the app, exported with a project, and
    can be shared. This keeps the book's own tables out of the public repository unless the teacher

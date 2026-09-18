@@ -112,3 +112,17 @@ describe('Verovio on bar repeats, finger lines and double bars', () => {
     expect(buildTimeline(s).totalQ).toBeCloseTo(15, 9);
   });
 });
+
+describe('Verovio on plectrum strokes', () => {
+  it('draws written strokes, and suggested ones marked so they can be styled apart', async () => {
+    const { mezrabs } = await import('../src/index.ts');
+    const s = JSON.parse(JSON.stringify(demoScore)) as Score;
+    s.measures[0]!.events[1]!.mezrab = 'chap';
+    tk.loadData(scoreToMei(s, { mezrabs: mezrabs(s, true) }));
+    expect(tk.getLog().replace(/\s+/g, '')).toBe('');
+    const svg = tk.renderToSVG(1);
+    expect(svg).toContain('class="dir mezrab"');
+    expect(svg).toContain('class="dir mezrab auto"');
+    expect(svg).toContain('∨');
+  });
+});
