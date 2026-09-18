@@ -1,0 +1,8 @@
+{
+  "name": "spike-verovio",
+  "private": true,
+  "type": "module",
+  "description": "M0 spike: hand-written MEI with koron, sori, a mixed key signature, a grace note, a tie and an unmetered bar",
+  "scripts": { "spike": "node spike.mjs" },
+  "dependencies": { "verovio": "6.3.0" }
+}

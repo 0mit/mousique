@@ -1,0 +1,17 @@
+import createVerovioModule from 'verovio/wasm';
+import { VerovioToolkit } from 'verovio/esm';
+import fs from 'node:fs';
+const VM = await createVerovioModule();
+const tk = new VerovioToolkit(VM);
+console.log('version', tk.getVersion());
+tk.setOptions({ scale: 50, adjustPageHeight: true, header: 'auto', footer: 'none', svgBoundingBoxes: true });
+const ok = tk.loadData(fs.readFileSync('spike.mei','utf8'));
+console.log('load', ok, 'pages', tk.getPageCount());
+console.log('log:', tk.getLog());
+const svg = tk.renderToSVG(1);
+fs.writeFileSync('out.svg', svg);
+for (const id of ['ev1','ev3','ev5','ev5g','ev10','ks1','m3']) console.log(id, svg.includes(`id="${id}"`));
+const tm = tk.renderToTimemap({ includeMeasures: true, includeRests: true });
+console.log(JSON.stringify(tm, null, 0));
+console.log('midi', JSON.stringify(tk.getMIDIValuesForElement('ev5')), JSON.stringify(tk.getMIDIValuesForElement('ev3')));
+console.log('attrs ev5', JSON.stringify(tk.getElementAttr('ev5')));

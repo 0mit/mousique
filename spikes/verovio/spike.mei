@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mei xmlns="http://www.music-encoding.org/ns/mei" meiversion="5.1">
+  <meiHead>
+    <fileDesc>
+      <titleStmt><title>دستگاه شور — spike</title><composer>آزمایش</composer></titleStmt>
+      <pubStmt/>
+    </fileDesc>
+  </meiHead>
+  <music><body><mdiv><score>
+    <scoreDef midi.bpm="60">
+      <staffGrp>
+        <staffDef n="1" lines="5" clef.shape="G" clef.line="2">
+          <keySig xml:id="ks1">
+            <keyAccid pname="b" accid="f"/>
+            <keyAccid pname="e" accid="koron"/>
+          </keySig>
+          <meterSig count="2" unit="4"/>
+        </staffDef>
+      </staffGrp>
+    </scoreDef>
+    <section>
+      <measure n="1" xml:id="m1">
+        <staff n="1"><layer n="1">
+          <note xml:id="ev1" pname="d" oct="4" dur="8"/>
+          <note xml:id="ev2" pname="e" oct="4" dur="8"/>
+          <note xml:id="ev3" pname="f" oct="4" dur="8" accid="sori"/>
+          <note xml:id="ev4" pname="g" oct="4" dur="8"/>
+        </layer></staff>
+      </measure>
+      <measure n="2" xml:id="m2">
+        <staff n="1"><layer n="1">
+          <note xml:id="ev5g" pname="b" oct="4" dur="8" grace="unacc"/>
+          <note xml:id="ev5" pname="a" oct="4" dur="4" accid="koron" tie="i"/>
+          <note xml:id="ev6" pname="a" oct="4" dur="4" tie="t"/>
+        </layer></staff>
+      </measure>
+      <measure n="3" xml:id="m3" metcon="false">
+        <staff n="1"><layer n="1">
+          <note xml:id="ev7" pname="g" oct="4" dur="16"/>
+          <note xml:id="ev8" pname="f" oct="4" dur="16" accid="n"/>
+          <note xml:id="ev9" pname="e" oct="4" dur="16"/>
+          <note xml:id="ev10" pname="d" oct="4" dur="2" dots="1"/>
+          <note xml:id="ev11" pname="c" oct="4" dur="8" accid="s"/>
+        </layer></staff>
+      </measure>
+    </section>
+  </score></mdiv></body></music>
+</mei>

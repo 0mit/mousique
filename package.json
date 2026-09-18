@@ -1,0 +1,12 @@
+{
+  "name": "mousique",
+  "private": true,
+  "description": "Practise from sheet music synced to a master's recording, with koron and sori",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "test": "npm test -w packages/core",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  }
+}

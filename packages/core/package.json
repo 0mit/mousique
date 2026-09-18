@@ -1,0 +1,19 @@
+{
+  "name": "@mousique/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Framework-free score model, validation, MEI writer, tuning and sync-map maths",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "verovio": "^6.3.0",
+    "vitest": "^5.0.1"
+  }
+}
