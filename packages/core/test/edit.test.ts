@@ -211,3 +211,20 @@ describe('bar-repeat signs, lines and double bars', () => {
     expect(validateScore(t).map((p) => p.message).join(' ')).toMatch(/first bar cannot repeat.*repeats the previous bar but also has notes/);
   });
 });
+
+describe('position after a repeat', () => {
+  it('finds the sounding bar in play order, not score order', async () => {
+    const { measureIndexAt } = await import('../src/index.ts');
+    const s: Score = newScore();
+    s.measures = ['A', 'B', 'C'].map((step, i) => ({
+      id: `m${i + 1}`,
+      ...(i === 0 ? { time: { beats: 1, beatType: 4 } } : {}),
+      ...(i === 1 ? { repeatEnd: true } : {}),
+      events: [{ id: `e${i + 1}`, duration: quarter, pitches: [{ step: step as Step, octave: 4 }] }],
+    }));
+    const tl = buildTimeline(s); // m1 m2 m1 m2 m3
+    const at = (q: number) => tl.measures[measureIndexAt(tl, q)]!;
+    expect(at(2.5)).toMatchObject({ number: 1, q: 2 });
+    expect(at(4.2)).toMatchObject({ number: 3, q: 4 });
+  });
+});

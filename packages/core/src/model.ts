@@ -112,6 +112,8 @@ export interface Measure {
   repeatPrevious?: boolean;
   /** A double bar line at the end of the measure (a section boundary without a repeat). */
   doubleBar?: boolean;
+  /** Text above the start of the bar, for a mark with no note to sit on (a bow mark over a bar-repeat sign). */
+  text?: string;
   events: ScoreEvent[];
 }
 

@@ -260,11 +260,11 @@ export function eventIndexAt(tl: Timeline, q: number): number {
   return ans;
 }
 
+/** Position in `tl.measures` (play order, repeats unfolded) of the measure sounding at q. */
 export function measureIndexAt(tl: Timeline, q: number): number {
   let ans = 0;
-  for (const m of tl.measures) {
-    if (m.q <= q + 1e-9) ans = m.index;
-    else break;
-  }
+  tl.measures.forEach((m, i) => {
+    if (m.q <= q + 1e-9) ans = i;
+  });
   return ans;
 }

@@ -102,12 +102,13 @@ describe('Verovio on bar repeats, finger lines and double bars', () => {
     const s = JSON.parse(JSON.stringify(demoScore)) as Score;
     s.measures[0]!.events[1]!.lineTo = 'e3';
     s.measures[1]!.doubleBar = true;
-    s.measures.splice(2, 0, { id: 'mr', repeatPrevious: true, events: [] });
+    s.measures.splice(2, 0, { id: 'mr', repeatPrevious: true, text: '⊓', events: [] });
     tk.loadData(scoreToMei(s));
     expect(tk.getLog().replace(/\s+/g, '')).toBe('');
     const svg = tk.renderToSVG(1);
     expect(svg).toContain('id="mr-rpt"');
     expect(svg).toContain('class="gliss"');
+    expect(svg).toContain('⊓');
     expect(buildTimeline(s).totalQ).toBeCloseTo(15, 9);
   });
 });

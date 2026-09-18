@@ -486,7 +486,7 @@ export function deleteMeasure(score: Score, sel: Selection): EditResult {
 }
 
 export type MeasurePatch = Partial<
-  Pick<Measure, 'clef' | 'key' | 'time' | 'unmetered' | 'repeatStart' | 'repeatEnd' | 'ending' | 'repeatPrevious' | 'doubleBar'>
+  Pick<Measure, 'clef' | 'key' | 'time' | 'unmetered' | 'repeatStart' | 'repeatEnd' | 'ending' | 'repeatPrevious' | 'doubleBar' | 'text'>
 >;
 
 /** Set or clear measure properties. A key whose value is undefined is removed from the measure. */

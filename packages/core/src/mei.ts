@@ -278,6 +278,7 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
             : ''),
       )
       .join('');
+    const barText = m.text ? `<dir staff="1" place="above" tstamp="1">${escapeXml(m.text)}</dir>` : '';
     const metcon = m.unmetered ? ' metcon="false"' : '';
     const left = m.repeatStart ? ' left="rptstart"' : '';
     const right = m.repeatEnd
@@ -289,7 +290,7 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
           : '';
     section +=
       `<measure xml:id="${escapeXml(m.id)}" n="${i + 1}"${metcon}${left}${right}>` +
-      `<staff n="1"><layer n="1">${content}</layer></staff>${dirs}</measure>`;
+      `<staff n="1"><layer n="1">${content}</layer></staff>${dirs}${barText}</measure>`;
   });
   if (openEnding !== undefined) section += '</ending>';
 

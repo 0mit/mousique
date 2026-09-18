@@ -226,6 +226,10 @@ export function BarPanel({ api, measureIndex }: { api: EditorApi; measureIndex: 
           <input type="checkbox" checked={!!m.doubleBar} onChange={(e) => patch({ doubleBar: e.target.checked })} /> Double bar line
         </label>
       </div>
+      <label className="m-stack">
+        Text above the bar <span className="m-unit">(a mark with no note under it, such as a bow mark over 𝄎)</span>
+        <CommitInput dir="auto" value={m.text ?? ''} placeholder="e.g. ⊓ or V" onCommit={(v) => patch({ text: v.trim() || undefined })} />
+      </label>
       <label className="m-row">
         Ending
         <select value={m.ending ?? ''} onChange={(e) => patch({ ending: e.target.value ? Number(e.target.value) : undefined })}>
