@@ -1,5 +1,6 @@
-import type { Beat, PlayNote } from '@mousique/core';
+import type { Beat, PlayNote, VoiceCue } from '@mousique/core';
 import { Synth } from './synth.ts';
+import type { VoiceBank } from './voice.ts';
 
 const LOOKAHEAD_S = 0.12;
 const TICK_MS = 25;
@@ -37,6 +38,12 @@ export class Player {
   private graceScheduledQ = 0;
   private timer: number | undefined;
   private onEnd: (() => void) | undefined;
+  private voice: { bank: VoiceBank; cues: VoiceCue[] } | undefined;
+
+  /** Speak these cues from this bank while playing (note names or rhythm words); undefined for silence. */
+  setVoice(voice: { bank: VoiceBank; cues: VoiceCue[] } | undefined): void {
+    this.voice = voice;
+  }
 
   setMaterial(
     notes: PlayNote[],
@@ -173,6 +180,15 @@ export class Player {
         } else {
           this.synth.pluck(n.hz, t, dur * 0.97, n.legato ? 0.55 : 1);
         }
+      }
+    }
+    if (this.voice) {
+      const { bank, cues } = this.voice;
+      const ctx = this.synth.ctx;
+      for (const c of cues) {
+        if (c.q < fromQ - 1e-9 || c.q >= toQ - 1e-9 || c.q < this.anchorQ - 1e-9) continue;
+        const node = bank.speak(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1);
+        if (node) this.synth.adopt(node);
       }
     }
     if (this.opts.metronome) {

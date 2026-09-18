@@ -1,0 +1,3436 @@
+{
+ "generated": "2026-09-19",
+ "factors": [
+  0.5,
+  0.7,
+  1.0,
+  1.4,
+  2.0
+ ],
+ "voices": {
+  "fa": {
+   "model": "fa_IR-amir-medium",
+   "licence": "CC0 (dataset: datacula.com)"
+  },
+  "en": {
+   "model": "en_US-ljspeech-medium",
+   "licence": "public domain (LJ Speech)"
+  }
+ },
+ "banks": {
+  "names-persian": {
+   "file": "names-persian.mp3",
+   "voice": "fa",
+   "clips": {
+    "C": {
+     "text": "دو",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 0.15,
+       "duration": 0.1258
+      },
+      {
+       "factor": 0.7,
+       "start": 0.4258,
+       "duration": 0.1761
+      },
+      {
+       "factor": 1.0,
+       "start": 0.7518,
+       "duration": 0.2515
+      },
+      {
+       "factor": 1.4,
+       "start": 1.1533,
+       "duration": 0.3521
+      },
+      {
+       "factor": 2.0,
+       "start": 1.6554,
+       "duration": 0.503
+      }
+     ]
+    },
+    "C-sharp": {
+     "text": "دو دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 2.3085,
+       "duration": 0.3029
+      },
+      {
+       "factor": 0.7,
+       "start": 2.7614,
+       "duration": 0.4241
+      },
+      {
+       "factor": 1.0,
+       "start": 3.3355,
+       "duration": 0.6059
+      },
+      {
+       "factor": 1.4,
+       "start": 4.0914,
+       "duration": 0.8482
+      },
+      {
+       "factor": 2.0,
+       "start": 5.0896,
+       "duration": 1.2117
+      }
+     ]
+    },
+    "C-flat": {
+     "text": "دو بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 6.4513,
+       "duration": 0.4537
+      },
+      {
+       "factor": 0.7,
+       "start": 7.055,
+       "duration": 0.6351
+      },
+      {
+       "factor": 1.0,
+       "start": 7.8401,
+       "duration": 0.9073
+      },
+      {
+       "factor": 1.4,
+       "start": 8.8975,
+       "duration": 1.2703
+      },
+      {
+       "factor": 2.0,
+       "start": 10.3178,
+       "duration": 1.8147
+      }
+     ]
+    },
+    "C-koron": {
+     "text": "دو کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 12.2824,
+       "duration": 0.4661
+      },
+      {
+       "factor": 0.7,
+       "start": 12.8986,
+       "duration": 0.6525
+      },
+      {
+       "factor": 1.0,
+       "start": 13.7011,
+       "duration": 0.9322
+      },
+      {
+       "factor": 1.4,
+       "start": 14.7833,
+       "duration": 1.3051
+      },
+      {
+       "factor": 2.0,
+       "start": 16.2384,
+       "duration": 1.8644
+      }
+     ]
+    },
+    "C-sori": {
+     "text": "دو سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 18.2528,
+       "duration": 0.4436
+      },
+      {
+       "factor": 0.7,
+       "start": 18.8464,
+       "duration": 0.621
+      },
+      {
+       "factor": 1.0,
+       "start": 19.6174,
+       "duration": 0.8872
+      },
+      {
+       "factor": 1.4,
+       "start": 20.6546,
+       "duration": 1.2421
+      },
+      {
+       "factor": 2.0,
+       "start": 22.0467,
+       "duration": 1.7744
+      }
+     ]
+    },
+    "D": {
+     "text": "رِ",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 23.9712,
+       "duration": 0.1697
+      },
+      {
+       "factor": 0.7,
+       "start": 24.2909,
+       "duration": 0.2376
+      },
+      {
+       "factor": 1.0,
+       "start": 24.6784,
+       "duration": 0.3394
+      },
+      {
+       "factor": 1.4,
+       "start": 25.1678,
+       "duration": 0.4751
+      },
+      {
+       "factor": 2.0,
+       "start": 25.7929,
+       "duration": 0.6787
+      }
+     ]
+    },
+    "D-sharp": {
+     "text": "رِ دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 26.6216,
+       "duration": 0.3066
+      },
+      {
+       "factor": 0.7,
+       "start": 27.0782,
+       "duration": 0.4292
+      },
+      {
+       "factor": 1.0,
+       "start": 27.6574,
+       "duration": 0.6132
+      },
+      {
+       "factor": 1.4,
+       "start": 28.4205,
+       "duration": 0.8584
+      },
+      {
+       "factor": 2.0,
+       "start": 29.429,
+       "duration": 1.2263
+      }
+     ]
+    },
+    "D-flat": {
+     "text": "رِ بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 30.8053,
+       "duration": 0.4498
+      },
+      {
+       "factor": 0.7,
+       "start": 31.405,
+       "duration": 0.6297
+      },
+      {
+       "factor": 1.0,
+       "start": 32.1847,
+       "duration": 0.8995
+      },
+      {
+       "factor": 1.4,
+       "start": 33.2342,
+       "duration": 1.2593
+      },
+      {
+       "factor": 2.0,
+       "start": 34.6435,
+       "duration": 1.799
+      }
+     ]
+    },
+    "D-koron": {
+     "text": "رِ کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 36.5925,
+       "duration": 0.4083
+      },
+      {
+       "factor": 0.7,
+       "start": 37.1508,
+       "duration": 0.5717
+      },
+      {
+       "factor": 1.0,
+       "start": 37.8725,
+       "duration": 0.8166
+      },
+      {
+       "factor": 1.4,
+       "start": 38.8391,
+       "duration": 1.1433
+      },
+      {
+       "factor": 2.0,
+       "start": 40.1324,
+       "duration": 1.6333
+      }
+     ]
+    },
+    "D-sori": {
+     "text": "رِ سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 41.9157,
+       "duration": 0.4262
+      },
+      {
+       "factor": 0.7,
+       "start": 42.4919,
+       "duration": 0.5966
+      },
+      {
+       "factor": 1.0,
+       "start": 43.2385,
+       "duration": 0.8523
+      },
+      {
+       "factor": 1.4,
+       "start": 44.2409,
+       "duration": 1.1933
+      },
+      {
+       "factor": 2.0,
+       "start": 45.5842,
+       "duration": 1.7047
+      }
+     ]
+    },
+    "E": {
+     "text": "می",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 47.4388,
+       "duration": 0.1389
+      },
+      {
+       "factor": 0.7,
+       "start": 47.7277,
+       "duration": 0.1944
+      },
+      {
+       "factor": 1.0,
+       "start": 48.0721,
+       "duration": 0.2777
+      },
+      {
+       "factor": 1.4,
+       "start": 48.4998,
+       "duration": 0.3888
+      },
+      {
+       "factor": 2.0,
+       "start": 49.0385,
+       "duration": 0.5554
+      }
+     ]
+    },
+    "E-sharp": {
+     "text": "می دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 49.7439,
+       "duration": 0.3864
+      },
+      {
+       "factor": 0.7,
+       "start": 50.2803,
+       "duration": 0.5409
+      },
+      {
+       "factor": 1.0,
+       "start": 50.9712,
+       "duration": 0.7727
+      },
+      {
+       "factor": 1.4,
+       "start": 51.8939,
+       "duration": 1.0819
+      },
+      {
+       "factor": 2.0,
+       "start": 53.1258,
+       "duration": 1.5455
+      }
+     ]
+    },
+    "E-flat": {
+     "text": "می بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 54.8213,
+       "duration": 0.5289
+      },
+      {
+       "factor": 0.7,
+       "start": 55.5002,
+       "duration": 0.7405
+      },
+      {
+       "factor": 1.0,
+       "start": 56.3907,
+       "duration": 1.0578
+      },
+      {
+       "factor": 1.4,
+       "start": 57.5985,
+       "duration": 1.481
+      },
+      {
+       "factor": 2.0,
+       "start": 59.2295,
+       "duration": 2.1156
+      }
+     ]
+    },
+    "E-koron": {
+     "text": "می کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 61.4951,
+       "duration": 0.4394
+      },
+      {
+       "factor": 0.7,
+       "start": 62.0845,
+       "duration": 0.6152
+      },
+      {
+       "factor": 1.0,
+       "start": 62.8497,
+       "duration": 0.8788
+      },
+      {
+       "factor": 1.4,
+       "start": 63.8785,
+       "duration": 1.2303
+      },
+      {
+       "factor": 2.0,
+       "start": 65.2589,
+       "duration": 1.7576
+      }
+     ]
+    },
+    "E-sori": {
+     "text": "می سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 67.1665,
+       "duration": 0.3857
+      },
+      {
+       "factor": 0.7,
+       "start": 67.7022,
+       "duration": 0.5399
+      },
+      {
+       "factor": 1.0,
+       "start": 68.3921,
+       "duration": 0.7713
+      },
+      {
+       "factor": 1.4,
+       "start": 69.3134,
+       "duration": 1.0798
+      },
+      {
+       "factor": 2.0,
+       "start": 70.5432,
+       "duration": 1.5426
+      }
+     ]
+    },
+    "F": {
+     "text": "فا",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 72.2358,
+       "duration": 0.1211
+      },
+      {
+       "factor": 0.7,
+       "start": 72.5069,
+       "duration": 0.1695
+      },
+      {
+       "factor": 1.0,
+       "start": 72.8263,
+       "duration": 0.2421
+      },
+      {
+       "factor": 1.4,
+       "start": 73.2185,
+       "duration": 0.339
+      },
+      {
+       "factor": 2.0,
+       "start": 73.7075,
+       "duration": 0.4843
+      }
+     ]
+    },
+    "F-sharp": {
+     "text": "فا دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 74.3417,
+       "duration": 0.293
+      },
+      {
+       "factor": 0.7,
+       "start": 74.7847,
+       "duration": 0.4101
+      },
+      {
+       "factor": 1.0,
+       "start": 75.3448,
+       "duration": 0.5859
+      },
+      {
+       "factor": 1.4,
+       "start": 76.0807,
+       "duration": 0.8203
+      },
+      {
+       "factor": 2.0,
+       "start": 77.051,
+       "duration": 1.1718
+      }
+     ]
+    },
+    "F-flat": {
+     "text": "فا بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 78.3728,
+       "duration": 0.427
+      },
+      {
+       "factor": 0.7,
+       "start": 78.9498,
+       "duration": 0.5978
+      },
+      {
+       "factor": 1.0,
+       "start": 79.6976,
+       "duration": 0.8541
+      },
+      {
+       "factor": 1.4,
+       "start": 80.7017,
+       "duration": 1.1957
+      },
+      {
+       "factor": 2.0,
+       "start": 82.0474,
+       "duration": 1.7081
+      }
+     ]
+    },
+    "F-koron": {
+     "text": "فا کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 83.9055,
+       "duration": 0.4326
+      },
+      {
+       "factor": 0.7,
+       "start": 84.4881,
+       "duration": 0.6057
+      },
+      {
+       "factor": 1.0,
+       "start": 85.2438,
+       "duration": 0.8652
+      },
+      {
+       "factor": 1.4,
+       "start": 86.259,
+       "duration": 1.2113
+      },
+      {
+       "factor": 2.0,
+       "start": 87.6203,
+       "duration": 1.7304
+      }
+     ]
+    },
+    "F-sori": {
+     "text": "فا سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 89.5007,
+       "duration": 0.5848
+      },
+      {
+       "factor": 0.7,
+       "start": 90.2355,
+       "duration": 0.8187
+      },
+      {
+       "factor": 1.0,
+       "start": 91.2043,
+       "duration": 1.1696
+      },
+      {
+       "factor": 1.4,
+       "start": 92.5239,
+       "duration": 1.6375
+      },
+      {
+       "factor": 2.0,
+       "start": 94.3113,
+       "duration": 2.3392
+      }
+     ]
+    },
+    "G": {
+     "text": "سُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 96.8006,
+       "duration": 0.138
+      },
+      {
+       "factor": 0.7,
+       "start": 97.0886,
+       "duration": 0.1932
+      },
+      {
+       "factor": 1.0,
+       "start": 97.4318,
+       "duration": 0.276
+      },
+      {
+       "factor": 1.4,
+       "start": 97.8578,
+       "duration": 0.3864
+      },
+      {
+       "factor": 2.0,
+       "start": 98.3942,
+       "duration": 0.552
+      }
+     ]
+    },
+    "G-sharp": {
+     "text": "سُل دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 99.0962,
+       "duration": 0.2896
+      },
+      {
+       "factor": 0.7,
+       "start": 99.5358,
+       "duration": 0.4054
+      },
+      {
+       "factor": 1.0,
+       "start": 100.0912,
+       "duration": 0.5792
+      },
+      {
+       "factor": 1.4,
+       "start": 100.8205,
+       "duration": 0.8109
+      },
+      {
+       "factor": 2.0,
+       "start": 101.7814,
+       "duration": 1.1585
+      }
+     ]
+    },
+    "G-flat": {
+     "text": "سُل بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 103.0899,
+       "duration": 0.4172
+      },
+      {
+       "factor": 0.7,
+       "start": 103.6571,
+       "duration": 0.584
+      },
+      {
+       "factor": 1.0,
+       "start": 104.3911,
+       "duration": 0.8343
+      },
+      {
+       "factor": 1.4,
+       "start": 105.3754,
+       "duration": 1.1681
+      },
+      {
+       "factor": 2.0,
+       "start": 106.6935,
+       "duration": 1.6687
+      }
+     ]
+    },
+    "G-koron": {
+     "text": "سُل کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 108.5122,
+       "duration": 0.4481
+      },
+      {
+       "factor": 0.7,
+       "start": 109.1103,
+       "duration": 0.6273
+      },
+      {
+       "factor": 1.0,
+       "start": 109.8876,
+       "duration": 0.8962
+      },
+      {
+       "factor": 1.4,
+       "start": 110.9339,
+       "duration": 1.2547
+      },
+      {
+       "factor": 2.0,
+       "start": 112.3386,
+       "duration": 1.7925
+      }
+     ]
+    },
+    "G-sori": {
+     "text": "سُل سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 114.2811,
+       "duration": 0.4429
+      },
+      {
+       "factor": 0.7,
+       "start": 114.874,
+       "duration": 0.6201
+      },
+      {
+       "factor": 1.0,
+       "start": 115.6441,
+       "duration": 0.8859
+      },
+      {
+       "factor": 1.4,
+       "start": 116.68,
+       "duration": 1.2402
+      },
+      {
+       "factor": 2.0,
+       "start": 118.0701,
+       "duration": 1.7717
+      }
+     ]
+    },
+    "A": {
+     "text": "لا",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 119.9918,
+       "duration": 0.1354
+      },
+      {
+       "factor": 0.7,
+       "start": 120.2772,
+       "duration": 0.1895
+      },
+      {
+       "factor": 1.0,
+       "start": 120.6167,
+       "duration": 0.2707
+      },
+      {
+       "factor": 1.4,
+       "start": 121.0374,
+       "duration": 0.379
+      },
+      {
+       "factor": 2.0,
+       "start": 121.5664,
+       "duration": 0.5414
+      }
+     ]
+    },
+    "A-sharp": {
+     "text": "لا دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 122.2578,
+       "duration": 0.3073
+      },
+      {
+       "factor": 0.7,
+       "start": 122.7151,
+       "duration": 0.4302
+      },
+      {
+       "factor": 1.0,
+       "start": 123.2953,
+       "duration": 0.6146
+      },
+      {
+       "factor": 1.4,
+       "start": 124.0599,
+       "duration": 0.8604
+      },
+      {
+       "factor": 2.0,
+       "start": 125.0702,
+       "duration": 1.2291
+      }
+     ]
+    },
+    "A-flat": {
+     "text": "لا بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 126.4493,
+       "duration": 0.5299
+      },
+      {
+       "factor": 0.7,
+       "start": 127.1293,
+       "duration": 0.7419
+      },
+      {
+       "factor": 1.0,
+       "start": 128.0212,
+       "duration": 1.0599
+      },
+      {
+       "factor": 1.4,
+       "start": 129.231,
+       "duration": 1.4838
+      },
+      {
+       "factor": 2.0,
+       "start": 130.8649,
+       "duration": 2.1197
+      }
+     ]
+    },
+    "A-koron": {
+     "text": "لا کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 133.1346,
+       "duration": 0.4366
+      },
+      {
+       "factor": 0.7,
+       "start": 133.7211,
+       "duration": 0.6112
+      },
+      {
+       "factor": 1.0,
+       "start": 134.4823,
+       "duration": 0.8731
+      },
+      {
+       "factor": 1.4,
+       "start": 135.5054,
+       "duration": 1.2223
+      },
+      {
+       "factor": 2.0,
+       "start": 136.8776,
+       "duration": 1.7461
+      }
+     ]
+    },
+    "A-sori": {
+     "text": "لا سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 138.7737,
+       "duration": 0.6174
+      },
+      {
+       "factor": 0.7,
+       "start": 139.5412,
+       "duration": 0.8644
+      },
+      {
+       "factor": 1.0,
+       "start": 140.5555,
+       "duration": 1.2348
+      },
+      {
+       "factor": 1.4,
+       "start": 141.9403,
+       "duration": 1.7287
+      },
+      {
+       "factor": 2.0,
+       "start": 143.819,
+       "duration": 2.4696
+      }
+     ]
+    },
+    "B": {
+     "text": "سی",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 146.4386,
+       "duration": 0.1027
+      },
+      {
+       "factor": 0.7,
+       "start": 146.6913,
+       "duration": 0.1438
+      },
+      {
+       "factor": 1.0,
+       "start": 146.9851,
+       "duration": 0.2054
+      },
+      {
+       "factor": 1.4,
+       "start": 147.3405,
+       "duration": 0.2876
+      },
+      {
+       "factor": 2.0,
+       "start": 147.7782,
+       "duration": 0.4109
+      }
+     ]
+    },
+    "B-sharp": {
+     "text": "سی دیز",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 148.339,
+       "duration": 0.3017
+      },
+      {
+       "factor": 0.7,
+       "start": 148.7908,
+       "duration": 0.4224
+      },
+      {
+       "factor": 1.0,
+       "start": 149.3632,
+       "duration": 0.6034
+      },
+      {
+       "factor": 1.4,
+       "start": 150.1166,
+       "duration": 0.8448
+      },
+      {
+       "factor": 2.0,
+       "start": 151.1114,
+       "duration": 1.2069
+      }
+     ]
+    },
+    "B-flat": {
+     "text": "سی بِمُل",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 152.4683,
+       "duration": 0.4371
+      },
+      {
+       "factor": 0.7,
+       "start": 153.0554,
+       "duration": 0.6119
+      },
+      {
+       "factor": 1.0,
+       "start": 153.8173,
+       "duration": 0.8741
+      },
+      {
+       "factor": 1.4,
+       "start": 154.8414,
+       "duration": 1.2238
+      },
+      {
+       "factor": 2.0,
+       "start": 156.2151,
+       "duration": 1.7482
+      }
+     ]
+    },
+    "B-koron": {
+     "text": "سی کُرُن",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 158.1133,
+       "duration": 0.4452
+      },
+      {
+       "factor": 0.7,
+       "start": 158.7085,
+       "duration": 0.6232
+      },
+      {
+       "factor": 1.0,
+       "start": 159.4817,
+       "duration": 0.8903
+      },
+      {
+       "factor": 1.4,
+       "start": 160.522,
+       "duration": 1.2464
+      },
+      {
+       "factor": 2.0,
+       "start": 161.9184,
+       "duration": 1.7806
+      }
+     ]
+    },
+    "B-sori": {
+     "text": "سی سُری",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 163.849,
+       "duration": 0.3915
+      },
+      {
+       "factor": 0.7,
+       "start": 164.3905,
+       "duration": 0.5481
+      },
+      {
+       "factor": 1.0,
+       "start": 165.0885,
+       "duration": 0.7829
+      },
+      {
+       "factor": 1.4,
+       "start": 166.0215,
+       "duration": 1.0961
+      },
+      {
+       "factor": 2.0,
+       "start": 167.2676,
+       "duration": 1.5659
+      }
+     ]
+    }
+   }
+  },
+  "names-solfege": {
+   "file": "names-solfege.mp3",
+   "voice": "en",
+   "clips": {
+    "C": {
+     "text": "Do",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 0.15,
+       "duration": 0.1746
+      },
+      {
+       "factor": 0.7,
+       "start": 0.4746,
+       "duration": 0.2444
+      },
+      {
+       "factor": 1.0,
+       "start": 0.8689,
+       "duration": 0.3491
+      },
+      {
+       "factor": 1.4,
+       "start": 1.368,
+       "duration": 0.4887
+      },
+      {
+       "factor": 2.0,
+       "start": 2.0067,
+       "duration": 0.6981
+      }
+     ]
+    },
+    "C-sharp": {
+     "text": "Do sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 2.8548,
+       "duration": 0.3331
+      },
+      {
+       "factor": 0.7,
+       "start": 3.3379,
+       "duration": 0.4663
+      },
+      {
+       "factor": 1.0,
+       "start": 3.9543,
+       "duration": 0.6662
+      },
+      {
+       "factor": 1.4,
+       "start": 4.7705,
+       "duration": 0.9327
+      },
+      {
+       "factor": 2.0,
+       "start": 5.8532,
+       "duration": 1.3324
+      }
+     ]
+    },
+    "C-flat": {
+     "text": "Do flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 7.3356,
+       "duration": 0.3645
+      },
+      {
+       "factor": 0.7,
+       "start": 7.8502,
+       "duration": 0.5103
+      },
+      {
+       "factor": 1.0,
+       "start": 8.5105,
+       "duration": 0.729
+      },
+      {
+       "factor": 1.4,
+       "start": 9.3895,
+       "duration": 1.0206
+      },
+      {
+       "factor": 2.0,
+       "start": 10.5602,
+       "duration": 1.458
+      }
+     ]
+    },
+    "C-koron": {
+     "text": "Do koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 12.1682,
+       "duration": 0.4311
+      },
+      {
+       "factor": 0.7,
+       "start": 12.7493,
+       "duration": 0.6035
+      },
+      {
+       "factor": 1.0,
+       "start": 13.5029,
+       "duration": 0.8622
+      },
+      {
+       "factor": 1.4,
+       "start": 14.5151,
+       "duration": 1.2071
+      },
+      {
+       "factor": 2.0,
+       "start": 15.8722,
+       "duration": 1.7244
+      }
+     ]
+    },
+    "C-sori": {
+     "text": "Do sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 17.7466,
+       "duration": 0.4224
+      },
+      {
+       "factor": 0.7,
+       "start": 18.319,
+       "duration": 0.5913
+      },
+      {
+       "factor": 1.0,
+       "start": 19.0603,
+       "duration": 0.8447
+      },
+      {
+       "factor": 1.4,
+       "start": 20.055,
+       "duration": 1.1826
+      },
+      {
+       "factor": 2.0,
+       "start": 21.3876,
+       "duration": 1.6894
+      }
+     ]
+    },
+    "D": {
+     "text": "Re",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 23.227,
+       "duration": 0.1562
+      },
+      {
+       "factor": 0.7,
+       "start": 23.5332,
+       "duration": 0.2187
+      },
+      {
+       "factor": 1.0,
+       "start": 23.9019,
+       "duration": 0.3124
+      },
+      {
+       "factor": 1.4,
+       "start": 24.3643,
+       "duration": 0.4373
+      },
+      {
+       "factor": 2.0,
+       "start": 24.9516,
+       "duration": 0.6248
+      }
+     ]
+    },
+    "D-sharp": {
+     "text": "Re sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 25.7264,
+       "duration": 0.3278
+      },
+      {
+       "factor": 0.7,
+       "start": 26.2042,
+       "duration": 0.459
+      },
+      {
+       "factor": 1.0,
+       "start": 26.8132,
+       "duration": 0.6556
+      },
+      {
+       "factor": 1.4,
+       "start": 27.6188,
+       "duration": 0.9179
+      },
+      {
+       "factor": 2.0,
+       "start": 28.6867,
+       "duration": 1.3113
+      }
+     ]
+    },
+    "D-flat": {
+     "text": "Re flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 30.148,
+       "duration": 0.361
+      },
+      {
+       "factor": 0.7,
+       "start": 30.659,
+       "duration": 0.5054
+      },
+      {
+       "factor": 1.0,
+       "start": 31.3144,
+       "duration": 0.722
+      },
+      {
+       "factor": 1.4,
+       "start": 32.1864,
+       "duration": 1.0108
+      },
+      {
+       "factor": 2.0,
+       "start": 33.3472,
+       "duration": 1.444
+      }
+     ]
+    },
+    "D-koron": {
+     "text": "Re koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 34.9412,
+       "duration": 0.4416
+      },
+      {
+       "factor": 0.7,
+       "start": 35.5328,
+       "duration": 0.6182
+      },
+      {
+       "factor": 1.0,
+       "start": 36.301,
+       "duration": 0.8831
+      },
+      {
+       "factor": 1.4,
+       "start": 37.3341,
+       "duration": 1.2364
+      },
+      {
+       "factor": 2.0,
+       "start": 38.7205,
+       "duration": 1.7663
+      }
+     ]
+    },
+    "D-sori": {
+     "text": "Re sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 40.6367,
+       "duration": 0.4264
+      },
+      {
+       "factor": 0.7,
+       "start": 41.2131,
+       "duration": 0.5969
+      },
+      {
+       "factor": 1.0,
+       "start": 41.96,
+       "duration": 0.8527
+      },
+      {
+       "factor": 1.4,
+       "start": 42.9628,
+       "duration": 1.1938
+      },
+      {
+       "factor": 2.0,
+       "start": 44.3066,
+       "duration": 1.7055
+      }
+     ]
+    },
+    "E": {
+     "text": "Mi",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 46.1621,
+       "duration": 0.1972
+      },
+      {
+       "factor": 0.7,
+       "start": 46.5093,
+       "duration": 0.2761
+      },
+      {
+       "factor": 1.0,
+       "start": 46.9354,
+       "duration": 0.3944
+      },
+      {
+       "factor": 1.4,
+       "start": 47.4797,
+       "duration": 0.5521
+      },
+      {
+       "factor": 2.0,
+       "start": 48.1818,
+       "duration": 0.7888
+      }
+     ]
+    },
+    "E-sharp": {
+     "text": "Mi sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 49.1206,
+       "duration": 0.3188
+      },
+      {
+       "factor": 0.7,
+       "start": 49.5894,
+       "duration": 0.4463
+      },
+      {
+       "factor": 1.0,
+       "start": 50.1858,
+       "duration": 0.6376
+      },
+      {
+       "factor": 1.4,
+       "start": 50.9734,
+       "duration": 0.8927
+      },
+      {
+       "factor": 2.0,
+       "start": 52.0161,
+       "duration": 1.2753
+      }
+     ]
+    },
+    "E-flat": {
+     "text": "Mi flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 53.4414,
+       "duration": 0.3718
+      },
+      {
+       "factor": 0.7,
+       "start": 53.9632,
+       "duration": 0.5205
+      },
+      {
+       "factor": 1.0,
+       "start": 54.6337,
+       "duration": 0.7436
+      },
+      {
+       "factor": 1.4,
+       "start": 55.5273,
+       "duration": 1.041
+      },
+      {
+       "factor": 2.0,
+       "start": 56.7183,
+       "duration": 1.4872
+      }
+     ]
+    },
+    "E-koron": {
+     "text": "Mi koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 58.3554,
+       "duration": 0.4491
+      },
+      {
+       "factor": 0.7,
+       "start": 58.9545,
+       "duration": 0.6287
+      },
+      {
+       "factor": 1.0,
+       "start": 59.7332,
+       "duration": 0.8981
+      },
+      {
+       "factor": 1.4,
+       "start": 60.7813,
+       "duration": 1.2574
+      },
+      {
+       "factor": 2.0,
+       "start": 62.1888,
+       "duration": 1.7963
+      }
+     ]
+    },
+    "E-sori": {
+     "text": "Mi sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 64.135,
+       "duration": 0.4638
+      },
+      {
+       "factor": 0.7,
+       "start": 64.7488,
+       "duration": 0.6493
+      },
+      {
+       "factor": 1.0,
+       "start": 65.548,
+       "duration": 0.9275
+      },
+      {
+       "factor": 1.4,
+       "start": 66.6256,
+       "duration": 1.2985
+      },
+      {
+       "factor": 2.0,
+       "start": 68.0741,
+       "duration": 1.8551
+      }
+     ]
+    },
+    "F": {
+     "text": "Fa",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 70.0792,
+       "duration": 0.2088
+      },
+      {
+       "factor": 0.7,
+       "start": 70.438,
+       "duration": 0.2923
+      },
+      {
+       "factor": 1.0,
+       "start": 70.8803,
+       "duration": 0.4176
+      },
+      {
+       "factor": 1.4,
+       "start": 71.4479,
+       "duration": 0.5846
+      },
+      {
+       "factor": 2.0,
+       "start": 72.1825,
+       "duration": 0.8352
+      }
+     ]
+    },
+    "F-sharp": {
+     "text": "Fa sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 73.1677,
+       "duration": 0.3156
+      },
+      {
+       "factor": 0.7,
+       "start": 73.6334,
+       "duration": 0.4419
+      },
+      {
+       "factor": 1.0,
+       "start": 74.2252,
+       "duration": 0.6312
+      },
+      {
+       "factor": 1.4,
+       "start": 75.0065,
+       "duration": 0.8838
+      },
+      {
+       "factor": 2.0,
+       "start": 76.0402,
+       "duration": 1.2625
+      }
+     ]
+    },
+    "F-flat": {
+     "text": "Fa flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 77.4527,
+       "duration": 0.3586
+      },
+      {
+       "factor": 0.7,
+       "start": 77.9613,
+       "duration": 0.502
+      },
+      {
+       "factor": 1.0,
+       "start": 78.6133,
+       "duration": 0.7171
+      },
+      {
+       "factor": 1.4,
+       "start": 79.4805,
+       "duration": 1.004
+      },
+      {
+       "factor": 2.0,
+       "start": 80.6345,
+       "duration": 1.4343
+      }
+     ]
+    },
+    "F-koron": {
+     "text": "Fa koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 82.2188,
+       "duration": 0.4636
+      },
+      {
+       "factor": 0.7,
+       "start": 82.8324,
+       "duration": 0.6491
+      },
+      {
+       "factor": 1.0,
+       "start": 83.6315,
+       "duration": 0.9273
+      },
+      {
+       "factor": 1.4,
+       "start": 84.7087,
+       "duration": 1.2981
+      },
+      {
+       "factor": 2.0,
+       "start": 86.1568,
+       "duration": 1.8545
+      }
+     ]
+    },
+    "F-sori": {
+     "text": "Fa sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 88.1614,
+       "duration": 0.458
+      },
+      {
+       "factor": 0.7,
+       "start": 88.7693,
+       "duration": 0.6411
+      },
+      {
+       "factor": 1.0,
+       "start": 89.5605,
+       "duration": 0.9159
+      },
+      {
+       "factor": 1.4,
+       "start": 90.6263,
+       "duration": 1.2822
+      },
+      {
+       "factor": 2.0,
+       "start": 92.0585,
+       "duration": 1.8317
+      }
+     ]
+    },
+    "G": {
+     "text": "Sol",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 94.0403,
+       "duration": 0.1893
+      },
+      {
+       "factor": 0.7,
+       "start": 94.3796,
+       "duration": 0.265
+      },
+      {
+       "factor": 1.0,
+       "start": 94.7946,
+       "duration": 0.3786
+      },
+      {
+       "factor": 1.4,
+       "start": 95.3232,
+       "duration": 0.53
+      },
+      {
+       "factor": 2.0,
+       "start": 96.0032,
+       "duration": 0.7572
+      }
+     ]
+    },
+    "G-sharp": {
+     "text": "Sol sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 96.9104,
+       "duration": 0.3567
+      },
+      {
+       "factor": 0.7,
+       "start": 97.4171,
+       "duration": 0.4993
+      },
+      {
+       "factor": 1.0,
+       "start": 98.0664,
+       "duration": 0.7133
+      },
+      {
+       "factor": 1.4,
+       "start": 98.9298,
+       "duration": 0.9987
+      },
+      {
+       "factor": 2.0,
+       "start": 100.0785,
+       "duration": 1.4267
+      }
+     ]
+    },
+    "G-flat": {
+     "text": "Sol flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 101.6551,
+       "duration": 0.3857
+      },
+      {
+       "factor": 0.7,
+       "start": 102.1908,
+       "duration": 0.54
+      },
+      {
+       "factor": 1.0,
+       "start": 102.8807,
+       "duration": 0.7713
+      },
+      {
+       "factor": 1.4,
+       "start": 103.8021,
+       "duration": 1.0799
+      },
+      {
+       "factor": 2.0,
+       "start": 105.032,
+       "duration": 1.5427
+      }
+     ]
+    },
+    "G-koron": {
+     "text": "Sol koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 106.7246,
+       "duration": 0.4355
+      },
+      {
+       "factor": 0.7,
+       "start": 107.3101,
+       "duration": 0.6097
+      },
+      {
+       "factor": 1.0,
+       "start": 108.0698,
+       "duration": 0.871
+      },
+      {
+       "factor": 1.4,
+       "start": 109.0909,
+       "duration": 1.2194
+      },
+      {
+       "factor": 2.0,
+       "start": 110.4603,
+       "duration": 1.742
+      }
+     ]
+    },
+    "G-sori": {
+     "text": "Sol sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 112.3523,
+       "duration": 0.453
+      },
+      {
+       "factor": 0.7,
+       "start": 112.9553,
+       "duration": 0.6342
+      },
+      {
+       "factor": 1.0,
+       "start": 113.7396,
+       "duration": 0.906
+      },
+      {
+       "factor": 1.4,
+       "start": 114.7956,
+       "duration": 1.2684
+      },
+      {
+       "factor": 2.0,
+       "start": 116.214,
+       "duration": 1.8121
+      }
+     ]
+    },
+    "A": {
+     "text": "La",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 118.1761,
+       "duration": 0.1541
+      },
+      {
+       "factor": 0.7,
+       "start": 118.4802,
+       "duration": 0.2158
+      },
+      {
+       "factor": 1.0,
+       "start": 118.846,
+       "duration": 0.3083
+      },
+      {
+       "factor": 1.4,
+       "start": 119.3043,
+       "duration": 0.4316
+      },
+      {
+       "factor": 2.0,
+       "start": 119.8859,
+       "duration": 0.6165
+      }
+     ]
+    },
+    "A-sharp": {
+     "text": "La sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 120.6524,
+       "duration": 0.3359
+      },
+      {
+       "factor": 0.7,
+       "start": 121.1383,
+       "duration": 0.4702
+      },
+      {
+       "factor": 1.0,
+       "start": 121.7585,
+       "duration": 0.6718
+      },
+      {
+       "factor": 1.4,
+       "start": 122.5803,
+       "duration": 0.9405
+      },
+      {
+       "factor": 2.0,
+       "start": 123.6708,
+       "duration": 1.3436
+      }
+     ]
+    },
+    "A-flat": {
+     "text": "La flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 125.1644,
+       "duration": 0.3812
+      },
+      {
+       "factor": 0.7,
+       "start": 125.6956,
+       "duration": 0.5336
+      },
+      {
+       "factor": 1.0,
+       "start": 126.3792,
+       "duration": 0.7623
+      },
+      {
+       "factor": 1.4,
+       "start": 127.2915,
+       "duration": 1.0673
+      },
+      {
+       "factor": 2.0,
+       "start": 128.5088,
+       "duration": 1.5246
+      }
+     ]
+    },
+    "A-koron": {
+     "text": "La koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 130.1834,
+       "duration": 0.4386
+      },
+      {
+       "factor": 0.7,
+       "start": 130.772,
+       "duration": 0.614
+      },
+      {
+       "factor": 1.0,
+       "start": 131.536,
+       "duration": 0.8771
+      },
+      {
+       "factor": 1.4,
+       "start": 132.5631,
+       "duration": 1.228
+      },
+      {
+       "factor": 2.0,
+       "start": 133.9411,
+       "duration": 1.7543
+      }
+     ]
+    },
+    "A-sori": {
+     "text": "La sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 135.8454,
+       "duration": 0.4655
+      },
+      {
+       "factor": 0.7,
+       "start": 136.4609,
+       "duration": 0.6517
+      },
+      {
+       "factor": 1.0,
+       "start": 137.2625,
+       "duration": 0.9309
+      },
+      {
+       "factor": 1.4,
+       "start": 138.3435,
+       "duration": 1.3033
+      },
+      {
+       "factor": 2.0,
+       "start": 139.7968,
+       "duration": 1.8619
+      }
+     ]
+    },
+    "B": {
+     "text": "Si",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 141.8086,
+       "duration": 0.2044
+      },
+      {
+       "factor": 0.7,
+       "start": 142.163,
+       "duration": 0.2862
+      },
+      {
+       "factor": 1.0,
+       "start": 142.5992,
+       "duration": 0.4088
+      },
+      {
+       "factor": 1.4,
+       "start": 143.158,
+       "duration": 0.5723
+      },
+      {
+       "factor": 2.0,
+       "start": 143.8803,
+       "duration": 0.8176
+      }
+     ]
+    },
+    "B-sharp": {
+     "text": "Si sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 144.8479,
+       "duration": 0.4052
+      },
+      {
+       "factor": 0.7,
+       "start": 145.4031,
+       "duration": 0.5672
+      },
+      {
+       "factor": 1.0,
+       "start": 146.1203,
+       "duration": 0.8103
+      },
+      {
+       "factor": 1.4,
+       "start": 147.0806,
+       "duration": 1.1344
+      },
+      {
+       "factor": 2.0,
+       "start": 148.365,
+       "duration": 1.6206
+      }
+     ]
+    },
+    "B-flat": {
+     "text": "Si flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 150.1356,
+       "duration": 0.4118
+      },
+      {
+       "factor": 0.7,
+       "start": 150.6974,
+       "duration": 0.5765
+      },
+      {
+       "factor": 1.0,
+       "start": 151.4239,
+       "duration": 0.8235
+      },
+      {
+       "factor": 1.4,
+       "start": 152.3974,
+       "duration": 1.153
+      },
+      {
+       "factor": 2.0,
+       "start": 153.7004,
+       "duration": 1.6471
+      }
+     ]
+    },
+    "B-koron": {
+     "text": "Si koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 155.4975,
+       "duration": 0.4505
+      },
+      {
+       "factor": 0.7,
+       "start": 156.098,
+       "duration": 0.6307
+      },
+      {
+       "factor": 1.0,
+       "start": 156.8787,
+       "duration": 0.901
+      },
+      {
+       "factor": 1.4,
+       "start": 157.9297,
+       "duration": 1.2614
+      },
+      {
+       "factor": 2.0,
+       "start": 159.3411,
+       "duration": 1.802
+      }
+     ]
+    },
+    "B-sori": {
+     "text": "Si sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 161.2931,
+       "duration": 0.4375
+      },
+      {
+       "factor": 0.7,
+       "start": 161.8805,
+       "duration": 0.6124
+      },
+      {
+       "factor": 1.0,
+       "start": 162.643,
+       "duration": 0.8749
+      },
+      {
+       "factor": 1.4,
+       "start": 163.6679,
+       "duration": 1.2249
+      },
+      {
+       "factor": 2.0,
+       "start": 165.0428,
+       "duration": 1.7498
+      }
+     ]
+    }
+   }
+  },
+  "names-letters": {
+   "file": "names-letters.mp3",
+   "voice": "en",
+   "clips": {
+    "C": {
+     "text": "C",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 0.15,
+       "duration": 0.2366
+      },
+      {
+       "factor": 0.7,
+       "start": 0.5366,
+       "duration": 0.3312
+      },
+      {
+       "factor": 1.0,
+       "start": 1.0177,
+       "duration": 0.4731
+      },
+      {
+       "factor": 1.4,
+       "start": 1.6408,
+       "duration": 0.6623
+      },
+      {
+       "factor": 2.0,
+       "start": 2.453,
+       "duration": 0.9461
+      }
+     ]
+    },
+    "C-sharp": {
+     "text": "C sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 3.5492,
+       "duration": 0.402
+      },
+      {
+       "factor": 0.7,
+       "start": 4.1012,
+       "duration": 0.5628
+      },
+      {
+       "factor": 1.0,
+       "start": 4.814,
+       "duration": 0.804
+      },
+      {
+       "factor": 1.4,
+       "start": 5.768,
+       "duration": 1.1257
+      },
+      {
+       "factor": 2.0,
+       "start": 7.0437,
+       "duration": 1.6081
+      }
+     ]
+    },
+    "C-flat": {
+     "text": "C flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 8.8018,
+       "duration": 0.4073
+      },
+      {
+       "factor": 0.7,
+       "start": 9.3591,
+       "duration": 0.5703
+      },
+      {
+       "factor": 1.0,
+       "start": 10.0794,
+       "duration": 0.8147
+      },
+      {
+       "factor": 1.4,
+       "start": 11.0441,
+       "duration": 1.1406
+      },
+      {
+       "factor": 2.0,
+       "start": 12.3347,
+       "duration": 1.6294
+      }
+     ]
+    },
+    "C-koron": {
+     "text": "C koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 14.1141,
+       "duration": 0.4026
+      },
+      {
+       "factor": 0.7,
+       "start": 14.6667,
+       "duration": 0.5637
+      },
+      {
+       "factor": 1.0,
+       "start": 15.3804,
+       "duration": 0.8052
+      },
+      {
+       "factor": 1.4,
+       "start": 16.3356,
+       "duration": 1.1273
+      },
+      {
+       "factor": 2.0,
+       "start": 17.6129,
+       "duration": 1.6104
+      }
+     ]
+    },
+    "C-sori": {
+     "text": "C sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 19.3734,
+       "duration": 0.3662
+      },
+      {
+       "factor": 0.7,
+       "start": 19.8895,
+       "duration": 0.5127
+      },
+      {
+       "factor": 1.0,
+       "start": 20.5522,
+       "duration": 0.7323
+      },
+      {
+       "factor": 1.4,
+       "start": 21.4345,
+       "duration": 1.0253
+      },
+      {
+       "factor": 2.0,
+       "start": 22.6098,
+       "duration": 1.4647
+      }
+     ]
+    },
+    "D": {
+     "text": "D",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 24.2244,
+       "duration": 0.1662
+      },
+      {
+       "factor": 0.7,
+       "start": 24.5406,
+       "duration": 0.2326
+      },
+      {
+       "factor": 1.0,
+       "start": 24.9232,
+       "duration": 0.3323
+      },
+      {
+       "factor": 1.4,
+       "start": 25.4055,
+       "duration": 0.4652
+      },
+      {
+       "factor": 2.0,
+       "start": 26.0207,
+       "duration": 0.6646
+      }
+     ]
+    },
+    "D-sharp": {
+     "text": "D sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 26.8353,
+       "duration": 0.3797
+      },
+      {
+       "factor": 0.7,
+       "start": 27.365,
+       "duration": 0.5315
+      },
+      {
+       "factor": 1.0,
+       "start": 28.0465,
+       "duration": 0.7593
+      },
+      {
+       "factor": 1.4,
+       "start": 28.9558,
+       "duration": 1.063
+      },
+      {
+       "factor": 2.0,
+       "start": 30.1689,
+       "duration": 1.5186
+      }
+     ]
+    },
+    "D-flat": {
+     "text": "D flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 31.8375,
+       "duration": 0.3746
+      },
+      {
+       "factor": 0.7,
+       "start": 32.3622,
+       "duration": 0.5245
+      },
+      {
+       "factor": 1.0,
+       "start": 33.0366,
+       "duration": 0.7493
+      },
+      {
+       "factor": 1.4,
+       "start": 33.9359,
+       "duration": 1.0489
+      },
+      {
+       "factor": 2.0,
+       "start": 35.1348,
+       "duration": 1.4985
+      }
+     ]
+    },
+    "D-koron": {
+     "text": "D koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 36.7833,
+       "duration": 0.3322
+      },
+      {
+       "factor": 0.7,
+       "start": 37.2656,
+       "duration": 0.4651
+      },
+      {
+       "factor": 1.0,
+       "start": 37.8807,
+       "duration": 0.6644
+      },
+      {
+       "factor": 1.4,
+       "start": 38.6951,
+       "duration": 0.9302
+      },
+      {
+       "factor": 2.0,
+       "start": 39.7754,
+       "duration": 1.3289
+      }
+     ]
+    },
+    "D-sori": {
+     "text": "D sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 41.2542,
+       "duration": 0.33
+      },
+      {
+       "factor": 0.7,
+       "start": 41.7343,
+       "duration": 0.462
+      },
+      {
+       "factor": 1.0,
+       "start": 42.3463,
+       "duration": 0.66
+      },
+      {
+       "factor": 1.4,
+       "start": 43.1563,
+       "duration": 0.9241
+      },
+      {
+       "factor": 2.0,
+       "start": 44.2304,
+       "duration": 1.3201
+      }
+     ]
+    },
+    "E": {
+     "text": "E",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 45.7005,
+       "duration": 0.148
+      },
+      {
+       "factor": 0.7,
+       "start": 45.9985,
+       "duration": 0.2072
+      },
+      {
+       "factor": 1.0,
+       "start": 46.3558,
+       "duration": 0.296
+      },
+      {
+       "factor": 1.4,
+       "start": 46.8018,
+       "duration": 0.4144
+      },
+      {
+       "factor": 2.0,
+       "start": 47.3662,
+       "duration": 0.592
+      }
+     ]
+    },
+    "E-sharp": {
+     "text": "E sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 48.1082,
+       "duration": 0.3246
+      },
+      {
+       "factor": 0.7,
+       "start": 48.5828,
+       "duration": 0.4544
+      },
+      {
+       "factor": 1.0,
+       "start": 49.1872,
+       "duration": 0.6492
+      },
+      {
+       "factor": 1.4,
+       "start": 49.9864,
+       "duration": 0.9088
+      },
+      {
+       "factor": 2.0,
+       "start": 51.0452,
+       "duration": 1.2983
+      }
+     ]
+    },
+    "E-flat": {
+     "text": "E flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 52.4935,
+       "duration": 0.3492
+      },
+      {
+       "factor": 0.7,
+       "start": 52.9927,
+       "duration": 0.4888
+      },
+      {
+       "factor": 1.0,
+       "start": 53.6315,
+       "duration": 0.6983
+      },
+      {
+       "factor": 1.4,
+       "start": 54.4798,
+       "duration": 0.9776
+      },
+      {
+       "factor": 2.0,
+       "start": 55.6074,
+       "duration": 1.3966
+      }
+     ]
+    },
+    "E-koron": {
+     "text": "E koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 57.1539,
+       "duration": 0.4618
+      },
+      {
+       "factor": 0.7,
+       "start": 57.7657,
+       "duration": 0.6465
+      },
+      {
+       "factor": 1.0,
+       "start": 58.5622,
+       "duration": 0.9235
+      },
+      {
+       "factor": 1.4,
+       "start": 59.6357,
+       "duration": 1.293
+      },
+      {
+       "factor": 2.0,
+       "start": 61.0787,
+       "duration": 1.8471
+      }
+     ]
+    },
+    "E-sori": {
+     "text": "E sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 63.0758,
+       "duration": 0.4078
+      },
+      {
+       "factor": 0.7,
+       "start": 63.6336,
+       "duration": 0.5709
+      },
+      {
+       "factor": 1.0,
+       "start": 64.3544,
+       "duration": 0.8156
+      },
+      {
+       "factor": 1.4,
+       "start": 65.32,
+       "duration": 1.1418
+      },
+      {
+       "factor": 2.0,
+       "start": 66.6118,
+       "duration": 1.6311
+      }
+     ]
+    },
+    "F": {
+     "text": "F",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 68.3929,
+       "duration": 0.141
+      },
+      {
+       "factor": 0.7,
+       "start": 68.6839,
+       "duration": 0.1974
+      },
+      {
+       "factor": 1.0,
+       "start": 69.0313,
+       "duration": 0.282
+      },
+      {
+       "factor": 1.4,
+       "start": 69.4634,
+       "duration": 0.3949
+      },
+      {
+       "factor": 2.0,
+       "start": 70.0083,
+       "duration": 0.5641
+      }
+     ]
+    },
+    "F-sharp": {
+     "text": "F sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 70.7223,
+       "duration": 0.3277
+      },
+      {
+       "factor": 0.7,
+       "start": 71.2,
+       "duration": 0.4588
+      },
+      {
+       "factor": 1.0,
+       "start": 71.8088,
+       "duration": 0.6554
+      },
+      {
+       "factor": 1.4,
+       "start": 72.6142,
+       "duration": 0.9175
+      },
+      {
+       "factor": 2.0,
+       "start": 73.6817,
+       "duration": 1.3107
+      }
+     ]
+    },
+    "F-flat": {
+     "text": "F flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 75.1424,
+       "duration": 0.3494
+      },
+      {
+       "factor": 0.7,
+       "start": 75.6419,
+       "duration": 0.4892
+      },
+      {
+       "factor": 1.0,
+       "start": 76.2811,
+       "duration": 0.6989
+      },
+      {
+       "factor": 1.4,
+       "start": 77.13,
+       "duration": 0.9784
+      },
+      {
+       "factor": 2.0,
+       "start": 78.2584,
+       "duration": 1.3977
+      }
+     ]
+    },
+    "F-koron": {
+     "text": "F koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 79.8061,
+       "duration": 0.3444
+      },
+      {
+       "factor": 0.7,
+       "start": 80.3005,
+       "duration": 0.4822
+      },
+      {
+       "factor": 1.0,
+       "start": 80.9327,
+       "duration": 0.6888
+      },
+      {
+       "factor": 1.4,
+       "start": 81.7715,
+       "duration": 0.9643
+      },
+      {
+       "factor": 2.0,
+       "start": 82.8858,
+       "duration": 1.3776
+      }
+     ]
+    },
+    "F-sori": {
+     "text": "F sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 84.4134,
+       "duration": 0.3371
+      },
+      {
+       "factor": 0.7,
+       "start": 84.9005,
+       "duration": 0.472
+      },
+      {
+       "factor": 1.0,
+       "start": 85.5225,
+       "duration": 0.6743
+      },
+      {
+       "factor": 1.4,
+       "start": 86.3468,
+       "duration": 0.944
+      },
+      {
+       "factor": 2.0,
+       "start": 87.4408,
+       "duration": 1.3486
+      }
+     ]
+    },
+    "G": {
+     "text": "G",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 88.9394,
+       "duration": 0.2138
+      },
+      {
+       "factor": 0.7,
+       "start": 89.3032,
+       "duration": 0.2993
+      },
+      {
+       "factor": 1.0,
+       "start": 89.7525,
+       "duration": 0.4276
+      },
+      {
+       "factor": 1.4,
+       "start": 90.3302,
+       "duration": 0.5987
+      },
+      {
+       "factor": 2.0,
+       "start": 91.0788,
+       "duration": 0.8552
+      }
+     ]
+    },
+    "G-sharp": {
+     "text": "G sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 92.0841,
+       "duration": 0.3635
+      },
+      {
+       "factor": 0.7,
+       "start": 92.5976,
+       "duration": 0.5089
+      },
+      {
+       "factor": 1.0,
+       "start": 93.2565,
+       "duration": 0.727
+      },
+      {
+       "factor": 1.4,
+       "start": 94.1334,
+       "duration": 1.0178
+      },
+      {
+       "factor": 2.0,
+       "start": 95.3012,
+       "duration": 1.454
+      }
+     ]
+    },
+    "G-flat": {
+     "text": "G flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 96.9052,
+       "duration": 0.3895
+      },
+      {
+       "factor": 0.7,
+       "start": 97.4447,
+       "duration": 0.5454
+      },
+      {
+       "factor": 1.0,
+       "start": 98.1401,
+       "duration": 0.779
+      },
+      {
+       "factor": 1.4,
+       "start": 99.0691,
+       "duration": 1.0907
+      },
+      {
+       "factor": 2.0,
+       "start": 100.3098,
+       "duration": 1.5581
+      }
+     ]
+    },
+    "G-koron": {
+     "text": "G koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 102.0179,
+       "duration": 0.4194
+      },
+      {
+       "factor": 0.7,
+       "start": 102.5873,
+       "duration": 0.5872
+      },
+      {
+       "factor": 1.0,
+       "start": 103.3244,
+       "duration": 0.8388
+      },
+      {
+       "factor": 1.4,
+       "start": 104.3132,
+       "duration": 1.1743
+      },
+      {
+       "factor": 2.0,
+       "start": 105.6375,
+       "duration": 1.6776
+      }
+     ]
+    },
+    "G-sori": {
+     "text": "G sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 107.4651,
+       "duration": 0.3785
+      },
+      {
+       "factor": 0.7,
+       "start": 107.9935,
+       "duration": 0.5298
+      },
+      {
+       "factor": 1.0,
+       "start": 108.6734,
+       "duration": 0.7569
+      },
+      {
+       "factor": 1.4,
+       "start": 109.5803,
+       "duration": 1.0597
+      },
+      {
+       "factor": 2.0,
+       "start": 110.79,
+       "duration": 1.5138
+      }
+     ]
+    },
+    "A": {
+     "text": "A",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 112.4538,
+       "duration": 0.1622
+      },
+      {
+       "factor": 0.7,
+       "start": 112.766,
+       "duration": 0.2271
+      },
+      {
+       "factor": 1.0,
+       "start": 113.1431,
+       "duration": 0.3244
+      },
+      {
+       "factor": 1.4,
+       "start": 113.6175,
+       "duration": 0.4541
+      },
+      {
+       "factor": 2.0,
+       "start": 114.2216,
+       "duration": 0.6488
+      }
+     ]
+    },
+    "A-sharp": {
+     "text": "A sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 115.0204,
+       "duration": 0.2961
+      },
+      {
+       "factor": 0.7,
+       "start": 115.4665,
+       "duration": 0.4146
+      },
+      {
+       "factor": 1.0,
+       "start": 116.0311,
+       "duration": 0.5922
+      },
+      {
+       "factor": 1.4,
+       "start": 116.7733,
+       "duration": 0.8291
+      },
+      {
+       "factor": 2.0,
+       "start": 117.7524,
+       "duration": 1.1844
+      }
+     ]
+    },
+    "A-flat": {
+     "text": "A flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 119.0868,
+       "duration": 0.3007
+      },
+      {
+       "factor": 0.7,
+       "start": 119.5375,
+       "duration": 0.421
+      },
+      {
+       "factor": 1.0,
+       "start": 120.1085,
+       "duration": 0.6015
+      },
+      {
+       "factor": 1.4,
+       "start": 120.8599,
+       "duration": 0.842
+      },
+      {
+       "factor": 2.0,
+       "start": 121.852,
+       "duration": 1.2029
+      }
+     ]
+    },
+    "A-koron": {
+     "text": "A koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 123.2049,
+       "duration": 0.4122
+      },
+      {
+       "factor": 0.7,
+       "start": 123.7671,
+       "duration": 0.5771
+      },
+      {
+       "factor": 1.0,
+       "start": 124.4943,
+       "duration": 0.8245
+      },
+      {
+       "factor": 1.4,
+       "start": 125.4688,
+       "duration": 1.1543
+      },
+      {
+       "factor": 2.0,
+       "start": 126.773,
+       "duration": 1.649
+      }
+     ]
+    },
+    "A-sori": {
+     "text": "A sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 128.572,
+       "duration": 0.3983
+      },
+      {
+       "factor": 0.7,
+       "start": 129.1203,
+       "duration": 0.5576
+      },
+      {
+       "factor": 1.0,
+       "start": 129.828,
+       "duration": 0.7966
+      },
+      {
+       "factor": 1.4,
+       "start": 130.7746,
+       "duration": 1.1152
+      },
+      {
+       "factor": 2.0,
+       "start": 132.0398,
+       "duration": 1.5932
+      }
+     ]
+    },
+    "B": {
+     "text": "B",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 133.783,
+       "duration": 0.1551
+      },
+      {
+       "factor": 0.7,
+       "start": 134.0881,
+       "duration": 0.2171
+      },
+      {
+       "factor": 1.0,
+       "start": 134.4551,
+       "duration": 0.3101
+      },
+      {
+       "factor": 1.4,
+       "start": 134.9152,
+       "duration": 0.4341
+      },
+      {
+       "factor": 2.0,
+       "start": 135.4993,
+       "duration": 0.6201
+      }
+     ]
+    },
+    "B-sharp": {
+     "text": "B sharp",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 136.2694,
+       "duration": 0.3433
+      },
+      {
+       "factor": 0.7,
+       "start": 136.7627,
+       "duration": 0.4806
+      },
+      {
+       "factor": 1.0,
+       "start": 137.3934,
+       "duration": 0.6866
+      },
+      {
+       "factor": 1.4,
+       "start": 138.23,
+       "duration": 0.9613
+      },
+      {
+       "factor": 2.0,
+       "start": 139.3413,
+       "duration": 1.3732
+      }
+     ]
+    },
+    "B-flat": {
+     "text": "B flat",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 140.8645,
+       "duration": 0.3733
+      },
+      {
+       "factor": 0.7,
+       "start": 141.3878,
+       "duration": 0.5226
+      },
+      {
+       "factor": 1.0,
+       "start": 142.0604,
+       "duration": 0.7466
+      },
+      {
+       "factor": 1.4,
+       "start": 142.957,
+       "duration": 1.0452
+      },
+      {
+       "factor": 2.0,
+       "start": 144.1522,
+       "duration": 1.4932
+      }
+     ]
+    },
+    "B-koron": {
+     "text": "B koron",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 145.7953,
+       "duration": 0.3811
+      },
+      {
+       "factor": 0.7,
+       "start": 146.3265,
+       "duration": 0.5336
+      },
+      {
+       "factor": 1.0,
+       "start": 147.01,
+       "duration": 0.7622
+      },
+      {
+       "factor": 1.4,
+       "start": 147.9222,
+       "duration": 1.0671
+      },
+      {
+       "factor": 2.0,
+       "start": 149.1394,
+       "duration": 1.5244
+      }
+     ]
+    },
+    "B-sori": {
+     "text": "B sori",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 150.8138,
+       "duration": 0.3103
+      },
+      {
+       "factor": 0.7,
+       "start": 151.2741,
+       "duration": 0.4344
+      },
+      {
+       "factor": 1.0,
+       "start": 151.8585,
+       "duration": 0.6205
+      },
+      {
+       "factor": 1.4,
+       "start": 152.629,
+       "duration": 0.8688
+      },
+      {
+       "factor": 2.0,
+       "start": 153.6478,
+       "duration": 1.2411
+      }
+     ]
+    }
+   }
+  },
+  "rhythm-words": {
+   "file": "rhythm-words.mp3",
+   "voice": "fa",
+   "clips": {
+    "راست": {
+     "text": "راست",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 0.15,
+       "duration": 0.1646
+      },
+      {
+       "factor": 0.7,
+       "start": 0.4646,
+       "duration": 0.2304
+      },
+      {
+       "factor": 1.0,
+       "start": 0.845,
+       "duration": 0.3291
+      },
+      {
+       "factor": 1.4,
+       "start": 1.3241,
+       "duration": 0.4608
+      },
+      {
+       "factor": 2.0,
+       "start": 1.9349,
+       "duration": 0.6582
+      }
+     ]
+    },
+    "راستُ": {
+     "text": "راستُ",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 2.7431,
+       "duration": 0.3111
+      },
+      {
+       "factor": 0.7,
+       "start": 3.2042,
+       "duration": 0.4356
+      },
+      {
+       "factor": 1.0,
+       "start": 3.7898,
+       "duration": 0.6222
+      },
+      {
+       "factor": 1.4,
+       "start": 4.562,
+       "duration": 0.8711
+      },
+      {
+       "factor": 2.0,
+       "start": 5.5831,
+       "duration": 1.2444
+      }
+     ]
+    },
+    "رُباب": {
+     "text": "رُباب",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 6.9775,
+       "duration": 0.316
+      },
+      {
+       "factor": 0.7,
+       "start": 7.4435,
+       "duration": 0.4423
+      },
+      {
+       "factor": 1.0,
+       "start": 8.0358,
+       "duration": 0.6319
+      },
+      {
+       "factor": 1.4,
+       "start": 8.8177,
+       "duration": 0.8846
+      },
+      {
+       "factor": 2.0,
+       "start": 9.8523,
+       "duration": 1.2638
+      }
+     ]
+    },
+    "میزد": {
+     "text": "می‌زد",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 11.2661,
+       "duration": 0.3259
+      },
+      {
+       "factor": 0.7,
+       "start": 11.742,
+       "duration": 0.4563
+      },
+      {
+       "factor": 1.0,
+       "start": 12.3483,
+       "duration": 0.6519
+      },
+      {
+       "factor": 1.4,
+       "start": 13.1502,
+       "duration": 0.9127
+      },
+      {
+       "factor": 2.0,
+       "start": 14.2129,
+       "duration": 1.3038
+      }
+     ]
+    },
+    "میزَدُ": {
+     "text": "می‌زَدُ",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 15.6666,
+       "duration": 0.5454
+      },
+      {
+       "factor": 0.7,
+       "start": 16.362,
+       "duration": 0.7635
+      },
+      {
+       "factor": 1.0,
+       "start": 17.2756,
+       "duration": 1.0907
+      },
+      {
+       "factor": 1.4,
+       "start": 18.5163,
+       "duration": 1.527
+      },
+      {
+       "factor": 2.0,
+       "start": 20.1934,
+       "duration": 2.1815
+      }
+     ]
+    },
+    "بِزَدَم": {
+     "text": "بِزَدَم",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 22.5249,
+       "duration": 0.477
+      },
+      {
+       "factor": 0.7,
+       "start": 23.1519,
+       "duration": 0.6678
+      },
+      {
+       "factor": 1.0,
+       "start": 23.9696,
+       "duration": 0.954
+      },
+      {
+       "factor": 1.4,
+       "start": 25.0736,
+       "duration": 1.3356
+      },
+      {
+       "factor": 2.0,
+       "start": 26.5591,
+       "duration": 1.9079
+      }
+     ]
+    },
+    "بِزَدَمُ": {
+     "text": "بِزَدَمُ",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 28.6171,
+       "duration": 0.4107
+      },
+      {
+       "factor": 0.7,
+       "start": 29.1778,
+       "duration": 0.5751
+      },
+      {
+       "factor": 1.0,
+       "start": 29.9029,
+       "duration": 0.8215
+      },
+      {
+       "factor": 1.4,
+       "start": 30.8744,
+       "duration": 1.1501
+      },
+      {
+       "factor": 2.0,
+       "start": 32.1745,
+       "duration": 1.643
+      }
+     ]
+    },
+    "رُبابُ": {
+     "text": "رُبابُ",
+     "variants": [
+      {
+       "factor": 0.5,
+       "start": 33.9675,
+       "duration": 0.3079
+      },
+      {
+       "factor": 0.7,
+       "start": 34.4254,
+       "duration": 0.4311
+      },
+      {
+       "factor": 1.0,
+       "start": 35.0065,
+       "duration": 0.6158
+      },
+      {
+       "factor": 1.4,
+       "start": 35.7723,
+       "duration": 0.8622
+      },
+      {
+       "factor": 2.0,
+       "start": 36.7845,
+       "duration": 1.2317
+      }
+     ]
+    }
+   }
+  }
+ }
+}

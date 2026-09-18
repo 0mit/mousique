@@ -8,3 +8,7 @@ spikes/**/out*
 test_sheets/
 test_weights/
 fixtures/private/
+# Voice generation: the environment, the downloaded voice models (≈60 MB each) and scratch output.
+tools/voice/.venv/
+tools/voice/models/
+tools/voice/out/

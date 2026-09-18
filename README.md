@@ -22,6 +22,7 @@ it, [`DECISIONS.md`](DECISIONS.md) says so and why. Milestone notes are in [`doc
 | Rhythm words (وزن‌خوانی واژگانی) | working for quarter-note beats, rests included ([design](docs/proposals/vazn-khani.md)) |
 | Note names for beginners | working: Persian solfège, Do Re Mi, letters |
 | Mezrab (راست ∧ / چپ ∨) | working: written strokes, and optional suggestions from the beat |
+| Voice | working: note names or rhythm words spoken in time, fitted to each note |
 | M3 media overlay and manual sync | next; the sync-map maths is done and tested |
 | M4 automatic alignment · M5 AI transcription · M6 interchange | not started |
 
@@ -64,6 +65,13 @@ A score is a small JSON document (`"format": "mousique-score"`). Key signatures 
 so a dastgah signature can mix flats and korons; the tuning block sets the reference pitch, a global
 offset and the size of koron and sori in cents. See `packages/core/src/model.ts` and the demo phrase in
 `packages/core/src/demo.ts`.
+
+## Voice
+
+The spoken note names and rhythm words are generated once by `tools/voice/generate.py` with
+[Piper](https://github.com/rhasspy/piper) voices trained on data free to publish — `fa_IR-amir-medium`
+(CC0) and `en_US-ljspeech-medium` (public domain) — and live in `apps/web/public/voice/`. Regenerate only
+when the word lists or the voice change.
 
 ## Licence
 

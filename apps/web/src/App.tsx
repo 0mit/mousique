@@ -10,16 +10,20 @@ import {
   mezrabs,
   noteNames,
   rhythmWords,
+  voiceBank,
+  voiceCues,
   selectedEvent,
   selectedMeasureIndex,
   validateScore,
   type Score,
   type Selection,
   type NameSystem,
+  type VoiceKind,
   type Tuning,
 } from '@mousique/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Player } from './audio/player.ts';
+import { VoiceBank } from './audio/voice.ts';
 import { Palette } from './editor/Palette.tsx';
 import { BarPanel, describeEvent, NotePanel, ScorePanel } from './editor/Panels.tsx';
 import { Shortcuts } from './editor/Shortcuts.tsx';
@@ -104,6 +108,24 @@ export function App() {
     }
   }, [suggestMezrab]);
   const strokes = useMemo(() => mezrabs(score, suggestMezrab), [score, suggestMezrab]);
+
+  // A voice that speaks each note's name or each beat's rhythm word while the score plays.
+  const [voiceKind, setVoiceKind] = useState<VoiceKind | 'off'>(() => {
+    try {
+      return (localStorage.getItem('mousique.voice') as VoiceKind | 'off' | null) ?? 'off';
+    } catch {
+      return 'off';
+    }
+  });
+  const [instrument, setInstrument] = useState(true);
+  const [voiceState, setVoiceState] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle');
+  useEffect(() => {
+    try {
+      localStorage.setItem('mousique.voice', voiceKind);
+    } catch {
+      // A per-viewer preference only.
+    }
+  }, [voiceKind]);
   const names = useMemo(() => (nameSystem === 'off' ? undefined : noteNames(score, nameSystem)), [score, nameSystem]);
   const badMeasures = useMemo(
     () => new Set(problems.filter((p) => p.measureIndex !== undefined).map((p) => score.measures[p.measureIndex!]!.id)),
@@ -137,7 +159,30 @@ export function App() {
   }, [player, timeline]);
 
   const bpm = score.tempo.bpm;
-  useEffect(() => player.setOptions({ bpm, speed, metronome, countIn }), [player, bpm, speed, metronome, countIn]);
+  useEffect(() => player.setOptions({ bpm, speed, metronome, countIn, synth: instrument }), [player, bpm, speed, metronome, countIn, instrument]);
+
+  // Load the voice bank once (it is cached for the page) and give the player its cues.
+  useEffect(() => {
+    if (voiceKind === 'off') {
+      player.setVoice(undefined);
+      setVoiceState('idle');
+      return;
+    }
+    let cancelled = false;
+    const bankName = voiceBank(voiceKind, nameSystem === 'off' ? 'persian' : nameSystem);
+    setVoiceState('loading');
+    VoiceBank.load(player.synth.ctx, bankName).then(
+      (bank) => {
+        if (cancelled) return;
+        player.setVoice({ bank, cues: voiceCues(score, voiceKind, timeline) });
+        setVoiceState('ready');
+      },
+      () => !cancelled && setVoiceState('failed'),
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [player, voiceKind, nameSystem, score, timeline]);
 
   const getQ = useCallback(() => player.q(), [player]);
 
@@ -278,6 +323,19 @@ export function App() {
         </label>
         <label className="m-check" title="Suggest مضراب راست ∧ and چپ ∨ from each note's place in the beat, where none is written">
           <input type="checkbox" checked={suggestMezrab} onChange={(e) => setSuggestMezrab(e.target.checked)} /> <span lang="fa">مضراب</span> ∧∨
+        </label>
+        <label className="m-field" title="A voice speaks each note's name, or each beat's rhythm word, fitted to the notes">
+          Voice
+          <select value={voiceKind} onChange={(e) => setVoiceKind(e.target.value as VoiceKind | 'off')}>
+            <option value="off">off</option>
+            <option value="names">note names</option>
+            <option value="words">rhythm words (وزن‌خوانی)</option>
+          </select>
+          {voiceState === 'loading' && <span className="m-unit">loading…</span>}
+          {voiceState === 'failed' && <span className="m-unit">not available</span>}
+        </label>
+        <label className="m-check" title="Play the instrument sound; turn it off to hear only the voice">
+          <input type="checkbox" checked={instrument} onChange={(e) => setInstrument(e.target.checked)} /> Instrument
         </label>
         <label className="m-field" title="Note names under the notes, for beginners">
           Names

@@ -83,6 +83,17 @@ export class Synth {
     this.live.clear();
   }
 
+  /** Where other voices (speech) join the mix, so they share the volume and the compressor. */
+  get output(): AudioNode {
+    return this.master;
+  }
+
+  /** Stop this node, too, when everything scheduled is silenced (seek, pause, stop). */
+  adopt(node: AudioScheduledSourceNode): void {
+    this.live.add(node);
+    node.addEventListener('ended', () => this.live.delete(node));
+  }
+
   private track(node: AudioScheduledSourceNode, start: number, stop: number): void {
     node.start(start);
     node.stop(stop);
