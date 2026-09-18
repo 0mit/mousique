@@ -61,7 +61,9 @@ WORDS = {
     "بِزَدَمُ": "بِزَدَمُ",
     "رُبابُ": "رُبابُ",
 }
-SYLLABLE_COUNT = {"راست": 1, "راستُ": 2, "رُباب": 2, "میزد": 2, "میزَدُ": 3, "بِزَدَم": 3, "بِزَدَمُ": 4, "رُبابُ": 3}
+# Each word's note pattern in sixteenths (its syllables' lengths), from the method's table.
+PATTERN = {"راست": [4], "راستُ": [3, 1], "رُباب": [1, 3], "میزد": [2, 2], "میزَدُ": [2, 1, 1],
+           "بِزَدَم": [1, 1, 2], "بِزَدَمُ": [1, 1, 1, 1], "رُبابُ": [1, 2, 1]}
 
 
 def banks() -> dict[str, tuple[str, dict[str, str]]]:
@@ -134,9 +136,98 @@ def speak(model: Path, text: str, wav: Path, tmp: Path, expected: float | None =
     shutil.copy(best[1], wav)
 
 
+def best_word_take(model: Path, text: str, units: list[int], tmp: Path) -> tuple[Path, dict]:
+    """Speak a rhythm word in every take and keep the one whose syllables are found cleanly and whose natural
+    spacing is closest to the word's note pattern."""
+    from piper import PiperVoice, SynthesisConfig
+
+    voice = _loaded.get(model) or PiperVoice.load(str(model))
+    _loaded[model] = voice
+    best = None
+    for i, (length, noise) in enumerate(TAKES + [(1.1, 0.5), (1.1, 0.8), (0.9, 0.667)]):
+        raw = tmp / f"word{i}.wav"
+        with wave.open(str(raw), "wb") as w:
+            voice.synthesize_wav(text + ".", w, syn_config=SynthesisConfig(length_scale=length, noise_scale=noise))
+        norm = tmp / f"word{i}.norm.wav"
+        run("sox", str(raw), "-r", str(RATE), "-c", "1", str(norm), "norm", "-3")
+        a = analyse(norm, len(units))
+        if not a:
+            continue
+        cost = warp_cost(a["onsets"], units)
+        if best is None or cost < best[0]:
+            best = (cost, norm, a)
+    if best is None:
+        raise RuntimeError(f"no take of {text!r} with {len(units)} clear syllables")
+    keep = tmp / "word-best.wav"
+    shutil.copy(best[1], keep)
+    return keep, best[2]
+
+
 def seconds(wav: Path) -> float:
     with wave.open(str(wav)) as w:
         return w.getnframes() / w.getframerate()
+
+
+# ---- syllable analysis ------------------------------------------------------------------------------
+#
+# A syllable is heard at its vowel onset (its "perceptual centre"), not where its sound begins, so that is
+# the moment that has to sit on the metronome grid. The voice gives no timing, but the number of syllables
+# of every word is known: the vowel nuclei are the n strongest voiced energy peaks, and a vowel onset is
+# halfway up the rise from the valley before its nucleus.
+
+HOP = 0.005
+
+
+def read_wav(path: Path):
+    import numpy as np
+    with wave.open(str(path)) as w:
+        sr = w.getframerate()
+        x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
+    return x, sr
+
+
+def voiced_envelope(x, sr):
+    import numpy as np
+    hop, win = int(sr * HOP), int(sr * 0.025)
+    frames = range(0, max(1, len(x) - win), hop)
+    env = np.array([np.sqrt(np.mean(x[i:i + win] ** 2)) for i in frames])
+    zcr = np.array([np.mean(np.abs(np.diff(np.sign(x[i:i + win])))) / 2 for i in frames])
+    voiced = env * (zcr < 0.25)
+    return np.convolve(voiced, np.ones(7) / 7, mode="same"), env
+
+
+def analyse(path: Path, n: int) -> dict | None:
+    """Vowel onsets, the valleys between syllables, and where sound starts and ends (all in seconds)."""
+    import numpy as np
+    x, sr = read_wav(path)
+    s, env = voiced_envelope(x, sr)
+    if len(s) < 10 or s.max() <= 0:
+        return None
+    cands = [i for i in range(1, len(s) - 1) if s[i] >= s[i - 1] and s[i] > s[i + 1] and s[i] > 0.12 * s.max()]
+    keep: list[int] = []
+    for p in sorted(cands, key=lambda i: -s[i]):
+        if all(abs(p - q) * HOP >= 0.05 for q in keep):
+            keep.append(p)
+        if len(keep) == n:
+            break
+    if len(keep) != n:
+        return None
+    keep.sort()
+    onsets, valleys, prev = [], [], 0
+    for p in keep:
+        v = prev + int(np.argmin(s[prev:p + 1]))
+        half = s[v] + 0.5 * (s[p] - s[v])
+        j = v
+        while j < p and s[j] < half:
+            j += 1
+        onsets.append(j * HOP)
+        valleys.append(v * HOP)
+        prev = p
+    loud = np.nonzero(env > 0.02 * env.max())[0]
+    start, end = loud[0] * HOP, (loud[-1] + 1) * HOP + 0.025
+    if any(b - a < 0.045 for a, b in zip(onsets, onsets[1:])):
+        return None
+    return {"onsets": onsets, "valleys": valleys, "start": start, "end": min(end, len(x) / sr)}
 
 
 def clean(src: Path, dst: Path) -> None:
@@ -146,6 +237,135 @@ def clean(src: Path, dst: Path) -> None:
         "silence", "1", "0.01", "0.5%", "reverse", "silence", "1", "0.01", "0.5%", "reverse", "norm", "-3")
     # A second pass: the fade-out needs the trimmed length, which sox only knows once the file exists.
     run("sox", str(trimmed), str(dst), "fade", "t", "0.005", "-0", "0.02")
+
+
+# ---- rhythm words: every vowel onset on its sixteenth -----------------------------------------------
+
+# Beat lengths the words are rendered at (quarter = 167 … 46 per minute); between two the app nudges the rate.
+BEATS = [0.36, 0.46, 0.6, 0.78, 1.0, 1.3]
+MAX_LEAD = 0.14      # consonants before the first vowel onset, kept at their natural length up to this
+NEXT_LEAD = 0.08     # room left at the end of a beat for the next word's lead-in
+ACCENT_DB = 2.0      # the syllable on the beat carries the accent ...
+LIGHT_DB = -1.5      # ... the syllables between the beats are lighter
+
+
+def pattern_onsets(units: list[int]) -> list[float]:
+    """Where each syllable starts in the beat, as a fraction: [1, 1, 2] -> [0, 0.25, 0.5]."""
+    out, acc = [], 0
+    for u in units:
+        out.append(acc / 4)
+        acc += u
+    return out
+
+
+def warp_cost(onsets: list[float], units: list[int]) -> float:
+    """How far a take's natural syllable spacing is from the pattern: the least-warped take sounds most natural."""
+    import math
+    if len(units) < 2:
+        return 0.0
+    got = [b - a for a, b in zip(onsets, onsets[1:])]
+    want = units[:-1]
+    g, w = sum(got), sum(want)
+    return sum(abs(math.log((x / g) / (y / w))) for x, y in zip(got, want))
+
+
+XFADE = 0.008  # each piece overlaps its neighbour by this much, cross-faded around the joint
+
+
+def write_wav(path: Path, x, sr: int) -> None:
+    import numpy as np
+    with wave.open(str(path), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(sr)
+        w.writeframes((np.clip(x, -1, 1) * 32767).astype(np.int16).tobytes())
+
+
+def render_word(src: Path, a: dict, units: list[int], beat: float, dst: Path, tmp: Path) -> dict:
+    """Place each vowel onset of a spoken word exactly on its sixteenth of a beat `beat` seconds long.
+
+    The word is cut at its vowel onsets into pieces (lead-in consonants, each syllable, the tail), each piece
+    is stretched on its own to an exact length (pitch kept), and the pieces are joined with short crossfades
+    centred on the target moments — so the grid points are exact by construction. rubberband's own time map
+    was tried first and drifts early in proportion to the stretch (up to 85 ms), which is why it is not used.
+    The syllable on the beat carries the accent; the others are a little lighter."""
+    import numpy as np
+
+    x, sr = read_wav(src)
+    onsets = a["onsets"]
+    lead_in = min(MAX_LEAD, onsets[0] - a["start"])
+    fracs = pattern_onsets(units)
+    tail_in = a["end"] - onsets[-1]
+    tail_out = min(tail_in, max(0.06, units[-1] / 4 * beat - NEXT_LEAD))
+    src_b = [onsets[0] - lead_in] + onsets + [a["end"]]
+    dst_b = [0.0] + [lead_in + f * beat for f in fracs] + [lead_in + fracs[-1] * beat + tail_out]
+    total = int(round(dst_b[-1] * sr)) + int(XFADE * sr) + 1
+    out = np.zeros(total)
+    weight = np.zeros(total)
+    for k in range(len(src_b) - 1):
+        s0, s1 = src_b[k], src_b[k + 1]
+        d0, d1 = dst_b[k], dst_b[k + 1]
+        r = (d1 - d0) / max(1e-4, s1 - s0)
+        # The piece plus an overlap on each side, so neighbours can cross-fade.
+        e0, e1 = max(0.0, s0 - XFADE), min(len(x) / sr, s1 + XFADE)
+        piece_in, piece_out = tmp / f"piece{k}.wav", tmp / f"piece{k}.out.wav"
+        write_wav(piece_in, x[int(e0 * sr):int(e1 * sr)], sr)
+        run("rubberband", "-3", "-D", f"{(e1 - e0) * r:.5f}", str(piece_in), str(piece_out))
+        y, _ = read_wav(piece_out)
+        gain = 10 ** ((ACCENT_DB if k <= 1 else LIGHT_DB) / 20)
+        at = int(round((d0 - (s0 - e0) * r) * sr))       # where the piece's first sample goes
+        # Trapezoid window: full weight over the piece, ramps over the overlaps.
+        n = len(y)
+        w = np.ones(n)
+        ramp_in = int(round((s0 - e0) * r * sr * 2))
+        ramp_out = int(round((e1 - s1) * r * sr * 2))
+        if ramp_in > 0:
+            w[:ramp_in] = np.linspace(0, 1, ramp_in, endpoint=False)
+        if ramp_out > 0:
+            w[n - ramp_out:] = np.linspace(1, 0, ramp_out)
+        lo, hi = max(0, at), min(total, at + n)
+        out[lo:hi] += (y * w * gain)[lo - at:hi - at]
+        weight[lo:hi] += w[lo - at:hi - at]
+    out = np.where(weight > 1e-3, out / np.maximum(weight, 1e-3), 0.0)
+    out = out[: int(round(dst_b[-1] * sr))]
+    fade = int(0.03 * sr)
+    out[-fade:] *= np.linspace(1, 0, fade)
+    out[: int(0.004 * sr)] *= np.linspace(0, 1, int(0.004 * sr))
+    write_wav(dst, out, sr)
+    return {"lead": round(lead_in, 4), "targets": [round(t, 4) for t in dst_b[1:-1]]}
+
+
+PROBE_INSIDE = 0.015
+
+
+def probe_error_ms(take: Path, a: dict, units: list[int], beat: float, tmp: Path) -> list[int]:
+    """Check a rendering the way that cannot be fooled by stretched vowels: put a short tone burst 15 ms inside
+    each syllable of a silent copy of the take, render it with the same cuts and lengths, and measure where
+    each burst lands against where it must."""
+    import numpy as np
+
+    x, sr = read_wav(take)
+    probe = np.zeros_like(x)
+    t = np.arange(int(sr * 0.012)) / sr
+    for o in a["onsets"]:
+        i = int((o + PROBE_INSIDE) * sr)
+        probe[i:i + len(t)] += 0.8 * np.sin(2 * np.pi * 1000 * t)
+    pin, pout = tmp / "probe.wav", tmp / "probe.out.wav"
+    write_wav(pin, probe, sr)
+    info = render_word(pin, a, units, beat, pout, tmp)
+    y, _ = read_wav(pout)
+    env = np.convolve(np.abs(y), np.ones(int(sr * 0.002)) / int(sr * 0.002), mode="same")
+    ons = a["onsets"] + [a["end"]]
+    tg = info["targets"] + [None]
+    errs = []
+    for k, target in enumerate(info["targets"]):
+        r = (tg[k + 1] - target) / (ons[k + 1] - ons[k]) if tg[k + 1] is not None else 1.0
+        expect = target + PROBE_INSIDE * r
+        i0, i1 = max(0, int((expect - 0.06) * sr)), int((expect + 0.06) * sr)
+        seg = env[i0:i1]
+        j = int(np.argmax(seg > 0.5 * seg.max())) if seg.size and seg.max() > 0 else 0
+        errs.append(round(((i0 + j) / sr - expect) * 1000))
+    return errs
 
 
 def stretch(src: Path, dst: Path, factor: float) -> None:
@@ -160,6 +380,7 @@ def main() -> None:
     index: dict = {
         "generated": date.today().isoformat(),
         "factors": FACTORS,
+        "beats": BEATS,
         "voices": {k: {"model": v[1], "licence": v[2]} for k, v in VOICES.items()},
         "banks": {},
     }
@@ -173,16 +394,32 @@ def main() -> None:
             cursor = GAP_S
             entries = {}
             for key, text in clips.items():
+                if bank == "rhythm-words":
+                    units = PATTERN[key]
+                    take, a = best_word_take(model, text, units, tmp)
+                    variants, report = [], []
+                    for b in BEATS:
+                        v = tmp / f"{bank}-{len(entries)}-{b}.wav"
+                        info = render_word(take, a, units, b, v, tmp)
+                        d = seconds(v)
+                        report.append(probe_error_ms(take, a, units, b, tmp))
+                        variants.append({"beat": b, "start": round(cursor, 4), "duration": round(d, 4), "lead": info["lead"]})
+                        parts += [v, silence]
+                        cursor += d + GAP_S
+                    entries[key] = {"text": text, "units": units, "variants": variants}
+                    print(f"  {key}: onset error ms per beat length {report}")
+                    continue
                 raw, base = tmp / "raw.wav", tmp / f"{bank}-{len(entries)}.wav"
-                expected = 0.32 * SYLLABLE_COUNT[key] if bank == "rhythm-words" else None
-                speak(model, text, raw, tmp, expected)
+                speak(model, text, raw, tmp)
                 clean(raw, base)
                 variants = []
                 for f in FACTORS:
                     v = tmp / f"{bank}-{len(entries)}-{f}.wav"
                     stretch(base, v, f)
                     d = seconds(v)
-                    variants.append({"factor": f, "start": round(cursor, 4), "duration": round(d, 4)})
+                    a = analyse(v, 1)
+                    lead = round(a["onsets"][0], 4) if a else 0.0
+                    variants.append({"factor": f, "start": round(cursor, 4), "duration": round(d, 4), "lead": lead})
                     parts += [v, silence]
                     cursor += d + GAP_S
                 entries[key] = {"text": text, "variants": variants}

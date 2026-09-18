@@ -3,9 +3,14 @@
 // playback; nothing is synthesized in the browser.
 
 interface Variant {
-  factor: number;
+  /** Note names: the stretch factor of this rendering. */
+  factor?: number;
+  /** Rhythm words: the beat length (seconds) this rendering puts its syllables on. */
+  beat?: number;
   start: number;
   duration: number;
+  /** Seconds from the clip's start to its first vowel onset — the moment that belongs on the grid. */
+  lead: number;
 }
 
 interface Clip {
@@ -84,8 +89,8 @@ export class VoiceBank {
   }
 
   /**
-   * Speak `key` from context time `t0`, fitted to `seconds`: the stored length nearest the target is chosen,
-   * the rate is nudged a little toward it, and whatever still overruns is faded out at the note's end.
+   * Speak a note name so that its vowel onset falls on `t0`, fitted to a note `seconds` long: the stored
+   * length nearest the target is chosen, the rate nudged toward it, and any overrun faded at the note's end.
    */
   speak(ctx: BaseAudioContext, out: AudioNode, key: string, t0: number, seconds: number, gain = 1): AudioScheduledSourceNode | undefined {
     let clip = this.clips[key];
@@ -101,22 +106,51 @@ export class VoiceBank {
       if (Math.abs(Math.log(v.duration / target)) < Math.abs(Math.log(best.duration / target))) best = v;
     }
     const rate = Math.min(RATE_MAX, Math.max(RATE_MIN, best.duration / target));
-    const heard = best.duration / rate;
+    return this.play(ctx, out, best, rate, t0, seconds, gain);
+  }
 
+  /**
+   * Speak a rhythm word for a beat that starts on `t0` and lasts `beatSeconds`. Each word was rendered with
+   * its syllables' vowel onsets exactly on the sixteenths of several beat lengths; the nearest is chosen and
+   * its rate adjusted so those onsets fall on this beat's grid, the first one on `t0` itself.
+   */
+  speakBeat(ctx: BaseAudioContext, out: AudioNode, key: string, t0: number, beatSeconds: number, gain = 1): AudioScheduledSourceNode | undefined {
+    const clip = this.clips[key];
+    if (!clip || beatSeconds <= 0.05) return undefined;
+    let best = clip.variants[0]!;
+    for (const v of clip.variants) {
+      if (Math.abs(Math.log(v.beat! / beatSeconds)) < Math.abs(Math.log(best.beat! / beatSeconds))) best = v;
+    }
+    // The rate that maps this rendering's beat onto the real one; beyond the nudge range, the grid wins.
+    const rate = best.beat! / beatSeconds;
+    return this.play(ctx, out, best, rate, t0, beatSeconds + best.lead / rate, gain);
+  }
+
+  /** Play a stored rendering so that its first vowel onset sounds at `grid`. */
+  private play(ctx: BaseAudioContext, out: AudioNode, v: Variant, rate: number, grid: number, maxSeconds: number, gain: number): AudioScheduledSourceNode {
+    const heard = v.duration / rate;
+    let start = grid - v.lead / rate;
+    let offset = Math.max(0, v.start + this.shift);
+    // Scheduled too late for the lead-in: skip into the clip, so the vowel still lands on the grid.
+    const now = ctx.currentTime + 0.005;
+    if (start < now) {
+      offset += (now - start) * rate;
+      start = now;
+    }
+    const end = Math.min(grid - v.lead / rate + heard, grid + maxSeconds);
     const src = ctx.createBufferSource();
     src.buffer = this.buffer;
     src.playbackRate.value = rate;
     const env = ctx.createGain();
-    const end = t0 + Math.min(heard, seconds);
-    env.gain.setValueAtTime(0, t0);
-    env.gain.linearRampToValueAtTime(gain, t0 + 0.008);
-    if (heard > seconds) {
+    env.gain.setValueAtTime(0, start);
+    env.gain.linearRampToValueAtTime(gain, start + 0.006);
+    if (end < grid - v.lead / rate + heard) {
       // Still too long: fade out as the note ends rather than spill into the next one.
-      env.gain.setValueAtTime(gain, Math.max(t0 + 0.01, end - 0.04));
+      env.gain.setValueAtTime(gain, Math.max(start + 0.01, end - 0.04));
       env.gain.linearRampToValueAtTime(0, end);
     }
     src.connect(env).connect(out);
-    src.start(t0, Math.max(0, best.start + this.shift), best.duration);
+    src.start(start, offset, Math.max(0.01, v.duration - (offset - v.start - this.shift)));
     src.stop(end + 0.01);
     return src;
   }

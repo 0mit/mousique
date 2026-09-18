@@ -174,7 +174,7 @@ export function App() {
     VoiceBank.load(player.synth.ctx, bankName).then(
       (bank) => {
         if (cancelled) return;
-        player.setVoice({ bank, cues: voiceCues(score, voiceKind, timeline) });
+        player.setVoice({ bank, cues: voiceCues(score, voiceKind, timeline), perBeat: voiceKind === 'words' });
         setVoiceState('ready');
       },
       () => !cancelled && setVoiceState('failed'),

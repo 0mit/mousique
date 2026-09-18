@@ -38,10 +38,12 @@ export class Player {
   private graceScheduledQ = 0;
   private timer: number | undefined;
   private onEnd: (() => void) | undefined;
-  private voice: { bank: VoiceBank; cues: VoiceCue[] } | undefined;
+  private voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean } | undefined;
+  /** Speech starts before its note (the consonants before the vowel), so it is scheduled further ahead. */
+  private voiceScheduledQ = 0;
 
   /** Speak these cues from this bank while playing (note names or rhythm words); undefined for silence. */
-  setVoice(voice: { bank: VoiceBank; cues: VoiceCue[] } | undefined): void {
+  setVoice(voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean } | undefined): void {
     this.voice = voice;
   }
 
@@ -102,6 +104,7 @@ export class Player {
     this.anchorT = now + lead;
     this.scheduledQ = fromQ;
     this.graceScheduledQ = fromQ;
+    this.voiceScheduledQ = fromQ;
     this.playing = true;
     this.tick();
     this.timer = window.setInterval(() => this.tick(), TICK_MS);
@@ -139,6 +142,7 @@ export class Player {
     this.anchorT = this.synth.ctx.currentTime + 0.03;
     this.scheduledQ = q;
     this.graceScheduledQ = q;
+    this.voiceScheduledQ = q;
   }
 
   private tick(): void {
@@ -150,6 +154,11 @@ export class Player {
     if (to > from) {
       this.schedule(from, to);
       this.scheduledQ = to;
+    }
+    const voiceTo = Math.min(horizonQ + GRACE_WINDOW_S * this.qps(), this.totalQ + 1e-9);
+    if (voiceTo > this.voiceScheduledQ) {
+      this.scheduleVoice(this.voiceScheduledQ, voiceTo);
+      this.voiceScheduledQ = voiceTo;
     }
     const graceTo = Math.min(horizonQ + GRACE_WINDOW_S * this.qps(), this.totalQ + 1e-9);
     if (graceTo > this.graceScheduledQ) {
@@ -182,21 +191,26 @@ export class Player {
         }
       }
     }
-    if (this.voice) {
-      const { bank, cues } = this.voice;
-      const ctx = this.synth.ctx;
-      for (const c of cues) {
-        if (c.q < fromQ - 1e-9 || c.q >= toQ - 1e-9 || c.q < this.anchorQ - 1e-9) continue;
-        const node = bank.speak(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1);
-        if (node) this.synth.adopt(node);
-      }
-    }
     if (this.opts.metronome) {
       for (const b of this.beats) {
         if (b.q >= fromQ - 1e-9 && b.q < toQ - 1e-9 && b.q >= this.anchorQ - 1e-9) {
           this.synth.click(this.timeOf(b.q), b.downbeat);
         }
       }
+    }
+  }
+
+  private scheduleVoice(fromQ: number, toQ: number): void {
+    if (!this.voice) return;
+    const { bank, cues, perBeat } = this.voice;
+    const ctx = this.synth.ctx;
+    const spq = 1 / this.qps();
+    for (const c of cues) {
+      if (c.q < fromQ - 1e-9 || c.q >= toQ - 1e-9 || c.q < this.anchorQ - 1e-9) continue;
+      const node = perBeat
+        ? bank.speakBeat(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1)
+        : bank.speak(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1);
+      if (node) this.synth.adopt(node);
     }
   }
 
