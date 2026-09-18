@@ -211,6 +211,26 @@ function layerXml(m: Measure, tiedIn: Set<string>, time: TimeSignature | undefin
   return { xml, tiedOut: tied };
 }
 
+/** Text above a note; each line is its own direction, so a gusheh name and a mark can stack. */
+function textAbove(e: ScoreEvent): string {
+  if (!e.text) return '';
+  return e.text
+    .split('\n')
+    .filter((l) => l.trim())
+    .reverse() // Verovio stacks later directions further from the staff; the first line should be on top.
+    .map((l) => `<dir staff="1" place="above" startid="#${escapeXml(e.id)}">${escapeXml(l.trim())}</dir>`)
+    .join('');
+}
+
+/** Text below: digits are fingering (<fing>); anything else, such as "rit.", is a direction. */
+function textBelow(e: ScoreEvent): string {
+  if (!e.below) return '';
+  const t = escapeXml(e.below);
+  return /^[\d۰-۹٠-٩\s,.-]+$/.test(e.below) && !/^[.\s]+$/.test(e.below)
+    ? `<fing staff="1" place="below" startid="#${escapeXml(e.id)}">${t}</fing>`
+    : `<dir staff="1" place="below" startid="#${escapeXml(e.id)}">${t}</dir>`;
+}
+
 export interface MeiOptions {
   /** Include the title and composer in the MEI header so Verovio draws them. Default true. */
   header?: boolean;
@@ -225,6 +245,7 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
   let time: TimeSignature | undefined;
   let tiedIn = new Set<string>();
 
+  const ids = new Set(score.measures.flatMap((m) => m.events.map((e) => e.id)));
   let section = '';
   let openEnding: number | undefined;
   score.measures.forEach((m, i) => {
@@ -244,8 +265,13 @@ export function scoreToMei(score: Score, opts: MeiOptions = {}): string {
     // An empty measure still needs something to draw and to click on.
     const content = xml || `<mRest xml:id="${escapeXml(m.id)}-empty"/>`;
     const dirs = m.events
-      .filter((e) => e.text)
-      .map((e) => `<dir staff="1" place="above" startid="#${escapeXml(e.id)}">${escapeXml(e.text!)}</dir>`)
+      .map(
+        (e) =>
+          textAbove(e) + textBelow(e) +
+          (e.slurTo && ids.has(e.slurTo)
+            ? `<slur startid="#${escapeXml(e.id)}" endid="#${escapeXml(e.slurTo)}"/>`
+            : ''),
+      )
       .join('');
     const metcon = m.unmetered ? ' metcon="false"' : '';
     const left = m.repeatStart ? ' left="rptstart"' : '';

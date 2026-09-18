@@ -78,3 +78,21 @@ describe('Verovio on the harder MEI shapes', () => {
     expect(x1f?.qstamp).toBeCloseTo(buildTimeline(s).byId.get('x1f')!.q, 6);
   });
 });
+
+describe('Verovio on slurs, fingering and stacked text', () => {
+  it('draws a slur across a bar line, fingering below, a direction below and two lines above', () => {
+    const s = JSON.parse(JSON.stringify(demoScore)) as Score;
+    const e4 = s.measures[0]!.events[3]!;
+    e4.slurTo = 'e5'; // across the bar line
+    e4.below = '۲';
+    e4.text = 'حجاز\nT';
+    s.measures[5]!.events[4]!.below = 'rit.';
+    tk.loadData(scoreToMei(s));
+    expect(tk.getLog().replace(/\s+/g, '')).toBe('');
+    const svg = tk.renderToSVG(1);
+    expect(svg).toContain('class="slur"');
+    expect(svg).toContain('class="fing"');
+    expect((svg.match(/class="dir"/g) ?? []).length).toBe(4); // آزاد, حجاز, T, rit.
+    expect(svg).toContain('rit.');
+  });
+});

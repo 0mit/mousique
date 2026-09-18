@@ -133,6 +133,7 @@ export function Palette({ api, event }: Props) {
 
       <div className="m-group" aria-label="Articulation">
         <Btn active={!!event?.tie} disabled={!hasNote} title="Tie to the next note (T)" label="‿" onClick={a.tie} />
+        <Btn active={!!event?.slurTo} disabled={!hasNote} title="Slur: each press reaches one note further (L); Shift+L pulls it back" label={<span className="m-small">slur</span>} onClick={() => a.slur(false)} />
         <Btn active={!!event?.grace} disabled={!hasNote} title="Grace note (/)" label={<span className="m-small">grace</span>} onClick={a.grace} />
         <Btn active={!!event?.duration.tuplet} disabled={!event} title="Triplet (Alt+3)" label="³" onClick={a.tuplet} />
         <Btn active={!!event?.tremolo} disabled={!hasNote} title="Riz / tremolo: 3, 2, 1 strokes, off (Z)" label={<span className="m-small">riz{event?.tremolo ? ` ${event.tremolo}` : ''}</span>} onClick={a.tremolo} />

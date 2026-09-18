@@ -1,6 +1,6 @@
 # Proposal: rhythm words over the notes (وزن‌خوانی واژگانی, Arshad Tahmasbi)
 
-Status: **proposed**, 2026-09-18. Nothing here is built yet.
+Status: **built for quarter-beat meters**, 2026-09-18. The operator answered the open questions: rests and ties get no words for now; beats longer than one word, and eighth-note meters, are not done now; the words go above the staff. Words are drawn as an HTML layer, not MEI lyrics (see `DECISIONS.md`).
 
 ## What the method is
 

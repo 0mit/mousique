@@ -168,3 +168,12 @@ body { background: var(--bg); }
 .m-shortcuts dl > div { display: grid; grid-template-columns: 84px 1fr; gap: 8px; }
 .m-shortcuts dt, .m-shortcuts dd { margin: 0; }
 kbd { font: inherit; font-size: 0.75rem; padding: 1px 5px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--bg); }
+
+/* Rhythm words (وزن‌خوانی واژگانی), drawn over the notes */
+.m-words { position: absolute; inset: 0 auto auto 0; pointer-events: none; }
+.m-word {
+  position: absolute; transform: translate(-50%, -100%); white-space: nowrap;
+  font-family: 'Vazirmatn', 'Noto Naskh Arabic', 'Noto Sans Arabic', 'DejaVu Sans', sans-serif;
+  color: #4b3f8f; line-height: 1;
+}
+.m-word.m-playing { color: var(--playing); font-weight: 700; }

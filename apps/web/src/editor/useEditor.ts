@@ -141,6 +141,8 @@ export function useEditor(initial: Score, onEdited?: (sel: Selection, score: Sco
       tuplet: () => apply((s, sel) => ed.toggleTuplet(s, sel), false),
       tremolo: () => apply((s, sel) => ed.cycleTremolo(s, sel), false),
       text: (t: string | undefined) => apply((s, sel) => ed.setText(s, sel, t), false),
+      below: (t: string | undefined) => apply((s, sel) => ed.setBelow(s, sel, t), false),
+      slur: (shrink = false) => apply((s, sel) => ed.extendSlur(s, sel, shrink), false),
       remove: () => apply((s, sel) => ed.deleteSelected(s, sel), false),
       addMeasure: (before = false) => apply((s, sel) => ed.insertMeasure(s, sel, before), false),
       removeMeasure: () => apply((s, sel) => ed.deleteMeasure(s, sel), false),
@@ -234,6 +236,9 @@ export function handleEditorKey(e: KeyboardEvent, api: EditorApi): boolean {
       break;
     case 'KeyT':
       a.tie();
+      return true;
+    case 'KeyL':
+      a.slur(e.shiftKey);
       return true;
     case 'Slash':
       a.grace();

@@ -171,7 +171,7 @@ export class Player {
           const step = n.tremoloQ * spq;
           for (let s = 0; s < dur - 1e-6; s += step) this.synth.pluck(n.hz, t + s, step * 0.95, s === 0 ? 1 : 0.8);
         } else {
-          this.synth.pluck(n.hz, t, dur * 0.97);
+          this.synth.pluck(n.hz, t, dur * 0.97, n.legato ? 0.55 : 1);
         }
       }
     }

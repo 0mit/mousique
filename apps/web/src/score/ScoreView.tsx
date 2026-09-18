@@ -1,4 +1,4 @@
-import { eventIndexAt, nearestOccurrence, scoreToMei, type Score, type Selection, type Timeline } from '@mousique/core';
+import { eventIndexAt, nearestOccurrence, scoreToMei, type RhythmWord, type Score, type Selection, type Timeline } from '@mousique/core';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { measureLayout, type Layout } from './layout.ts';
 import { loadVerovio } from './verovio.ts';
@@ -15,14 +15,17 @@ interface Props {
   badMeasures: Set<string>;
   /** A click on a note or an empty spot in a bar. `q` is where that note sounds, nearest the cursor. */
   onSelect: (sel: Selection, q: number | undefined) => void;
+  /** Rhythm words to draw above the notes, by event id; undefined hides them. */
+  words?: Map<string, RhythmWord>;
 }
 
 const PLAYING_CLASS = 'm-playing';
 
-export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect }: Props) {
+export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect, words }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pagesRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
+  const wordsRef = useRef<HTMLDivElement>(null);
   const layoutRef = useRef<Layout>({ events: new Map(), systems: [] });
   const [width, setWidth] = useState(0);
   const [status, setStatus] = useState<'loading' | 'ready' | string>('loading');
@@ -55,7 +58,9 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
           footer: 'none',
           pageMarginLeft: 40,
           pageMarginRight: 40,
-          pageMarginTop: 40,
+          // Room above each system for the rhythm words when they are shown.
+          pageMarginTop: words ? 140 : 40,
+          spacingSystem: words ? 22 : 12,
           pageMarginBottom: 40,
           svgViewBox: false,
         });
@@ -75,7 +80,7 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
     return () => {
       cancelled = true;
     };
-  }, [score, timeline, width, zoom]);
+  }, [score, timeline, width, zoom, !!words]);
 
   // Cursor: highlight the sounding event and glide the playhead between onsets.
   useEffect(() => {
@@ -97,6 +102,9 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
       if (ev.id !== lastId) {
         if (lastId) root.querySelector(`[id="${CSS.escape(lastId)}"]`)?.classList.remove(PLAYING_CLASS);
         root.querySelector(`[id="${CSS.escape(ev.id)}"]`)?.classList.add(PLAYING_CLASS);
+        const words = wordsRef.current;
+        if (lastId) words?.querySelector(`[data-id="${CSS.escape(lastId)}"]`)?.classList.remove(PLAYING_CLASS);
+        words?.querySelector(`[data-id="${CSS.escape(ev.id)}"]`)?.classList.add(PLAYING_CLASS);
         lastId = ev.id;
       }
       const L = layoutRef.current;
@@ -171,6 +179,26 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
       {status !== 'ready' && <div className="m-score-status">{status === 'loading' ? 'Loading the renderer…' : status}</div>}
       <div className="m-pages" ref={pagesRef} onClick={onClick} />
       <div className="m-playhead" ref={headRef} aria-hidden />
+      <div className="m-words" ref={wordsRef} dir="rtl" lang="fa" key={renderCount}>
+        {words &&
+          status === 'ready' &&
+          [...words].map(([id, w]) => {
+            const box = layoutRef.current.events.get(id);
+            const sys = box ? layoutRef.current.systems[box.systemIndex] : undefined;
+            if (!box || !sys) return null;
+            return (
+              <span
+                key={id}
+                data-id={id}
+                className="m-word"
+                title={w.word}
+                style={{ left: box.x, top: sys.inkTop - 6, fontSize: `${Math.round(zoom * 0.3)}px` }}
+              >
+                {w.syllable}
+              </span>
+            );
+          })}
+      </div>
     </div>
   );
 }

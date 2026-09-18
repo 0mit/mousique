@@ -68,7 +68,12 @@ export interface ScoreEvent {
   grace?: boolean;
   /** Tremolo (riz) strokes through the stem: 1 = eighths, 2 = sixteenths, 3 = thirty-seconds. */
   tremolo?: 1 | 2 | 3;
+  /** Text above the note: a mark such as T, a stroke sign, a gusheh name. */
   text?: string;
+  /** Text below the note: fingering, usually. */
+  below?: string;
+  /** A slur from this note to the event with this id (later in the score). */
+  slurTo?: string;
 }
 
 export type Clef = 'treble' | 'treble-8vb' | 'bass' | 'alto' | 'tenor';

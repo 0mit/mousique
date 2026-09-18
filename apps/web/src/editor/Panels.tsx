@@ -39,7 +39,7 @@ export function describeEvent(e: ScoreEvent): string {
   const tup = e.duration.tuplet ? ` (${e.duration.tuplet.actual}:${e.duration.tuplet.normal})` : '';
   if (!e.pitches?.length) return `${d} rest${tup}`;
   const ps = e.pitches.map((p) => `${p.step}${p.octave}${p.accidental ? ` ${ACC_NAME[p.accidental]}` : ''}`).join(' + ');
-  const extras = [e.grace && 'grace', e.tie && 'tied', e.tremolo && `riz ×${e.tremolo}`].filter(Boolean).join(', ');
+  const extras = [e.grace && 'grace', e.tie && 'tied', e.slurTo && 'slurred', e.tremolo && `riz ×${e.tremolo}`].filter(Boolean).join(', ');
   return `${ps}, ${d}${tup}${extras ? ` — ${extras}` : ''}`;
 }
 
@@ -85,7 +85,11 @@ export function NotePanel({ api, event, measureNumber }: { api: EditorApi; event
       <p className="m-desc">{describeEvent(event)}</p>
       <label className="m-stack" htmlFor="m-note-text">
         Text above the note <span className="m-unit">(fingering, a gusheh name…)</span>
-        <CommitInput id="m-note-text" dir="auto" value={event.text ?? ''} placeholder="e.g. ۲ or حجاز" onCommit={(v) => api.actions.text(v || undefined)} />
+        <CommitInput id="m-note-text" dir="auto" value={event.text ?? ''} placeholder="e.g. T or حجاز" onCommit={(v) => api.actions.text(v || undefined)} />
+      </label>
+      <label className="m-stack" htmlFor="m-note-below">
+        Below the note <span className="m-unit">(fingering)</span>
+        <CommitInput id="m-note-below" dir="auto" value={event.below ?? ''} placeholder="e.g. ۲" onCommit={(v) => api.actions.below(v || undefined)} />
       </label>
     </section>
   );

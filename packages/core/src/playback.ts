@@ -14,6 +14,8 @@ export interface PlayNote {
   graceRank: number;
   /** Re-attack interval in quarter notes for tremolo (riz), or 0. */
   tremoloQ: number;
+  /** Under a slur after its first note: sounded without a new stroke, so softer. */
+  legato: boolean;
 }
 
 const TREMOLO_Q = { 1: 0.5, 2: 0.25, 3: 0.125 } as const;
@@ -46,6 +48,7 @@ export function playbackNotes(tl: Timeline): PlayNote[] {
         midi: n.midi,
         graceRank: 0,
         tremoloQ: e.tremolo ? TREMOLO_Q[e.tremolo] : 0,
+        legato: e.legato,
       };
       out.push(pn);
       if (e.grace) graceRun.push(pn);

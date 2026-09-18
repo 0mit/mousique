@@ -16,6 +16,9 @@ export function validateScore(score: Score): Problem[] {
   if (!(score.tempo.bpm > 0)) problems.push({ message: `tempo must be positive, got ${score.tempo.bpm}` });
   if (!(score.tuning.a4Hz > 0)) problems.push({ message: `reference pitch must be positive, got ${score.tuning.a4Hz}` });
 
+  const order = new Map<string, number>();
+  score.measures.forEach((m) => m.events.forEach((e) => order.set(e.id, order.size)));
+
   score.measures.forEach((m, measureIndex) => {
     if (ids.has(m.id)) problems.push({ measureIndex, message: `duplicate id ${m.id}` });
     ids.add(m.id);
@@ -47,6 +50,9 @@ export function validateScore(score: Score): Problem[] {
       }
       if (e.grace && (!e.pitches || e.pitches.length === 0)) {
         problems.push({ measureIndex, eventId: e.id, message: 'a grace note cannot be a rest' });
+      }
+      if (e.slurTo !== undefined && !((order.get(e.slurTo) ?? -1) > order.get(e.id)!)) {
+        problems.push({ measureIndex, eventId: e.id, message: `a slur from ${e.id} ends on ${e.slurTo}, which is not a later note` });
       }
       if (!e.grace) total += durationQ(e.duration);
     }

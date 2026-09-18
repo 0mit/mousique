@@ -26,6 +26,8 @@ export interface TimelineEvent {
   grace: boolean;
   rest: boolean;
   tremolo: 1 | 2 | 3 | undefined;
+  /** Inside a slur, after its first note: played without a new stroke. */
+  legato: boolean;
   notes: TimelineNote[];
 }
 
@@ -106,6 +108,8 @@ export function buildTimeline(score: Score): Timeline {
   let q = 0;
   // Sounding accidental per step+octave carried from the previous event through a tie.
   let tiedIn = new Map<string, Accidental | undefined>();
+  // The id a running slur ends on.
+  let slurEnd: string | undefined;
 
   for (const index of playOrder(score)) {
     const m = score.measures[index]!;
@@ -147,6 +151,9 @@ export function buildTimeline(score: Score): Timeline {
       });
       const occurrence = seen.get(e.id) ?? 0;
       seen.set(e.id, occurrence + 1);
+      const legato = slurEnd !== undefined && !grace;
+      if (e.id === slurEnd) slurEnd = undefined;
+      if (e.slurTo) slurEnd = e.slurTo;
       const te: TimelineEvent = {
         id: e.id,
         measureIndex: index,
@@ -156,6 +163,7 @@ export function buildTimeline(score: Score): Timeline {
         grace,
         rest: notes.length === 0,
         tremolo: e.tremolo,
+        legato,
         notes,
       };
       if (grace) {

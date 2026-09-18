@@ -19,7 +19,7 @@ it, [`DECISIONS.md`](DECISIONS.md) says so and why. Milestone notes are in [`doc
 | M0 spikes | Verovio, synth and a first transcription test on printed pages held |
 | M1 model, rendering, playback with cursor | working |
 | M2 editor | working: keyboard and palette entry, repeats, autosave |
-| Rhythm words (وزن‌خوانی واژگانی) | [proposed](docs/proposals/vazn-khani.md) |
+| Rhythm words (وزن‌خوانی واژگانی) | working for quarter-note beats ([design](docs/proposals/vazn-khani.md)) |
 | M3 media overlay and manual sync | the sync-map maths is done and tested |
 | M4 automatic alignment · M5 AI transcription · M6 interchange | not started |
 

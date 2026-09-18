@@ -7,6 +7,7 @@ import {
   nearestOccurrence,
   newScore,
   playbackNotes,
+  rhythmWords,
   selectedEvent,
   selectedMeasureIndex,
   validateScore,
@@ -52,9 +53,24 @@ export function App() {
   const [playing, setPlaying] = useState(false);
   const [loadError, setLoadError] = useState<string>();
   const [saved, setSaved] = useState<'loading' | 'saved' | 'saving'>('loading');
+  const [showWords, setShowWords] = useState(() => {
+    try {
+      return localStorage.getItem('mousique.words') === '1';
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('mousique.words', showWords ? '1' : '0');
+    } catch {
+      // A per-viewer preference only; nothing is lost without it.
+    }
+  }, [showWords]);
 
   const timeline = useMemo(() => buildTimeline(score), [score]);
   const problems = useMemo(() => validateScore(score), [score]);
+  const words = useMemo(() => (showWords ? rhythmWords(score) : undefined), [score, showWords]);
   const badMeasures = useMemo(
     () => new Set(problems.filter((p) => p.measureIndex !== undefined).map((p) => score.measures[p.measureIndex!]!.id)),
     [problems, score],
@@ -223,6 +239,9 @@ export function App() {
         <label className="m-check">
           <input type="checkbox" checked={countIn} onChange={(e) => setCountIn(e.target.checked)} /> Count-in
         </label>
+        <label className="m-check" title="Tahmasbi's rhythm words (وزن‌خوانی واژگانی) over the notes, for beats in quarter-note meters">
+          <input type="checkbox" checked={showWords} onChange={(e) => setShowWords(e.target.checked)} /> <span lang="fa">وزن‌خوانی</span> words
+        </label>
         <label className="m-field">
           Zoom
           <input type="range" min={30} max={90} step={5} value={zoom} onChange={(e) => setZoom(+e.target.value)} />
@@ -240,6 +259,7 @@ export function App() {
             zoom={zoom}
             selection={state.selection}
             badMeasures={badMeasures}
+            words={words}
             onSelect={(sel, q) => {
               api.select(sel);
               if (q !== undefined) player.seek(q);

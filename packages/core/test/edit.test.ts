@@ -167,3 +167,23 @@ describe('repeats', () => {
     expect(buildTimeline(t).events.map((e) => e.id)).toEqual(['e1', 'e2', 'e3', 'e1', 'e2', 'e3', 'e4', 'e5']);
   });
 });
+
+describe('slurs and fingering', () => {
+  it('extends a slur note by note, shrinks it, and drops it when its end is deleted', async () => {
+    const { extendSlur, setBelow } = await import('../src/index.ts');
+    const r = type(newScore(), null, 'CDEF', quarter);
+    const first = { kind: 'event', id: r.score.measures[0]!.events[0]!.id } as const;
+    const ids = r.score.measures[0]!.events.map((e) => e.id);
+    let s = extendSlur(r.score, first).score;
+    expect(s.measures[0]!.events[0]!.slurTo).toBe(ids[1]);
+    s = extendSlur(s, first).score;
+    expect(s.measures[0]!.events[0]!.slurTo).toBe(ids[2]);
+    s = extendSlur(s, first, true).score;
+    expect(s.measures[0]!.events[0]!.slurTo).toBe(ids[1]);
+    s = deleteSelected(s, { kind: 'event', id: ids[1]! }).score;
+    expect(s.measures[0]!.events[0]!.slurTo).toBeUndefined();
+    s = setBelow(s, first, ' ۲ ').score;
+    expect(s.measures[0]!.events[0]!.below).toBe('۲');
+    expect(validateScore(s)).toEqual([]);
+  });
+});

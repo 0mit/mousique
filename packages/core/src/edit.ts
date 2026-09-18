@@ -395,6 +395,38 @@ export function setText(score: Score, sel: Selection, text: string | undefined):
   });
 }
 
+/** Text below the note — fingering. */
+export function setBelow(score: Score, sel: Selection, text: string | undefined): EditResult {
+  return onSelectedEvent(score, sel, (e) => {
+    if (text && text.trim()) e.below = text.trim();
+    else delete e.below;
+  });
+}
+
+/** Pitched, non-grace events in reading order: what a slur can start or end on. */
+function slurrable(score: Score): ScoreEvent[] {
+  return score.measures.flatMap((m) => m.events.filter((e) => !e.grace && e.pitches?.length));
+}
+
+/**
+ * Slur from the selected note: the first press slurs it to the next note, each further press reaches
+ * one note further. `shrink` pulls the end back by one note, and removes the slur at its last step.
+ */
+export function extendSlur(score: Score, sel: Selection, shrink = false): EditResult {
+  return onSelectedEvent(score, sel, (e, s) => {
+    if (!e.pitches?.length || e.grace) return;
+    const notes = slurrable(s);
+    const start = notes.findIndex((x) => x.id === e.id);
+    const end = e.slurTo ? notes.findIndex((x) => x.id === e.slurTo) : start;
+    const next = shrink ? end - 1 : end + 1;
+    if (next <= start || !notes[next]) {
+      if (shrink) delete e.slurTo;
+      return;
+    }
+    e.slurTo = notes[next]!.id;
+  });
+}
+
 /** Delete the selected event; the selection moves to the one before it (or its measure, if now empty). */
 export function deleteSelected(score: Score, sel: Selection): EditResult {
   if (sel?.kind !== 'event') return { score, selection: sel };
@@ -403,6 +435,8 @@ export function deleteSelected(score: Score, sel: Selection): EditResult {
   if (!loc) return { score, selection: sel };
   const m = s.measures[loc.mi]!;
   m.events.splice(loc.ei, 1);
+  // A slur that ended on the deleted note is removed with it.
+  for (const mm of s.measures) for (const e of mm.events) if (e.slurTo === sel.id) delete e.slurTo;
   const prev = m.events[loc.ei - 1] ?? m.events[0];
   return { score: s, selection: prev ? { kind: 'event', id: prev.id } : { kind: 'measure', id: m.id } };
 }

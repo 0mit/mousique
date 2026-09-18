@@ -12,8 +12,11 @@ export interface EventBox {
 export interface SystemBox {
   left: number;
   right: number;
+  /** Top and height of the staff lines. */
   top: number;
   height: number;
+  /** Top of everything drawn for the system, marks above the staff included. */
+  inkTop: number;
 }
 
 export interface Layout {
@@ -31,8 +34,9 @@ export function measureLayout(container: HTMLElement, ids: Iterable<string>): La
     // The staff, not the whole system group, so text above the staff does not stretch the playhead.
     const staff = g.querySelector('g.staff') ?? g;
     const r = staff.getBoundingClientRect();
+    const all = g.getBoundingClientRect();
     systemIndex.set(g, systems.length);
-    systems.push({ left: r.left - ox, right: r.right - ox, top: r.top - oy, height: r.height });
+    systems.push({ left: r.left - ox, right: r.right - ox, top: r.top - oy, height: r.height, inkTop: Math.min(all.top, r.top) - oy });
   });
 
   const events = new Map<string, EventBox>();
