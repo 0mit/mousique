@@ -21,11 +21,11 @@ has one word for each.
 | 𝅘𝅥𝅯 ♪. | رُباب | رُ 1 · باب 3 |
 | ♪ ♪ | می‌زد | می 2 · زد 2 |
 | ♪ 𝅘𝅥𝅯 𝅘𝅥𝅯 | می‌زدُ | می 2 · زَ 1 · دُ 1 |
-| 𝅘𝅥𝅯 𝅘𝅥𝅯 ♪ | بَزَدم | بَ 1 · زَ 1 · دَم 2 |
-| 𝅘𝅥𝅯 𝅘𝅥𝅯 𝅘𝅥𝅯 𝅘𝅥𝅯 | بَزَدَمُ | بَ 1 · زَ 1 · دَ 1 · مُ 1 |
+| 𝅘𝅥𝅯 𝅘𝅥𝅯 ♪ | بِزَدم | بِ 1 · زَ 1 · دَم 2 |
+| 𝅘𝅥𝅯 𝅘𝅥𝅯 𝅘𝅥𝅯 𝅘𝅥𝅯 | بِزَدَمُ | بِ 1 · زَ 1 · دَ 1 · مُ 1 |
 | 𝅘𝅥𝅯 ♪ 𝅘𝅥𝅯 | رُبابُ | رُ 1 · با 2 · بُ 1 |
 
-The syllable lengths are Persian prosody itself: a short syllable (CV: رُ، بَ، زَ، تُ) is one unit, a long one
+The syllable lengths are Persian prosody itself: a short syllable (CV: رُ، بِ، زَ، تُ) is one unit, a long one
 (CV̄ or CVC: می، با، زد، دَم) two, an extended one (CV̄C: راس، باب) three, and راست four. The four base
 words (راست، رباب، می‌زد، بزدم) each gain a final ـُ to make the next figure, which is why the method
 needs so few words.

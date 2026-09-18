@@ -13,15 +13,15 @@ import type { Score, TimeSignature } from './model.ts';
 export type RhythmDictionary = Record<string, string[]>;
 
 // A tatweel (ـ) after a syllable whose last letter joins the next keeps the word visibly one word when its
-// syllables are spread over several notes (بَـ زَ دَم).
+// syllables are spread over several notes (بِـ زَ دَم).
 export const TAHMASBI_WORDS: RhythmDictionary = {
   '4': ['راست'],
   '3-1': ['راسـ', 'تُ'],
   '1-3': ['رُ', 'باب'],
   '2-2': ['می', 'زد'],
   '2-1-1': ['می', 'زَ', 'دُ'],
-  '1-1-2': ['بَـ', 'زَ', 'دَم'],
-  '1-1-1-1': ['بَـ', 'زَ', 'دَ', 'مُ'],
+  '1-1-2': ['بِـ', 'زَ', 'دَم'],
+  '1-1-1-1': ['بِـ', 'زَ', 'دَ', 'مُ'],
   '1-2-1': ['رُ', 'با', 'بُ'],
 };
 

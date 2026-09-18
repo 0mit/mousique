@@ -29,8 +29,8 @@ describe('rhythm words', () => {
   it('reads every figure of the flash cards', () => {
     expect(syl(bar([note(d('quarter')), note(d('eighth', 1)), note(d('16th'))]))).toBe('راست راسـ تُ');
     expect(syl(bar([note(d('16th')), note(d('eighth', 1)), note(d('eighth')), note(d('eighth'))]))).toBe('رُ باب می زد');
-    expect(syl(bar([note(d('eighth')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('eighth'))]))).toBe('می زَ دُ بَـ زَ دَم');
-    expect(syl(bar([note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('eighth')), note(d('16th'))]))).toBe('بَـ زَ دَ مُ رُ با بُ');
+    expect(syl(bar([note(d('eighth')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('eighth'))]))).toBe('می زَ دُ بِـ زَ دَم');
+    expect(syl(bar([note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('16th')), note(d('eighth')), note(d('16th'))]))).toBe('بِـ زَ دَ مُ رُ با بُ');
   });
 
   it('gives no words to a beat with a rest, a tie or a tuplet, nor to a half note', () => {
