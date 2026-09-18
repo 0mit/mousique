@@ -17,6 +17,8 @@ export interface SystemBox {
   height: number;
   /** Top of everything drawn for the system, marks above the staff included. */
   inkTop: number;
+  /** Bottom of everything drawn for the system, fingering and low ledger notes included. */
+  inkBottom: number;
 }
 
 export interface MeasureBox {
@@ -44,7 +46,7 @@ export function measureLayout(container: HTMLElement, ids: Iterable<string>): La
     const r = staff.getBoundingClientRect();
     const all = g.getBoundingClientRect();
     systemIndex.set(g, systems.length);
-    systems.push({ left: r.left - ox, right: r.right - ox, top: r.top - oy, height: r.height, inkTop: Math.min(all.top, r.top) - oy });
+    systems.push({ left: r.left - ox, right: r.right - ox, top: r.top - oy, height: r.height, inkTop: Math.min(all.top, r.top) - oy, inkBottom: Math.max(all.bottom, r.bottom) - oy });
   });
 
   const measures = new Map<string, MeasureBox>();

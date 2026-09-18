@@ -67,7 +67,7 @@ body { background: var(--bg); }
 .m-button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .m-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); min-width: 6em; font-weight: 600; }
 .m-field { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); }
-.m-field input[type='number'] {
+.m-field input[type='number'], .m-field select {
   width: 5.5em; font: inherit; color: var(--ink); background: var(--bg);
   border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px;
 }
@@ -179,3 +179,12 @@ kbd { font: inherit; font-size: 0.75rem; padding: 1px 5px; border: 1px solid var
   color: #4b3f8f; line-height: 1;
 }
 .m-word.m-playing { color: var(--playing); font-weight: 700; }
+/* Note names for beginners, drawn under each system. */
+.m-name {
+  position: absolute; transform: translateX(-50%); white-space: nowrap; line-height: 1;
+  font-family: 'Vazirmatn', 'Noto Naskh Arabic', 'Noto Sans Arabic', 'DejaVu Sans', sans-serif;
+  color: #2f6b3a;
+}
+.m-name.m-playing { color: var(--playing); font-weight: 700; }
+.m-name-part { display: flex; flex-direction: column; align-items: center; }
+.m-name-part small { font-size: 0.72em; opacity: 0.85; margin-top: 1px; }

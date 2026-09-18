@@ -17,12 +17,14 @@ interface Props {
   onSelect: (sel: Selection, q: number | undefined) => void;
   /** Rhythm words to draw above the notes, by event id; undefined hides them. */
   words?: Map<string, RhythmWord>;
+  /** Note names to draw below the notes, by event id; undefined hides them. */
+  names?: Map<string, string>;
 }
 
 const PLAYING_CLASS = 'm-playing';
 const ECHO_CLASS = 'm-echo';
 
-export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect, words }: Props) {
+export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures, onSelect, words, names }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const pagesRef = useRef<HTMLDivElement>(null);
   const headRef = useRef<HTMLDivElement>(null);
@@ -61,7 +63,7 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
           pageMarginRight: 40,
           // Room above each system for the rhythm words when they are shown.
           pageMarginTop: words ? 140 : 40,
-          spacingSystem: words ? 22 : 12,
+          spacingSystem: 12 + (words ? 10 : 0) + (names ? 12 : 0),
           pageMarginBottom: 40,
           svgViewBox: false,
         });
@@ -83,7 +85,7 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
     return () => {
       cancelled = true;
     };
-  }, [score, timeline, width, zoom, !!words]);
+  }, [score, timeline, width, zoom, !!words, !!names]);
 
   // Cursor: highlight the sounding event and glide the playhead between onsets.
   useEffect(() => {
@@ -107,9 +109,9 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
       if (shownId !== lastId) {
         if (lastId) root.querySelector(`[id="${CSS.escape(lastId)}"]`)?.classList.remove(PLAYING_CLASS);
         root.querySelector(`[id="${CSS.escape(shownId)}"]`)?.classList.add(PLAYING_CLASS);
-        const words = wordsRef.current;
-        if (lastId) words?.querySelector(`[data-id="${CSS.escape(lastId)}"]`)?.classList.remove(PLAYING_CLASS);
-        words?.querySelector(`[data-id="${CSS.escape(ev.id)}"]`)?.classList.add(PLAYING_CLASS);
+        // Words and names are keyed by the written note, which a bar-repeat sign's replay shares.
+        wordsRef.current?.querySelectorAll(`.${PLAYING_CLASS}`).forEach((el) => el.classList.remove(PLAYING_CLASS));
+        wordsRef.current?.querySelectorAll(`[data-id="${CSS.escape(ev.id)}"]`).forEach((el) => el.classList.add(PLAYING_CLASS));
         lastId = shownId;
       }
       const L = layoutRef.current;
@@ -223,6 +225,33 @@ export function ScoreView({ score, timeline, getQ, zoom, selection, badMeasures,
                 style={{ left: box.x, top: sys.inkTop - 6, fontSize: `${Math.round(zoom * 0.3)}px` }}
               >
                 {w.syllable}
+              </span>
+            );
+          })}
+        {names &&
+          status === 'ready' &&
+          [...names].map(([id, name]) => {
+            const box = layoutRef.current.events.get(id);
+            const sys = box ? layoutRef.current.systems[box.systemIndex] : undefined;
+            if (!box || !sys) return null;
+            return (
+              <span
+                key={`n-${id}`}
+                data-id={id}
+                className="m-name"
+                dir="auto"
+                style={{ left: box.x, top: sys.inkBottom + 4, fontSize: `${Math.round(zoom * 0.25)}px` }}
+              >
+                {/* The note on top and its accidental beneath, so a name is no wider than its note. */}
+                {name.split(' / ').map((part, i) => {
+                  const [base, ...acc] = part.split(' ');
+                  return (
+                    <span key={i} className="m-name-part">
+                      {base}
+                      {acc.length > 0 && <small>{acc.join(' ')}</small>}
+                    </span>
+                  );
+                })}
               </span>
             );
           })}

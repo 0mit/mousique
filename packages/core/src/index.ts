@@ -9,3 +9,4 @@ export * from './demo.ts';
 export * from './playback.ts';
 export * from './edit.ts';
 export * from './rhythm.ts';
+export * from './names.ts';

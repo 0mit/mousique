@@ -7,12 +7,14 @@ import {
   nearestOccurrence,
   newScore,
   playbackNotes,
+  noteNames,
   rhythmWords,
   selectedEvent,
   selectedMeasureIndex,
   validateScore,
   type Score,
   type Selection,
+  type NameSystem,
   type Tuning,
 } from '@mousique/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -68,9 +70,25 @@ export function App() {
     }
   }, [showWords]);
 
+  const [nameSystem, setNameSystem] = useState<NameSystem | 'off'>(() => {
+    try {
+      return (localStorage.getItem('mousique.names') as NameSystem | 'off' | null) ?? 'off';
+    } catch {
+      return 'off';
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('mousique.names', nameSystem);
+    } catch {
+      // A per-viewer preference only.
+    }
+  }, [nameSystem]);
+
   const timeline = useMemo(() => buildTimeline(score), [score]);
   const problems = useMemo(() => validateScore(score), [score]);
   const words = useMemo(() => (showWords ? rhythmWords(score) : undefined), [score, showWords]);
+  const names = useMemo(() => (nameSystem === 'off' ? undefined : noteNames(score, nameSystem)), [score, nameSystem]);
   const badMeasures = useMemo(
     () => new Set(problems.filter((p) => p.measureIndex !== undefined).map((p) => score.measures[p.measureIndex!]!.id)),
     [problems, score],
@@ -242,6 +260,15 @@ export function App() {
         <label className="m-check" title="Tahmasbi's rhythm words (وزن‌خوانی واژگانی) over the notes, for beats in quarter-note meters">
           <input type="checkbox" checked={showWords} onChange={(e) => setShowWords(e.target.checked)} /> <span lang="fa">وزن‌خوانی</span> words
         </label>
+        <label className="m-field" title="Note names under the notes, for beginners">
+          Names
+          <select value={nameSystem} onChange={(e) => setNameSystem(e.target.value as NameSystem | 'off')}>
+            <option value="off">off</option>
+            <option value="persian">Persian (دو ر می)</option>
+            <option value="solfege">Do Re Mi</option>
+            <option value="letters">C D E</option>
+          </select>
+        </label>
         <label className="m-field">
           Zoom
           <input type="range" min={30} max={90} step={5} value={zoom} onChange={(e) => setZoom(+e.target.value)} />
@@ -260,6 +287,7 @@ export function App() {
             selection={state.selection}
             badMeasures={badMeasures}
             words={words}
+            names={names}
             onSelect={(sel, q) => {
               api.select(sel);
               if (q !== undefined) player.seek(q);
