@@ -19,7 +19,8 @@ interface Clip {
 }
 
 interface VoiceIndex {
-  banks: Record<string, { file: string; clips: Record<string, Clip> }>;
+  /** firstSound: where the first clip crosses |x| > 0.02 in the audio as encoded (see measureShift). */
+  banks: Record<string, { file: string; clips: Record<string, Clip>; firstSound?: number }>;
 }
 
 const BASE = `${import.meta.env.BASE_URL}voice/`;
@@ -53,13 +54,15 @@ export class VoiceBank {
    * Measure the decoder's shift once: find where the first clip's sound actually begins and compare it with
    * where the index says it begins. Every clip in the bank moves by the same amount.
    */
-  private static measureShift(buffer: AudioBuffer, clips: Record<string, Clip>): number {
+  private static measureShift(buffer: AudioBuffer, clips: Record<string, Clip>, firstSound?: number): number {
     const first = Math.min(...Object.values(clips).flatMap((c) => c.variants.map((v) => v.start)));
+    // Compare like with like: the generator recorded where the same crossing happens before encoding.
+    const reference = firstSound ?? first;
     const data = buffer.getChannelData(0);
     const from = Math.floor(Math.max(0, first - 0.1) * buffer.sampleRate);
-    const to = Math.min(data.length, Math.floor((first + 0.2) * buffer.sampleRate));
+    const to = Math.min(data.length, Math.floor((first + 0.5) * buffer.sampleRate));
     for (let i = from; i < to; i++) {
-      if (Math.abs(data[i]!) > 0.02) return Math.min(0.1, Math.max(-0.05, i / buffer.sampleRate - first));
+      if (Math.abs(data[i]!) > 0.02) return Math.min(0.12, Math.max(-0.05, i / buffer.sampleRate - reference));
     }
     return 0;
   }
@@ -76,7 +79,7 @@ export class VoiceBank {
         if (!bank) throw new Error(`no voice bank ${name}`);
         const data = await fetch(`${BASE}${bank.file}`).then((r) => r.arrayBuffer());
         const buffer = await ctx.decodeAudioData(data);
-        return new VoiceBank(name, bank.clips, buffer, VoiceBank.measureShift(buffer, bank.clips));
+        return new VoiceBank(name, bank.clips, buffer, VoiceBank.measureShift(buffer, bank.clips, bank.firstSound));
       })();
       VoiceBank.cache.set(name, p);
       p.catch(() => VoiceBank.cache.delete(name));

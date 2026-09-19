@@ -24,5 +24,7 @@ describe('voice cues', () => {
   it('picks the bank for the kind and naming system', () => {
     expect(voiceBank('words', 'persian')).toBe('rhythm-words');
     expect(voiceBank('names', 'letters')).toBe('names-letters');
+    expect(voiceBank('words', 'persian', 'soft3')).toBe('rhythm-words-soft3');
+    expect(voiceBank('names', 'persian', 'soft5')).toBe('names-persian'); // colours are for the rhythm words
   });
 });

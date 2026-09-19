@@ -19,9 +19,13 @@ export interface VoiceCue {
   eventId: string;
 }
 
-/** The voice bank that holds the clips for a kind of cue. */
-export function voiceBank(kind: VoiceKind, system: NameSystem): string {
-  return kind === 'words' ? 'rhythm-words' : `names-${system}`;
+/** A colour of the voice: as synthesized, or pitched up (formants kept) and softened. */
+export type VoiceColour = 'natural' | 'soft3' | 'soft5';
+
+/** The voice bank that holds the clips for a kind of cue. Colours exist for the rhythm words. */
+export function voiceBank(kind: VoiceKind, system: NameSystem, colour: VoiceColour = 'natural'): string {
+  if (kind === 'words') return colour === 'natural' ? 'rhythm-words' : `rhythm-words-${colour}`;
+  return `names-${system}`;
 }
 
 const SPOKEN_ACC: Partial<Record<Accidental, string>> = { sharp: 'sharp', flat: 'flat', koron: 'koron', sori: 'sori' };

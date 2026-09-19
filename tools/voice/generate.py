@@ -85,7 +85,9 @@ def banks() -> dict[str, tuple[str, dict[str, str]]]:
 
 
 def run(*cmd: str) -> None:
-    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+    if r.returncode:
+        raise RuntimeError(f"{cmd[0]} failed ({r.returncode}): {r.stderr.strip()[-400:]}\n  {' '.join(cmd)[:300]}")
 
 
 def ensure_model(voice: str) -> Path:
@@ -126,7 +128,7 @@ def speak(model: Path, text: str, wav: Path, tmp: Path, expected: float | None =
             voice.synthesize_wav(text + ".", w, syn_config=SynthesisConfig(length_scale=length, noise_scale=noise))
         run("sox", str(raw), str(trimmed), "silence", "1", "0.01", "0.5%", "reverse", "silence", "1", "0.01", "0.5%", "reverse")
         d = seconds(trimmed)
-        if d < 0.05:
+        if d < 0.12:  # a take this short has lost its vowel
             continue
         score = abs(math.log(d / target))
         if best is None or score < best[0]:
@@ -179,10 +181,19 @@ HOP = 0.005
 
 
 def read_wav(path: Path):
+    """Mono PCM WAV as floats in [-1, 1]; 16- and 32-bit (sox writes 32-bit from some inputs)."""
     import numpy as np
     with wave.open(str(path)) as w:
-        sr = w.getframerate()
-        x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16).astype(float) / 32768
+        sr, width, channels = w.getframerate(), w.getsampwidth(), w.getnchannels()
+        raw = w.readframes(w.getnframes())
+    if width == 2:
+        x = np.frombuffer(raw, dtype=np.int16).astype(float) / 32768
+    elif width == 4:
+        x = np.frombuffer(raw, dtype=np.int32).astype(float) / 2147483648
+    else:
+        raise ValueError(f"{path}: {8 * width}-bit WAV not handled")
+    if channels > 1:
+        x = x.reshape(-1, channels).mean(axis=1)
     return x, sr
 
 
@@ -235,8 +246,15 @@ def clean(src: Path, dst: Path) -> None:
     trimmed = dst.with_suffix(".trim.wav")
     run("sox", str(src), "-r", str(RATE), "-c", "1", str(trimmed),
         "silence", "1", "0.01", "0.5%", "reverse", "silence", "1", "0.01", "0.5%", "reverse", "norm", "-3")
-    # A second pass: the fade-out needs the trimmed length, which sox only knows once the file exists.
-    run("sox", str(trimmed), str(dst), "fade", "t", "0.005", "-0", "0.02")
+    # Short fades so the clip never clicks, done here rather than by sox, whose fade refuses some inputs.
+    import numpy as np
+    x, sr = read_wav(trimmed)
+    if len(x) < int(0.03 * sr):
+        raise RuntimeError(f"clip too short after trimming: {len(x) / sr:.3f}s")
+    fin, fout = int(0.003 * sr), int(min(0.02, len(x) / sr / 4) * sr)
+    x[:fin] *= np.linspace(0, 1, fin)
+    x[-fout:] *= np.linspace(1, 0, fout)
+    write_wav(dst, x, sr)
 
 
 # ---- rhythm words: every vowel onset on its sixteenth -----------------------------------------------
@@ -375,6 +393,64 @@ def stretch(src: Path, dst: Path, factor: float) -> None:
         run("rubberband", "-3", "-t", str(factor), str(src), str(dst))
 
 
+# ---- voice colours --------------------------------------------------------------------------------
+#
+# Derived banks: the same clips with the pitch raised (formants kept, so it is the same voice speaking higher,
+# not sped up) and a softer colour — the harsh 3–5 kHz presence dipped, the top rolled off, gentle compression,
+# a little quieter. Pitch shifting keeps every clip's timing (measured: 0–1 ms), so a derived bank shares its
+# source's index and its grid positions.
+
+STYLES = {
+    "soft3": {"semitones": 3},
+    "soft5": {"semitones": 5},
+}
+STYLED_BANKS = ["rhythm-words"]
+SOFTEN = ["highpass", "110", "equalizer", "3500", "1.2q", "-4", "lowpass", "7000",
+          "compand", "0.01,0.15", "-40,-40,-20,-16,0,-10", "-3", "-12", "0.02", "gain", "-n", "-4"]
+
+
+def first_sound(wav: Path, first_clip: float) -> float:
+    """Where the first clip first crosses the level the app looks for (|x| > 0.02), in the audio exactly as it is
+    encoded. The app measures the same crossing after decoding; the difference is the decoder's delay, whatever
+    the voice colour does to the loudness of the first sound."""
+    import numpy as np
+    x, sr = read_wav(wav)
+    i0, i1 = int(max(0.0, first_clip - 0.1) * sr), int((first_clip + 0.5) * sr)
+    hits = np.nonzero(np.abs(x[i0:i1]) > 0.02)[0]
+    return round((i0 + hits[0]) / sr, 5) if hits.size else first_clip
+
+
+def first_clip_start(bank: dict) -> float:
+    return min(v["start"] for c in bank["clips"].values() for v in c["variants"])
+
+
+def derive_styles(bank: str, packed_wav: Path, index: dict, tmp: Path) -> None:
+    for style, spec in STYLES.items():
+        shifted, soft = tmp / f"{bank}-{style}-p.wav", tmp / f"{bank}-{style}.wav"
+        run("rubberband", "-3", "-p", str(spec["semitones"]), "--formant", str(packed_wav), str(shifted))
+        run("sox", str(shifted), str(soft), *SOFTEN)
+        name = f"{bank}-{style}"
+        run("ffmpeg", "-y", "-i", str(soft), "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1", str(OUT / f"{name}.mp3"))
+        index["banks"][name] = {**index["banks"][bank], "file": f"{name}.mp3", "style": style,
+                                "derived_from": bank, **spec,
+                                "firstSound": first_sound(soft, first_clip_start(index["banks"][bank]))}
+        print(f"{name}: derived ({spec['semitones']:+d} semitones, softened)")
+
+
+def styles_only() -> None:
+    """Derive the colours again from the existing banks, without re-synthesizing any speech."""
+    index = json.loads((OUT / "index.json").read_text())
+    with tempfile.TemporaryDirectory() as tmp_s:
+        tmp = Path(tmp_s)
+        for bank in STYLED_BANKS:
+            packed = HERE / "out" / f"{bank}.wav"
+            if not packed.exists():
+                packed = tmp / f"{bank}.wav"
+                run("ffmpeg", "-y", "-i", str(OUT / index["banks"][bank]["file"]), "-ar", str(RATE), "-ac", "1", str(packed))
+            derive_styles(bank, packed, index, tmp)
+    (OUT / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     index: dict = {
@@ -387,7 +463,7 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp_s:
         tmp = Path(tmp_s)
         silence = tmp / "gap.wav"
-        run("sox", "-n", "-r", str(RATE), "-c", "1", str(silence), "trim", "0", str(GAP_S))
+        run("sox", "-n", "-r", str(RATE), "-c", "1", "-b", "16", str(silence), "trim", "0", str(GAP_S))
         for bank, (voice, clips) in banks().items():
             model = ensure_model(voice)
             parts: list[Path] = [silence]
@@ -427,12 +503,18 @@ def main() -> None:
                     print(f"warning: {bank}/{key} ({text}) is only {variants[2]['duration']:.3f}s")
             packed = tmp / f"{bank}.wav"
             run("sox", *map(str, parts), str(packed))
+            (HERE / "out").mkdir(exist_ok=True)
+            shutil.copy(packed, HERE / "out" / f"{bank}.wav")   # kept (git-ignored) so colours can be re-derived
             run("ffmpeg", "-y", "-i", str(packed), "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1",
                 str(OUT / f"{bank}.mp3"))
             index["banks"][bank] = {"file": f"{bank}.mp3", "voice": voice, "clips": entries}
+            index["banks"][bank]["firstSound"] = first_sound(packed, first_clip_start(index["banks"][bank]))
             print(f"{bank}: {len(entries)} clips, {cursor:.1f}s packed")
+            if bank in STYLED_BANKS:
+                derive_styles(bank, packed, index, tmp)
     (OUT / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    styles_only() if "--styles-only" in sys.argv else main()

@@ -18,6 +18,7 @@ import {
   type Score,
   type Selection,
   type NameSystem,
+  type VoiceColour,
   type VoiceKind,
   type Tuning,
 } from '@mousique/core';
@@ -118,6 +119,20 @@ export function App() {
     }
   });
   const [instrument, setInstrument] = useState(true);
+  const [voiceColour, setVoiceColour] = useState<VoiceColour>(() => {
+    try {
+      return (localStorage.getItem('mousique.voiceColour') as VoiceColour | null) ?? 'natural';
+    } catch {
+      return 'natural';
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('mousique.voiceColour', voiceColour);
+    } catch {
+      // A per-viewer preference only.
+    }
+  }, [voiceColour]);
   const [voiceState, setVoiceState] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle');
   useEffect(() => {
     try {
@@ -169,7 +184,7 @@ export function App() {
       return;
     }
     let cancelled = false;
-    const bankName = voiceBank(voiceKind, nameSystem === 'off' ? 'persian' : nameSystem);
+    const bankName = voiceBank(voiceKind, nameSystem === 'off' ? 'persian' : nameSystem, voiceColour);
     setVoiceState('loading');
     VoiceBank.load(player.synth.ctx, bankName).then(
       (bank) => {
@@ -182,7 +197,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [player, voiceKind, nameSystem, score, timeline]);
+  }, [player, voiceKind, nameSystem, voiceColour, score, timeline]);
 
   const getQ = useCallback(() => player.q(), [player]);
 
@@ -331,6 +346,13 @@ export function App() {
             <option value="names">note names</option>
             <option value="words">rhythm words (وزن‌خوانی)</option>
           </select>
+          {voiceKind === 'words' && (
+            <select value={voiceColour} onChange={(e) => setVoiceColour(e.target.value as VoiceColour)} title="Voice colour: as synthesized, or higher (formants kept) and softer">
+              <option value="natural">natural</option>
+              <option value="soft3">soft, +3</option>
+              <option value="soft5">soft, +5</option>
+            </select>
+          )}
           {voiceState === 'loading' && <span className="m-unit">loading…</span>}
           {voiceState === 'failed' && <span className="m-unit">not available</span>}
         </label>
