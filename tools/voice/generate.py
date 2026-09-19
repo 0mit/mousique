@@ -53,8 +53,10 @@ SOLFEGE = {"C": "Do", "D": "Re", "E": "Mi", "F": "Fa", "G": "Sol", "A": "La", "B
 # words for koron and sori, so they are said as they are.
 # Spelled for the voice, not the eye: "Do" alone is taken for the English word (/duː/), "Dô" is read /do/;
 # "koron" would be read with a French nasal (/koʁɔ̃/), "koronne" keeps the final n (/koʁɔn/). Checked with
-# the phonemizer the voice uses (espeak-ng -v fr --ipa).
-FR_STEP = {"C": "Dô", "D": "Ré", "E": "Mi", "F": "Fa", "G": "Sol", "A": "La", "B": "Si"}
+# the phonemizer the voice uses (espeak-ng -v fr --ipa). "Sol" is phonemized right (/sɔl/) but this voice
+# renders its open o far forward — heard as "sel" by the operator, and measured: second formant 1730–1860 Hz,
+# beside "Sel" at 2070–2220. "Sôl" (/soːl/) comes out a clear back o, 1030–1240 Hz.
+FR_STEP = {"C": "Dô", "D": "Ré", "E": "Mi", "F": "Fa", "G": "Sôl", "A": "La", "B": "Si"}
 FR_ACC = {"sharp": "dièse", "flat": "bémol", "koron": "koronne", "sori": "sori"}
 # Syllables in each spoken name: the step (one) plus its accidental. Used to find the FIRST syllable's vowel
 # onset, which is the moment that goes on the grid — not the strongest vowel, which in "Ré dièse" or
