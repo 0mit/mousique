@@ -19,8 +19,11 @@ export interface VoiceCue {
   eventId: string;
 }
 
-/** A colour of the voice: as synthesized, or pitched up (formants kept) and softened. */
-export type VoiceColour = 'natural' | 'soft3' | 'soft5';
+/**
+ * A colour of the rhythm-word voice: as synthesized (amir); softened at its own pitch; warmer (2 semitones
+ * lower, formants kept, more low-mid body) and softened; or the other free Persian voice (ganji).
+ */
+export type VoiceColour = 'natural' | 'soft' | 'warm' | 'ganji';
 
 /** The voice bank that holds the clips for a kind of cue. Colours exist for the rhythm words. */
 export function voiceBank(kind: VoiceKind, system: NameSystem, colour: VoiceColour = 'natural'): string {

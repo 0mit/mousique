@@ -30,6 +30,7 @@ OUT = HERE.parent.parent / "apps" / "web" / "public" / "voice"
 
 VOICES = {
     "fa": ("fa/fa_IR/amir/medium", "fa_IR-amir-medium", "CC0 (dataset: datacula.com)"),
+    "fa-ganji": ("fa/fa_IR/ganji/medium", "fa_IR-ganji-medium", "CC0 (dataset: tts.datacula.com)"),
     "en": ("en/en_US/ljspeech/medium", "en_US-ljspeech-medium", "public domain (LJ Speech)"),
 }
 
@@ -81,6 +82,7 @@ def banks() -> dict[str, tuple[str, dict[str, str]]]:
         "names-solfege": ("en", names(SOLFEGE, EN_ACC, "en")),
         "names-letters": ("en", names(LETTER, EN_ACC, "en")),
         "rhythm-words": ("fa", dict(WORDS)),
+        "rhythm-words-ganji": ("fa-ganji", dict(WORDS)),
     }
 
 
@@ -238,7 +240,15 @@ def analyse(path: Path, n: int) -> dict | None:
     start, end = loud[0] * HOP, (loud[-1] + 1) * HOP + 0.025
     if any(b - a < 0.045 for a, b in zip(onsets, onsets[1:])):
         return None
-    return {"onsets": onsets, "valleys": valleys, "start": start, "end": min(end, len(x) / sr)}
+    end = min(end, len(x) / sr)
+    # Where the last vowel ends: the voiced energy falls below a third of its nucleus. What follows is the
+    # closing consonants (the "st" of راست), which keep their natural length.
+    last = keep[-1]
+    j = last
+    while j < len(s) - 1 and s[j] > 0.33 * s[last]:
+        j += 1
+    vowel_end = min(max(j * HOP, onsets[-1] + 0.03), end - 0.01)
+    return {"onsets": onsets, "valleys": valleys, "start": start, "end": end, "vowel_end": vowel_end}
 
 
 def clean(src: Path, dst: Path) -> None:
@@ -262,7 +272,7 @@ def clean(src: Path, dst: Path) -> None:
 # Beat lengths the words are rendered at (quarter = 167 … 46 per minute); between two the app nudges the rate.
 BEATS = [0.36, 0.46, 0.6, 0.78, 1.0, 1.3]
 MAX_LEAD = 0.14      # consonants before the first vowel onset, kept at their natural length up to this
-NEXT_LEAD = 0.08     # room left at the end of a beat for the next word's lead-in
+NEXT_LEAD = 0.06     # room left at the end of a note for the next word's lead-in
 ACCENT_DB = 2.0      # the syllable on the beat carries the accent ...
 LIGHT_DB = -1.5      # ... the syllables between the beats are lighter
 
@@ -313,10 +323,14 @@ def render_word(src: Path, a: dict, units: list[int], beat: float, dst: Path, tm
     onsets = a["onsets"]
     lead_in = min(MAX_LEAD, onsets[0] - a["start"])
     fracs = pattern_onsets(units)
-    tail_in = a["end"] - onsets[-1]
-    tail_out = min(tail_in, max(0.06, units[-1] / 4 * beat - NEXT_LEAD))
-    src_b = [onsets[0] - lead_in] + onsets + [a["end"]]
-    dst_b = [0.0] + [lead_in + f * beat for f in fracs] + [lead_in + fracs[-1] * beat + tail_out]
+    # The last syllable lasts as long as its note: its vowel is held until the closing consonants have to
+    # start, and those keep their natural length, ending a little before the next word's lead-in.
+    coda = a["end"] - a["vowel_end"]
+    last_note = units[-1] / 4 * beat
+    vowel_out = max(a["vowel_end"] - onsets[-1], last_note - NEXT_LEAD - coda)
+    src_b = [onsets[0] - lead_in] + onsets + [a["vowel_end"], a["end"]]
+    last_on = lead_in + fracs[-1] * beat
+    dst_b = [0.0] + [lead_in + f * beat for f in fracs] + [last_on + vowel_out, last_on + vowel_out + coda]
     total = int(round(dst_b[-1] * sr)) + int(XFADE * sr) + 1
     out = np.zeros(total)
     weight = np.zeros(total)
@@ -330,7 +344,9 @@ def render_word(src: Path, a: dict, units: list[int], beat: float, dst: Path, tm
         write_wav(piece_in, x[int(e0 * sr):int(e1 * sr)], sr)
         run("rubberband", "-3", "-D", f"{(e1 - e0) * r:.5f}", str(piece_in), str(piece_out))
         y, _ = read_wav(piece_out)
-        gain = 10 ** ((ACCENT_DB if k <= 1 else LIGHT_DB) / 20)
+        # Pieces: 0 lead-in, 1..n syllables (the last split into its vowel and its coda).
+        syllable = min(k, len(units))
+        gain = 10 ** ((ACCENT_DB if syllable <= 1 else LIGHT_DB) / 20)
         at = int(round((d0 - (s0 - e0) * r) * sr))       # where the piece's first sample goes
         # Trapezoid window: full weight over the piece, ramps over the overlaps.
         n = len(y)
@@ -350,7 +366,8 @@ def render_word(src: Path, a: dict, units: list[int], beat: float, dst: Path, tm
     out[-fade:] *= np.linspace(1, 0, fade)
     out[: int(0.004 * sr)] *= np.linspace(0, 1, int(0.004 * sr))
     write_wav(dst, out, sr)
-    return {"lead": round(lead_in, 4), "targets": [round(t, 4) for t in dst_b[1:-1]]}
+    return {"lead": round(lead_in, 4), "targets": [round(t, 4) for t in dst_b[1:1 + len(units)]],
+            "vowel_out": vowel_out}
 
 
 PROBE_INSIDE = 0.015
@@ -373,11 +390,14 @@ def probe_error_ms(take: Path, a: dict, units: list[int], beat: float, tmp: Path
     info = render_word(pin, a, units, beat, pout, tmp)
     y, _ = read_wav(pout)
     env = np.convolve(np.abs(y), np.ones(int(sr * 0.002)) / int(sr * 0.002), mode="same")
-    ons = a["onsets"] + [a["end"]]
+    ons = a["onsets"] + [a["vowel_end"]]
     tg = info["targets"] + [None]
     errs = []
     for k, target in enumerate(info["targets"]):
-        r = (tg[k + 1] - target) / (ons[k + 1] - ons[k]) if tg[k + 1] is not None else 1.0
+        if tg[k + 1] is not None:
+            r = (tg[k + 1] - target) / (ons[k + 1] - ons[k])
+        else:  # the held last vowel
+            r = info["vowel_out"] / (a["vowel_end"] - a["onsets"][-1])
         expect = target + PROBE_INSIDE * r
         i0, i1 = max(0, int((expect - 0.06) * sr)), int((expect + 0.06) * sr)
         seg = env[i0:i1]
@@ -400,9 +420,10 @@ def stretch(src: Path, dst: Path, factor: float) -> None:
 # a little quieter. Pitch shifting keeps every clip's timing (measured: 0–1 ms), so a derived bank shares its
 # source's index and its grid positions.
 
+# Tried and rejected by the operator (2026-09-19): +3 and +5 semitones — "higher pitches are not good".
 STYLES = {
-    "soft3": {"semitones": 3},
-    "soft5": {"semitones": 5},
+    "soft": {"semitones": 0, "warmth": 0},
+    "warm": {"semitones": -2, "warmth": 2},
 }
 STYLED_BANKS = ["rhythm-words"]
 SOFTEN = ["highpass", "110", "equalizer", "3500", "1.2q", "-4", "lowpass", "7000",
@@ -427,14 +448,18 @@ def first_clip_start(bank: dict) -> float:
 def derive_styles(bank: str, packed_wav: Path, index: dict, tmp: Path) -> None:
     for style, spec in STYLES.items():
         shifted, soft = tmp / f"{bank}-{style}-p.wav", tmp / f"{bank}-{style}.wav"
-        run("rubberband", "-3", "-p", str(spec["semitones"]), "--formant", str(packed_wav), str(shifted))
-        run("sox", str(shifted), str(soft), *SOFTEN)
+        if spec["semitones"]:
+            run("rubberband", "-3", "-p", str(spec["semitones"]), "--formant", str(packed_wav), str(shifted))
+        else:
+            shutil.copy(packed_wav, shifted)
+        warmth = ["bass", str(spec["warmth"]), "250"] if spec["warmth"] else []
+        run("sox", str(shifted), str(soft), *warmth, *SOFTEN)
         name = f"{bank}-{style}"
         run("ffmpeg", "-y", "-i", str(soft), "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1", str(OUT / f"{name}.mp3"))
         index["banks"][name] = {**index["banks"][bank], "file": f"{name}.mp3", "style": style,
                                 "derived_from": bank, **spec,
                                 "firstSound": first_sound(soft, first_clip_start(index["banks"][bank]))}
-        print(f"{name}: derived ({spec['semitones']:+d} semitones, softened)")
+        print(f"{name}: derived ({spec['semitones']:+d} semitones, warmth {spec['warmth']} dB, softened)")
 
 
 def styles_only() -> None:
@@ -451,8 +476,9 @@ def styles_only() -> None:
     (OUT / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
 
 
-def main() -> None:
+def main(only: str | None = None) -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    previous = json.loads((OUT / "index.json").read_text()) if only and (OUT / "index.json").exists() else None
     index: dict = {
         "generated": date.today().isoformat(),
         "factors": FACTORS,
@@ -465,12 +491,16 @@ def main() -> None:
         silence = tmp / "gap.wav"
         run("sox", "-n", "-r", str(RATE), "-c", "1", "-b", "16", str(silence), "trim", "0", str(GAP_S))
         for bank, (voice, clips) in banks().items():
+            if only and not bank.startswith(only):
+                if previous and bank in previous["banks"]:
+                    index["banks"][bank] = previous["banks"][bank]
+                continue
             model = ensure_model(voice)
             parts: list[Path] = [silence]
             cursor = GAP_S
             entries = {}
             for key, text in clips.items():
-                if bank == "rhythm-words":
+                if bank.startswith("rhythm-words"):
                     units = PATTERN[key]
                     take, a = best_word_take(model, text, units, tmp)
                     variants, report = [], []
@@ -517,4 +547,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     import sys
-    styles_only() if "--styles-only" in sys.argv else main()
+    if "--styles-only" in sys.argv:
+        styles_only()
+    else:
+        main("rhythm" if "--rhythm-only" in sys.argv else None)

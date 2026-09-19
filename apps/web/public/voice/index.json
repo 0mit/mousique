@@ -20,6 +20,10 @@
    "model": "fa_IR-amir-medium",
    "licence": "CC0 (dataset: datacula.com)"
   },
+  "fa-ganji": {
+   "model": "fa_IR-ganji-medium",
+   "licence": "CC0 (dataset: tts.datacula.com)"
+  },
   "en": {
    "model": "en_US-ljspeech-medium",
    "licence": "public domain (LJ Speech)"
@@ -3735,38 +3739,38 @@
       {
        "beat": 0.36,
        "start": 0.15,
-       "duration": 0.2842,
-       "lead": 0.02
+       "duration": 0.445,
+       "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 0.5842,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 0.745,
+       "duration": 0.54,
+       "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 1.0184,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 1.435,
+       "duration": 0.68,
+       "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 1.4527,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 2.265,
+       "duration": 0.86,
+       "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 1.8869,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 3.275,
+       "duration": 1.08,
+       "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 2.3211,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 4.505,
+       "duration": 1.38,
+       "lead": 0.14
       }
      ]
     },
@@ -3779,38 +3783,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 2.7553,
-       "duration": 0.47,
+       "start": 6.035,
+       "duration": 0.5325,
        "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 3.3753,
-       "duration": 0.545,
+       "start": 6.7175,
+       "duration": 0.6074,
        "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 4.0703,
-       "duration": 0.66,
+       "start": 7.4749,
+       "duration": 0.7125,
        "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 4.8803,
-       "duration": 0.7984,
+       "start": 8.3374,
+       "duration": 0.86,
        "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 5.8287,
-       "duration": 0.9634,
+       "start": 9.3474,
+       "duration": 1.08,
        "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 6.942,
-       "duration": 1.1884,
+       "start": 10.5774,
+       "duration": 1.38,
        "lead": 0.14
       }
      ]
@@ -3824,38 +3828,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 8.2804,
-       "duration": 0.295,
+       "start": 12.1074,
+       "duration": 0.4157,
        "lead": 0.015
       },
       {
        "beat": 0.46,
-       "start": 8.7254,
-       "duration": 0.385,
+       "start": 12.6731,
+       "duration": 0.4407,
        "lead": 0.015
       },
       {
        "beat": 0.6,
-       "start": 9.2604,
-       "duration": 0.42,
+       "start": 13.2637,
+       "duration": 0.555,
        "lead": 0.015
       },
       {
        "beat": 0.78,
-       "start": 9.8304,
-       "duration": 0.465,
+       "start": 13.9688,
+       "duration": 0.735,
        "lead": 0.015
       },
       {
        "beat": 1.0,
-       "start": 10.4454,
-       "duration": 0.52,
+       "start": 14.8538,
+       "duration": 0.955,
        "lead": 0.015
       },
       {
        "beat": 1.3,
-       "start": 11.1154,
-       "duration": 0.595,
+       "start": 15.9588,
+       "duration": 1.255,
        "lead": 0.015
       }
      ]
@@ -3869,38 +3873,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 11.8604,
-       "duration": 0.42,
+       "start": 17.3638,
+       "duration": 0.44,
        "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 12.4304,
-       "duration": 0.52,
+       "start": 17.9538,
+       "duration": 0.54,
        "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 13.1004,
-       "duration": 0.655,
+       "start": 18.6438,
+       "duration": 0.68,
        "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 13.9054,
-       "duration": 0.745,
+       "start": 19.4738,
+       "duration": 0.86,
        "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 14.8004,
-       "duration": 0.855,
+       "start": 20.4838,
+       "duration": 1.08,
        "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 15.8054,
-       "duration": 1.005,
+       "start": 21.7138,
+       "duration": 1.38,
        "lead": 0.14
       }
      ]
@@ -3915,39 +3919,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 16.9604,
-       "duration": 0.36,
-       "lead": 0.03
+       "start": 23.2438,
+       "duration": 0.64,
+       "lead": 0.05
       },
       {
        "beat": 0.46,
-       "start": 17.4704,
-       "duration": 0.435,
-       "lead": 0.03
+       "start": 24.0338,
+       "duration": 0.715,
+       "lead": 0.05
       },
       {
        "beat": 0.6,
-       "start": 18.0554,
-       "duration": 0.55,
-       "lead": 0.03
+       "start": 24.8988,
+       "duration": 0.82,
+       "lead": 0.05
       },
       {
        "beat": 0.78,
-       "start": 18.7554,
-       "duration": 0.73,
-       "lead": 0.03
+       "start": 25.8688,
+       "duration": 0.955,
+       "lead": 0.05
       },
       {
        "beat": 1.0,
-       "start": 19.6354,
-       "duration": 0.95,
-       "lead": 0.03
+       "start": 26.9738,
+       "duration": 1.12,
+       "lead": 0.05
       },
       {
        "beat": 1.3,
-       "start": 20.7354,
-       "duration": 1.2239,
-       "lead": 0.03
+       "start": 28.2438,
+       "duration": 1.345,
+       "lead": 0.05
       }
      ]
     },
@@ -3961,39 +3965,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 22.1093,
-       "duration": 0.42,
-       "lead": 0.14
+       "start": 29.7388,
+       "duration": 0.9633,
+       "lead": 0.125
       },
       {
        "beat": 0.46,
-       "start": 22.6793,
-       "duration": 0.52,
-       "lead": 0.14
+       "start": 30.8521,
+       "duration": 1.0133,
+       "lead": 0.125
       },
       {
        "beat": 0.6,
-       "start": 23.3493,
-       "duration": 0.6588,
-       "lead": 0.14
+       "start": 32.0154,
+       "duration": 1.0833,
+       "lead": 0.125
       },
       {
        "beat": 0.78,
-       "start": 24.1581,
-       "duration": 0.7488,
-       "lead": 0.14
+       "start": 33.2487,
+       "duration": 1.1733,
+       "lead": 0.125
       },
       {
        "beat": 1.0,
-       "start": 25.0569,
-       "duration": 0.8588,
-       "lead": 0.14
+       "start": 34.572,
+       "duration": 1.2833,
+       "lead": 0.125
       },
       {
        "beat": 1.3,
-       "start": 26.0658,
-       "duration": 1.0088,
-       "lead": 0.14
+       "start": 36.0052,
+       "duration": 1.4333,
+       "lead": 0.125
       }
      ]
     },
@@ -4008,39 +4012,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 27.2246,
-       "duration": 0.345,
-       "lead": 0.015
+       "start": 37.5885,
+       "duration": 0.465,
+       "lead": 0.01
       },
       {
        "beat": 0.46,
-       "start": 27.7195,
-       "duration": 0.42,
-       "lead": 0.015
+       "start": 38.2035,
+       "duration": 0.54,
+       "lead": 0.01
       },
       {
        "beat": 0.6,
-       "start": 28.2895,
-       "duration": 0.535,
-       "lead": 0.015
+       "start": 38.8935,
+       "duration": 0.645,
+       "lead": 0.01
       },
       {
        "beat": 0.78,
-       "start": 28.9746,
-       "duration": 0.715,
-       "lead": 0.015
+       "start": 39.6885,
+       "duration": 0.78,
+       "lead": 0.01
       },
       {
        "beat": 1.0,
-       "start": 29.8396,
-       "duration": 0.935,
-       "lead": 0.015
+       "start": 40.6185,
+       "duration": 0.95,
+       "lead": 0.01
       },
       {
        "beat": 1.3,
-       "start": 30.9246,
-       "duration": 1.2022,
-       "lead": 0.015
+       "start": 41.7185,
+       "duration": 1.25,
+       "lead": 0.01
       }
      ]
     },
@@ -4054,47 +4058,47 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 32.2768,
-       "duration": 0.345,
-       "lead": 0.015
+       "start": 43.1185,
+       "duration": 0.505,
+       "lead": 0.02
       },
       {
        "beat": 0.46,
-       "start": 32.7717,
-       "duration": 0.42,
-       "lead": 0.015
+       "start": 43.7735,
+       "duration": 0.58,
+       "lead": 0.02
       },
       {
        "beat": 0.6,
-       "start": 33.3417,
-       "duration": 0.535,
-       "lead": 0.015
+       "start": 44.5035,
+       "duration": 0.685,
+       "lead": 0.02
       },
       {
        "beat": 0.78,
-       "start": 34.0268,
-       "duration": 0.715,
-       "lead": 0.015
+       "start": 45.3385,
+       "duration": 0.82,
+       "lead": 0.02
       },
       {
        "beat": 1.0,
-       "start": 34.8918,
-       "duration": 0.935,
-       "lead": 0.015
+       "start": 46.3085,
+       "duration": 0.985,
+       "lead": 0.02
       },
       {
        "beat": 1.3,
-       "start": 35.9768,
-       "duration": 1.235,
-       "lead": 0.015
+       "start": 47.4435,
+       "duration": 1.26,
+       "lead": 0.02
       }
      ]
     }
    },
-   "firstSound": 0.17215
+   "firstSound": 0.30122
   },
-  "rhythm-words-soft3": {
-   "file": "rhythm-words-soft3.mp3",
+  "rhythm-words-soft": {
+   "file": "rhythm-words-soft.mp3",
    "voice": "fa",
    "clips": {
     "راست": {
@@ -4106,38 +4110,38 @@
       {
        "beat": 0.36,
        "start": 0.15,
-       "duration": 0.2842,
-       "lead": 0.02
+       "duration": 0.445,
+       "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 0.5842,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 0.745,
+       "duration": 0.54,
+       "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 1.0184,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 1.435,
+       "duration": 0.68,
+       "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 1.4527,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 2.265,
+       "duration": 0.86,
+       "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 1.8869,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 3.275,
+       "duration": 1.08,
+       "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 2.3211,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 4.505,
+       "duration": 1.38,
+       "lead": 0.14
       }
      ]
     },
@@ -4150,38 +4154,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 2.7553,
-       "duration": 0.47,
+       "start": 6.035,
+       "duration": 0.5325,
        "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 3.3753,
-       "duration": 0.545,
+       "start": 6.7175,
+       "duration": 0.6074,
        "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 4.0703,
-       "duration": 0.66,
+       "start": 7.4749,
+       "duration": 0.7125,
        "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 4.8803,
-       "duration": 0.7984,
+       "start": 8.3374,
+       "duration": 0.86,
        "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 5.8287,
-       "duration": 0.9634,
+       "start": 9.3474,
+       "duration": 1.08,
        "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 6.942,
-       "duration": 1.1884,
+       "start": 10.5774,
+       "duration": 1.38,
        "lead": 0.14
       }
      ]
@@ -4195,38 +4199,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 8.2804,
-       "duration": 0.295,
+       "start": 12.1074,
+       "duration": 0.4157,
        "lead": 0.015
       },
       {
        "beat": 0.46,
-       "start": 8.7254,
-       "duration": 0.385,
+       "start": 12.6731,
+       "duration": 0.4407,
        "lead": 0.015
       },
       {
        "beat": 0.6,
-       "start": 9.2604,
-       "duration": 0.42,
+       "start": 13.2637,
+       "duration": 0.555,
        "lead": 0.015
       },
       {
        "beat": 0.78,
-       "start": 9.8304,
-       "duration": 0.465,
+       "start": 13.9688,
+       "duration": 0.735,
        "lead": 0.015
       },
       {
        "beat": 1.0,
-       "start": 10.4454,
-       "duration": 0.52,
+       "start": 14.8538,
+       "duration": 0.955,
        "lead": 0.015
       },
       {
        "beat": 1.3,
-       "start": 11.1154,
-       "duration": 0.595,
+       "start": 15.9588,
+       "duration": 1.255,
        "lead": 0.015
       }
      ]
@@ -4240,38 +4244,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 11.8604,
-       "duration": 0.42,
+       "start": 17.3638,
+       "duration": 0.44,
        "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 12.4304,
-       "duration": 0.52,
+       "start": 17.9538,
+       "duration": 0.54,
        "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 13.1004,
-       "duration": 0.655,
+       "start": 18.6438,
+       "duration": 0.68,
        "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 13.9054,
-       "duration": 0.745,
+       "start": 19.4738,
+       "duration": 0.86,
        "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 14.8004,
-       "duration": 0.855,
+       "start": 20.4838,
+       "duration": 1.08,
        "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 15.8054,
-       "duration": 1.005,
+       "start": 21.7138,
+       "duration": 1.38,
        "lead": 0.14
       }
      ]
@@ -4286,39 +4290,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 16.9604,
-       "duration": 0.36,
-       "lead": 0.03
+       "start": 23.2438,
+       "duration": 0.64,
+       "lead": 0.05
       },
       {
        "beat": 0.46,
-       "start": 17.4704,
-       "duration": 0.435,
-       "lead": 0.03
+       "start": 24.0338,
+       "duration": 0.715,
+       "lead": 0.05
       },
       {
        "beat": 0.6,
-       "start": 18.0554,
-       "duration": 0.55,
-       "lead": 0.03
+       "start": 24.8988,
+       "duration": 0.82,
+       "lead": 0.05
       },
       {
        "beat": 0.78,
-       "start": 18.7554,
-       "duration": 0.73,
-       "lead": 0.03
+       "start": 25.8688,
+       "duration": 0.955,
+       "lead": 0.05
       },
       {
        "beat": 1.0,
-       "start": 19.6354,
-       "duration": 0.95,
-       "lead": 0.03
+       "start": 26.9738,
+       "duration": 1.12,
+       "lead": 0.05
       },
       {
        "beat": 1.3,
-       "start": 20.7354,
-       "duration": 1.2239,
-       "lead": 0.03
+       "start": 28.2438,
+       "duration": 1.345,
+       "lead": 0.05
       }
      ]
     },
@@ -4332,39 +4336,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 22.1093,
-       "duration": 0.42,
-       "lead": 0.14
+       "start": 29.7388,
+       "duration": 0.9633,
+       "lead": 0.125
       },
       {
        "beat": 0.46,
-       "start": 22.6793,
-       "duration": 0.52,
-       "lead": 0.14
+       "start": 30.8521,
+       "duration": 1.0133,
+       "lead": 0.125
       },
       {
        "beat": 0.6,
-       "start": 23.3493,
-       "duration": 0.6588,
-       "lead": 0.14
+       "start": 32.0154,
+       "duration": 1.0833,
+       "lead": 0.125
       },
       {
        "beat": 0.78,
-       "start": 24.1581,
-       "duration": 0.7488,
-       "lead": 0.14
+       "start": 33.2487,
+       "duration": 1.1733,
+       "lead": 0.125
       },
       {
        "beat": 1.0,
-       "start": 25.0569,
-       "duration": 0.8588,
-       "lead": 0.14
+       "start": 34.572,
+       "duration": 1.2833,
+       "lead": 0.125
       },
       {
        "beat": 1.3,
-       "start": 26.0658,
-       "duration": 1.0088,
-       "lead": 0.14
+       "start": 36.0052,
+       "duration": 1.4333,
+       "lead": 0.125
       }
      ]
     },
@@ -4379,39 +4383,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 27.2246,
-       "duration": 0.345,
-       "lead": 0.015
+       "start": 37.5885,
+       "duration": 0.465,
+       "lead": 0.01
       },
       {
        "beat": 0.46,
-       "start": 27.7195,
-       "duration": 0.42,
-       "lead": 0.015
+       "start": 38.2035,
+       "duration": 0.54,
+       "lead": 0.01
       },
       {
        "beat": 0.6,
-       "start": 28.2895,
-       "duration": 0.535,
-       "lead": 0.015
+       "start": 38.8935,
+       "duration": 0.645,
+       "lead": 0.01
       },
       {
        "beat": 0.78,
-       "start": 28.9746,
-       "duration": 0.715,
-       "lead": 0.015
+       "start": 39.6885,
+       "duration": 0.78,
+       "lead": 0.01
       },
       {
        "beat": 1.0,
-       "start": 29.8396,
-       "duration": 0.935,
-       "lead": 0.015
+       "start": 40.6185,
+       "duration": 0.95,
+       "lead": 0.01
       },
       {
        "beat": 1.3,
-       "start": 30.9246,
-       "duration": 1.2022,
-       "lead": 0.015
+       "start": 41.7185,
+       "duration": 1.25,
+       "lead": 0.01
       }
      ]
     },
@@ -4425,50 +4429,51 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 32.2768,
-       "duration": 0.345,
-       "lead": 0.015
+       "start": 43.1185,
+       "duration": 0.505,
+       "lead": 0.02
       },
       {
        "beat": 0.46,
-       "start": 32.7717,
-       "duration": 0.42,
-       "lead": 0.015
+       "start": 43.7735,
+       "duration": 0.58,
+       "lead": 0.02
       },
       {
        "beat": 0.6,
-       "start": 33.3417,
-       "duration": 0.535,
-       "lead": 0.015
+       "start": 44.5035,
+       "duration": 0.685,
+       "lead": 0.02
       },
       {
        "beat": 0.78,
-       "start": 34.0268,
-       "duration": 0.715,
-       "lead": 0.015
+       "start": 45.3385,
+       "duration": 0.82,
+       "lead": 0.02
       },
       {
        "beat": 1.0,
-       "start": 34.8918,
-       "duration": 0.935,
-       "lead": 0.015
+       "start": 46.3085,
+       "duration": 0.985,
+       "lead": 0.02
       },
       {
        "beat": 1.3,
-       "start": 35.9768,
-       "duration": 1.235,
-       "lead": 0.015
+       "start": 47.4435,
+       "duration": 1.26,
+       "lead": 0.02
       }
      ]
     }
    },
-   "firstSound": 0.16268,
-   "style": "soft3",
+   "firstSound": 0.16154,
+   "style": "soft",
    "derived_from": "rhythm-words",
-   "semitones": 3
+   "semitones": 0,
+   "warmth": 0
   },
-  "rhythm-words-soft5": {
-   "file": "rhythm-words-soft5.mp3",
+  "rhythm-words-warm": {
+   "file": "rhythm-words-warm.mp3",
    "voice": "fa",
    "clips": {
     "راست": {
@@ -4480,38 +4485,38 @@
       {
        "beat": 0.36,
        "start": 0.15,
-       "duration": 0.2842,
-       "lead": 0.02
+       "duration": 0.445,
+       "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 0.5842,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 0.745,
+       "duration": 0.54,
+       "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 1.0184,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 1.435,
+       "duration": 0.68,
+       "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 1.4527,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 2.265,
+       "duration": 0.86,
+       "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 1.8869,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 3.275,
+       "duration": 1.08,
+       "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 2.3211,
-       "duration": 0.2842,
-       "lead": 0.02
+       "start": 4.505,
+       "duration": 1.38,
+       "lead": 0.14
       }
      ]
     },
@@ -4524,38 +4529,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 2.7553,
-       "duration": 0.47,
+       "start": 6.035,
+       "duration": 0.5325,
        "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 3.3753,
-       "duration": 0.545,
+       "start": 6.7175,
+       "duration": 0.6074,
        "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 4.0703,
-       "duration": 0.66,
+       "start": 7.4749,
+       "duration": 0.7125,
        "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 4.8803,
-       "duration": 0.7984,
+       "start": 8.3374,
+       "duration": 0.86,
        "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 5.8287,
-       "duration": 0.9634,
+       "start": 9.3474,
+       "duration": 1.08,
        "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 6.942,
-       "duration": 1.1884,
+       "start": 10.5774,
+       "duration": 1.38,
        "lead": 0.14
       }
      ]
@@ -4569,38 +4574,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 8.2804,
-       "duration": 0.295,
+       "start": 12.1074,
+       "duration": 0.4157,
        "lead": 0.015
       },
       {
        "beat": 0.46,
-       "start": 8.7254,
-       "duration": 0.385,
+       "start": 12.6731,
+       "duration": 0.4407,
        "lead": 0.015
       },
       {
        "beat": 0.6,
-       "start": 9.2604,
-       "duration": 0.42,
+       "start": 13.2637,
+       "duration": 0.555,
        "lead": 0.015
       },
       {
        "beat": 0.78,
-       "start": 9.8304,
-       "duration": 0.465,
+       "start": 13.9688,
+       "duration": 0.735,
        "lead": 0.015
       },
       {
        "beat": 1.0,
-       "start": 10.4454,
-       "duration": 0.52,
+       "start": 14.8538,
+       "duration": 0.955,
        "lead": 0.015
       },
       {
        "beat": 1.3,
-       "start": 11.1154,
-       "duration": 0.595,
+       "start": 15.9588,
+       "duration": 1.255,
        "lead": 0.015
       }
      ]
@@ -4614,38 +4619,38 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 11.8604,
-       "duration": 0.42,
+       "start": 17.3638,
+       "duration": 0.44,
        "lead": 0.14
       },
       {
        "beat": 0.46,
-       "start": 12.4304,
-       "duration": 0.52,
+       "start": 17.9538,
+       "duration": 0.54,
        "lead": 0.14
       },
       {
        "beat": 0.6,
-       "start": 13.1004,
-       "duration": 0.655,
+       "start": 18.6438,
+       "duration": 0.68,
        "lead": 0.14
       },
       {
        "beat": 0.78,
-       "start": 13.9054,
-       "duration": 0.745,
+       "start": 19.4738,
+       "duration": 0.86,
        "lead": 0.14
       },
       {
        "beat": 1.0,
-       "start": 14.8004,
-       "duration": 0.855,
+       "start": 20.4838,
+       "duration": 1.08,
        "lead": 0.14
       },
       {
        "beat": 1.3,
-       "start": 15.8054,
-       "duration": 1.005,
+       "start": 21.7138,
+       "duration": 1.38,
        "lead": 0.14
       }
      ]
@@ -4660,39 +4665,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 16.9604,
-       "duration": 0.36,
-       "lead": 0.03
+       "start": 23.2438,
+       "duration": 0.64,
+       "lead": 0.05
       },
       {
        "beat": 0.46,
-       "start": 17.4704,
-       "duration": 0.435,
-       "lead": 0.03
+       "start": 24.0338,
+       "duration": 0.715,
+       "lead": 0.05
       },
       {
        "beat": 0.6,
-       "start": 18.0554,
-       "duration": 0.55,
-       "lead": 0.03
+       "start": 24.8988,
+       "duration": 0.82,
+       "lead": 0.05
       },
       {
        "beat": 0.78,
-       "start": 18.7554,
-       "duration": 0.73,
-       "lead": 0.03
+       "start": 25.8688,
+       "duration": 0.955,
+       "lead": 0.05
       },
       {
        "beat": 1.0,
-       "start": 19.6354,
-       "duration": 0.95,
-       "lead": 0.03
+       "start": 26.9738,
+       "duration": 1.12,
+       "lead": 0.05
       },
       {
        "beat": 1.3,
-       "start": 20.7354,
-       "duration": 1.2239,
-       "lead": 0.03
+       "start": 28.2438,
+       "duration": 1.345,
+       "lead": 0.05
       }
      ]
     },
@@ -4706,39 +4711,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 22.1093,
-       "duration": 0.42,
-       "lead": 0.14
+       "start": 29.7388,
+       "duration": 0.9633,
+       "lead": 0.125
       },
       {
        "beat": 0.46,
-       "start": 22.6793,
-       "duration": 0.52,
-       "lead": 0.14
+       "start": 30.8521,
+       "duration": 1.0133,
+       "lead": 0.125
       },
       {
        "beat": 0.6,
-       "start": 23.3493,
-       "duration": 0.6588,
-       "lead": 0.14
+       "start": 32.0154,
+       "duration": 1.0833,
+       "lead": 0.125
       },
       {
        "beat": 0.78,
-       "start": 24.1581,
-       "duration": 0.7488,
-       "lead": 0.14
+       "start": 33.2487,
+       "duration": 1.1733,
+       "lead": 0.125
       },
       {
        "beat": 1.0,
-       "start": 25.0569,
-       "duration": 0.8588,
-       "lead": 0.14
+       "start": 34.572,
+       "duration": 1.2833,
+       "lead": 0.125
       },
       {
        "beat": 1.3,
-       "start": 26.0658,
-       "duration": 1.0088,
-       "lead": 0.14
+       "start": 36.0052,
+       "duration": 1.4333,
+       "lead": 0.125
       }
      ]
     },
@@ -4753,39 +4758,39 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 27.2246,
-       "duration": 0.345,
-       "lead": 0.015
+       "start": 37.5885,
+       "duration": 0.465,
+       "lead": 0.01
       },
       {
        "beat": 0.46,
-       "start": 27.7195,
-       "duration": 0.42,
-       "lead": 0.015
+       "start": 38.2035,
+       "duration": 0.54,
+       "lead": 0.01
       },
       {
        "beat": 0.6,
-       "start": 28.2895,
-       "duration": 0.535,
-       "lead": 0.015
+       "start": 38.8935,
+       "duration": 0.645,
+       "lead": 0.01
       },
       {
        "beat": 0.78,
-       "start": 28.9746,
-       "duration": 0.715,
-       "lead": 0.015
+       "start": 39.6885,
+       "duration": 0.78,
+       "lead": 0.01
       },
       {
        "beat": 1.0,
-       "start": 29.8396,
-       "duration": 0.935,
-       "lead": 0.015
+       "start": 40.6185,
+       "duration": 0.95,
+       "lead": 0.01
       },
       {
        "beat": 1.3,
-       "start": 30.9246,
-       "duration": 1.2022,
-       "lead": 0.015
+       "start": 41.7185,
+       "duration": 1.25,
+       "lead": 0.01
       }
      ]
     },
@@ -4799,47 +4804,419 @@
      "variants": [
       {
        "beat": 0.36,
-       "start": 32.2768,
-       "duration": 0.345,
-       "lead": 0.015
+       "start": 43.1185,
+       "duration": 0.505,
+       "lead": 0.02
       },
       {
        "beat": 0.46,
-       "start": 32.7717,
-       "duration": 0.42,
-       "lead": 0.015
+       "start": 43.7735,
+       "duration": 0.58,
+       "lead": 0.02
       },
       {
        "beat": 0.6,
-       "start": 33.3417,
-       "duration": 0.535,
-       "lead": 0.015
+       "start": 44.5035,
+       "duration": 0.685,
+       "lead": 0.02
       },
       {
        "beat": 0.78,
-       "start": 34.0268,
-       "duration": 0.715,
-       "lead": 0.015
+       "start": 45.3385,
+       "duration": 0.82,
+       "lead": 0.02
       },
       {
        "beat": 1.0,
-       "start": 34.8918,
-       "duration": 0.935,
-       "lead": 0.015
+       "start": 46.3085,
+       "duration": 0.985,
+       "lead": 0.02
       },
       {
        "beat": 1.3,
-       "start": 35.9768,
-       "duration": 1.235,
-       "lead": 0.015
+       "start": 47.4435,
+       "duration": 1.26,
+       "lead": 0.02
       }
      ]
     }
    },
-   "firstSound": 0.16766,
-   "style": "soft5",
+   "firstSound": 0.29615,
+   "style": "warm",
    "derived_from": "rhythm-words",
-   "semitones": 5
+   "semitones": -2,
+   "warmth": 2
+  },
+  "rhythm-words-ganji": {
+   "file": "rhythm-words-ganji.mp3",
+   "voice": "fa-ganji",
+   "clips": {
+    "راست": {
+     "text": "راست",
+     "units": [
+      4
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 0.15,
+       "duration": 0.52,
+       "lead": 0.055
+      },
+      {
+       "beat": 0.46,
+       "start": 0.82,
+       "duration": 0.52,
+       "lead": 0.055
+      },
+      {
+       "beat": 0.6,
+       "start": 1.49,
+       "duration": 0.595,
+       "lead": 0.055
+      },
+      {
+       "beat": 0.78,
+       "start": 2.235,
+       "duration": 0.775,
+       "lead": 0.055
+      },
+      {
+       "beat": 1.0,
+       "start": 3.16,
+       "duration": 0.995,
+       "lead": 0.055
+      },
+      {
+       "beat": 1.3,
+       "start": 4.305,
+       "duration": 1.295,
+       "lead": 0.055
+      }
+     ]
+    },
+    "راستُ": {
+     "text": "راستُ",
+     "units": [
+      3,
+      1
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 5.75,
+       "duration": 0.46,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.46,
+       "start": 6.36,
+       "duration": 0.535,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.6,
+       "start": 7.0451,
+       "duration": 0.64,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.78,
+       "start": 7.8351,
+       "duration": 0.775,
+       "lead": 0.02
+      },
+      {
+       "beat": 1.0,
+       "start": 8.7601,
+       "duration": 0.96,
+       "lead": 0.02
+      },
+      {
+       "beat": 1.3,
+       "start": 9.8701,
+       "duration": 1.26,
+       "lead": 0.02
+      }
+     ]
+    },
+    "رُباب": {
+     "text": "رُباب",
+     "units": [
+      1,
+      3
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 11.2801,
+       "duration": 0.58,
+       "lead": 0.045
+      },
+      {
+       "beat": 0.46,
+       "start": 12.0101,
+       "duration": 0.605,
+       "lead": 0.045
+      },
+      {
+       "beat": 0.6,
+       "start": 12.7651,
+       "duration": 0.64,
+       "lead": 0.045
+      },
+      {
+       "beat": 0.78,
+       "start": 13.5551,
+       "duration": 0.765,
+       "lead": 0.045
+      },
+      {
+       "beat": 1.0,
+       "start": 14.47,
+       "duration": 0.985,
+       "lead": 0.045
+      },
+      {
+       "beat": 1.3,
+       "start": 15.605,
+       "duration": 1.285,
+       "lead": 0.045
+      }
+     ]
+    },
+    "میزد": {
+     "text": "می‌زد",
+     "units": [
+      2,
+      2
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 17.04,
+       "duration": 0.51,
+       "lead": 0.015
+      },
+      {
+       "beat": 0.46,
+       "start": 17.7,
+       "duration": 0.56,
+       "lead": 0.015
+      },
+      {
+       "beat": 0.6,
+       "start": 18.41,
+       "duration": 0.63,
+       "lead": 0.015
+      },
+      {
+       "beat": 0.78,
+       "start": 19.1901,
+       "duration": 0.735,
+       "lead": 0.015
+      },
+      {
+       "beat": 1.0,
+       "start": 20.0751,
+       "duration": 0.955,
+       "lead": 0.015
+      },
+      {
+       "beat": 1.3,
+       "start": 21.1801,
+       "duration": 1.255,
+       "lead": 0.015
+      }
+     ]
+    },
+    "میزَدُ": {
+     "text": "می‌زَدُ",
+     "units": [
+      2,
+      1,
+      1
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 22.5851,
+       "duration": 0.47,
+       "lead": 0.015
+      },
+      {
+       "beat": 0.46,
+       "start": 23.2051,
+       "duration": 0.545,
+       "lead": 0.015
+      },
+      {
+       "beat": 0.6,
+       "start": 23.9001,
+       "duration": 0.65,
+       "lead": 0.015
+      },
+      {
+       "beat": 0.78,
+       "start": 24.7001,
+       "duration": 0.785,
+       "lead": 0.015
+      },
+      {
+       "beat": 1.0,
+       "start": 25.6351,
+       "duration": 0.955,
+       "lead": 0.015
+      },
+      {
+       "beat": 1.3,
+       "start": 26.7401,
+       "duration": 1.255,
+       "lead": 0.015
+      }
+     ]
+    },
+    "بِزَدَم": {
+     "text": "بِزَدَم",
+     "units": [
+      1,
+      1,
+      2
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 28.1451,
+       "duration": 0.43,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.46,
+       "start": 28.7251,
+       "duration": 0.48,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.6,
+       "start": 29.3551,
+       "duration": 0.56,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.78,
+       "start": 30.0651,
+       "duration": 0.74,
+       "lead": 0.02
+      },
+      {
+       "beat": 1.0,
+       "start": 30.9551,
+       "duration": 0.96,
+       "lead": 0.02
+      },
+      {
+       "beat": 1.3,
+       "start": 32.0651,
+       "duration": 1.26,
+       "lead": 0.02
+      }
+     ]
+    },
+    "بِزَدَمُ": {
+     "text": "بِزَدَمُ",
+     "units": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 33.4751,
+       "duration": 0.5,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.46,
+       "start": 34.1251,
+       "duration": 0.575,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.6,
+       "start": 34.8501,
+       "duration": 0.68,
+       "lead": 0.02
+      },
+      {
+       "beat": 0.78,
+       "start": 35.6801,
+       "duration": 0.815,
+       "lead": 0.02
+      },
+      {
+       "beat": 1.0,
+       "start": 36.6451,
+       "duration": 0.98,
+       "lead": 0.02
+      },
+      {
+       "beat": 1.3,
+       "start": 37.7751,
+       "duration": 1.26,
+       "lead": 0.02
+      }
+     ]
+    },
+    "رُبابُ": {
+     "text": "رُبابُ",
+     "units": [
+      1,
+      2,
+      1
+     ],
+     "variants": [
+      {
+       "beat": 0.36,
+       "start": 39.1851,
+       "duration": 0.515,
+       "lead": 0.045
+      },
+      {
+       "beat": 0.46,
+       "start": 39.8502,
+       "duration": 0.59,
+       "lead": 0.045
+      },
+      {
+       "beat": 0.6,
+       "start": 40.5902,
+       "duration": 0.695,
+       "lead": 0.045
+      },
+      {
+       "beat": 0.78,
+       "start": 41.4352,
+       "duration": 0.83,
+       "lead": 0.045
+      },
+      {
+       "beat": 1.0,
+       "start": 42.4152,
+       "duration": 0.995,
+       "lead": 0.045
+      },
+      {
+       "beat": 1.3,
+       "start": 43.5602,
+       "duration": 1.285,
+       "lead": 0.045
+      }
+     ]
+    }
+   },
+   "firstSound": 0.17107
   }
  }
 }

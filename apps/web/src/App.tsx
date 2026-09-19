@@ -121,7 +121,8 @@ export function App() {
   const [instrument, setInstrument] = useState(true);
   const [voiceColour, setVoiceColour] = useState<VoiceColour>(() => {
     try {
-      return (localStorage.getItem('mousique.voiceColour') as VoiceColour | null) ?? 'natural';
+      const saved = localStorage.getItem('mousique.voiceColour') as VoiceColour | null;
+      return saved && ['natural', 'soft', 'warm', 'ganji'].includes(saved) ? saved : 'natural';
     } catch {
       return 'natural';
     }
@@ -347,10 +348,11 @@ export function App() {
             <option value="words">rhythm words (وزن‌خوانی)</option>
           </select>
           {voiceKind === 'words' && (
-            <select value={voiceColour} onChange={(e) => setVoiceColour(e.target.value as VoiceColour)} title="Voice colour: as synthesized, or higher (formants kept) and softer">
+            <select value={voiceColour} onChange={(e) => setVoiceColour(e.target.value as VoiceColour)} title="Voice colour: as synthesized; softer; warmer and a little lower; or a second voice">
               <option value="natural">natural</option>
-              <option value="soft3">soft, +3</option>
-              <option value="soft5">soft, +5</option>
+              <option value="soft">soft</option>
+              <option value="warm">warm</option>
+              <option value="ganji">second voice</option>
             </select>
           )}
           {voiceState === 'loading' && <span className="m-unit">loading…</span>}

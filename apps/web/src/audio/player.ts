@@ -92,7 +92,8 @@ export class Player {
     await this.synth.resume();
     this.onEnd = onEnd;
     if (fromQ >= this.totalQ - 1e-9) fromQ = 0;
-    const now = this.synth.ctx.currentTime + 0.05;
+    // With a voice on, a short pre-roll lets the first word's consonants start before its grid point.
+    const now = this.synth.ctx.currentTime + (this.voice ? 0.2 : 0.05);
     let lead = 0;
     if (this.opts.countIn) {
       // One bar of the meter in force where playback starts.
@@ -139,7 +140,7 @@ export class Player {
   private restartAt(q: number): void {
     this.synth.stopAll();
     this.anchorQ = q;
-    this.anchorT = this.synth.ctx.currentTime + 0.03;
+    this.anchorT = this.synth.ctx.currentTime + (this.voice ? 0.2 : 0.03);
     this.scheduledQ = q;
     this.graceScheduledQ = q;
     this.voiceScheduledQ = q;
