@@ -7,7 +7,7 @@ import { buildTimeline } from './timeline.ts';
 export type NameSystem = 'persian' | 'solfege' | 'letters';
 
 const PERSIAN: Record<Step, string> = { C: 'دو', D: 'ر', E: 'می', F: 'فا', G: 'سل', A: 'لا', B: 'سی' };
-const SOLFEGE: Record<Step, string> = { C: 'Do', D: 'Re', E: 'Mi', F: 'Fa', G: 'Sol', A: 'La', B: 'Si' };
+const SOLFEGE: Record<Step, string> = { C: 'Do', D: 'Ré', E: 'Mi', F: 'Fa', G: 'Sol', A: 'La', B: 'Si' };
 
 const PERSIAN_ACC: Record<Accidental, string> = {
   sharp: 'دیز',

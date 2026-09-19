@@ -19,9 +19,12 @@ export interface VoiceCue {
   eventId: string;
 }
 
-/** The voice bank that holds the clips for a kind of cue. */
-export function voiceBank(kind: VoiceKind, system: NameSystem): string {
-  return kind === 'words' ? 'rhythm-words' : `names-${system}`;
+/**
+ * The voice bank that holds the clips for a kind of cue. Note names are always spoken in French, by a French
+ * voice (the operator's choice), whichever naming system is shown on the page.
+ */
+export function voiceBank(kind: VoiceKind, _system?: NameSystem): string {
+  return kind === 'words' ? 'rhythm-words' : 'names-french';
 }
 
 const SPOKEN_ACC: Partial<Record<Accidental, string>> = { sharp: 'sharp', flat: 'flat', koron: 'koron', sori: 'sori' };

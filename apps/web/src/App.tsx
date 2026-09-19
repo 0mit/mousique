@@ -348,7 +348,7 @@ export function App() {
           Voice
           <select value={voiceKind} onChange={(e) => setVoiceKind(e.target.value as VoiceKind | 'off')}>
             <option value="off">off</option>
-            <option value="names">note names</option>
+            <option value="names">note names (French)</option>
             <option value="words">rhythm words (وزن‌خوانی)</option>
           </select>
           {voiceKind === 'words' && (
@@ -367,7 +367,7 @@ export function App() {
           <select value={nameSystem} onChange={(e) => setNameSystem(e.target.value as NameSystem | 'off')}>
             <option value="off">off</option>
             <option value="persian">Persian (دو ر می)</option>
-            <option value="solfege">Do Re Mi</option>
+            <option value="solfege">Do Ré Mi</option>
             <option value="letters">C D E</option>
           </select>
         </label>

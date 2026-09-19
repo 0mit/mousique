@@ -70,7 +70,9 @@ offset and the size of koron and sori in cents. See `packages/core/src/model.ts`
 
 The spoken note names and rhythm words are generated once by `tools/voice/generate.py` with
 [Piper](https://github.com/rhasspy/piper) voices trained on data free to publish — `fa_IR-ganji-medium`
-(CC0) for Persian and `en_US-ljspeech-medium` (public domain) for English — and live in `apps/web/public/voice/`. Regenerate only
+(CC0) for the rhythm words, and `fr_FR-siwis-medium` for the note names, spoken in French. The French voice is
+trained on the SIWIS French Speech Synthesis Database (University of Edinburgh), licensed
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/); the note-name clips are derived from it — and live in `apps/web/public/voice/`. Regenerate only
 when the word lists or the voice change.
 
 ## Licence

@@ -8,8 +8,8 @@ note's duration. Re-run only when the word lists or the voice change:
     .venv/bin/python generate.py            # needs sox, rubberband and ffmpeg on PATH
 
 Voices (downloaded into models/ by this script) and their licences:
-  fa_IR-amir-medium   — Piper, dataset CC0 (datacula.com)
-  en_US-ljspeech-medium — Piper, LJ Speech dataset, public domain
+  fa_IR-ganji-medium  — Piper, dataset CC0 (tts.datacula.com): the rhythm words
+  fr_FR-siwis-medium  — Piper, SIWIS database, CC BY 4.0 (credited in the README): the note names
 so the generated clips can be published with the app.
 """
 
@@ -31,6 +31,8 @@ OUT = HERE.parent.parent / "apps" / "web" / "public" / "voice"
 VOICES = {
     "fa": ("fa/fa_IR/amir/medium", "fa_IR-amir-medium", "CC0 (dataset: datacula.com)"),
     "fa-ganji": ("fa/fa_IR/ganji/medium", "fa_IR-ganji-medium", "CC0 (dataset: tts.datacula.com)"),
+    "fr": ("fr/fr_FR/siwis/medium", "fr_FR-siwis-medium",
+           "CC BY 4.0 — SIWIS French Speech Synthesis Database, University of Edinburgh (datashare.is.ed.ac.uk/handle/10283/2353); attribution required"),
     "en": ("en/en_US/ljspeech/medium", "en_US-ljspeech-medium", "public domain (LJ Speech)"),
 }
 
@@ -45,6 +47,13 @@ ACCS = ["", "sharp", "flat", "koron", "sori"]
 FA_STEP = {"C": "دو", "D": "رِ", "E": "می", "F": "فا", "G": "سُل", "A": "لا", "B": "سی"}
 FA_ACC = {"sharp": "دیز", "flat": "بِمُل", "koron": "کُرُن", "sori": "سُری"}
 SOLFEGE = {"C": "Do", "D": "Re", "E": "Mi", "F": "Fa", "G": "Sol", "A": "La", "B": "Si"}
+# Note names are spoken in French, with a French voice (the operator's choice, 2026-09-19). French has no
+# words for koron and sori, so they are said as they are.
+# Spelled for the voice, not the eye: "Do" alone is taken for the English word (/duː/), "Dô" is read /do/;
+# "koron" would be read with a French nasal (/koʁɔ̃/), "koronne" keeps the final n (/koʁɔn/). Checked with
+# the phonemizer the voice uses (espeak-ng -v fr --ipa).
+FR_STEP = {"C": "Dô", "D": "Ré", "E": "Mi", "F": "Fa", "G": "Sol", "A": "La", "B": "Si"}
+FR_ACC = {"sharp": "dièse", "flat": "bémol", "koron": "koronne", "sori": "sori"}
 EN_ACC = {"sharp": "sharp", "flat": "flat", "koron": "koron", "sori": "sori"}
 LETTER = {"C": "C", "D": "D", "E": "E", "F": "F", "G": "G", "A": "A", "B": "B"}
 
@@ -78,9 +87,7 @@ def banks() -> dict[str, tuple[str, dict[str, str]]]:
         return out
 
     return {
-        "names-persian": ("fa-ganji", names(FA_STEP, FA_ACC, "fa")),
-        "names-solfege": ("en", names(SOLFEGE, EN_ACC, "en")),
-        "names-letters": ("en", names(LETTER, EN_ACC, "en")),
+        "names-french": ("fr", names(FR_STEP, FR_ACC, "fr")),
         "rhythm-words": ("fa-ganji", dict(WORDS)),
     }
 
