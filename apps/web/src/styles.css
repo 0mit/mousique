@@ -71,7 +71,7 @@ body { background: var(--bg); }
   width: 5.5em; font: inherit; color: var(--ink); background: var(--bg);
   border: 1px solid var(--line); border-radius: 6px; padding: 4px 6px;
 }
-.m-field input[type='range'] { width: 110px; accent-color: var(--accent); }
+.m-field input[type='range'] { width: 150px; accent-color: var(--accent); }
 .m-unit { color: var(--muted); font-size: 0.8rem; }
 .m-num { font-variant-numeric: tabular-nums; }
 .m-check { display: inline-flex; align-items: center; gap: 4px; font-size: 0.85rem; color: var(--muted); }
@@ -206,4 +206,4 @@ kbd { font: inherit; font-size: 0.75rem; padding: 1px 5px; border: 1px solid var
 .m-lab-cands .m-tool { min-width: 30px; height: 30px; padding: 0 4px; }
 .m-lab-name { font-size: 1.15rem; font-weight: 600; min-width: 4.5em; }
 .m-lab-cands { display: flex; gap: 3px; flex: 1; min-width: 0; }
-.m-lab-word input[type='range'] { width: 110px; accent-color: var(--accent); }
+.m-lab-word input[type='range'] { width: 150px; accent-color: var(--accent); }

@@ -154,14 +154,14 @@ export function VoiceLab({ bank: given, player, bpm, setting, onChange, onExport
               <label className="m-row">
                 Loudness
                 <span>
-                  <input type="range" min={-6} max={6} step={0.5} value={s.gainDb} onChange={(e) => onChange(w.word, { ...s, gainDb: +e.target.value })} />
+                  <input type="range" min={-6} max={6} step={0.25} value={s.gainDb} onChange={(e) => onChange(w.word, { ...s, gainDb: +e.target.value })} />
                   <span className="m-unit m-num">{s.gainDb > 0 ? '+' : ''}{s.gainDb} dB</span>
                 </span>
               </label>
               <label className="m-row">
                 Timing
                 <span>
-                  <input type="range" min={-80} max={80} step={2} value={s.nudgeMs} onChange={(e) => onChange(w.word, { ...s, nudgeMs: +e.target.value })} />
+                  <input type="range" min={-80} max={80} step={1} value={s.nudgeMs} onChange={(e) => onChange(w.word, { ...s, nudgeMs: +e.target.value })} />
                   <span className="m-unit m-num">{s.nudgeMs > 0 ? '+' : ''}{s.nudgeMs} ms</span>
                 </span>
               </label>

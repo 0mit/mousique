@@ -21,10 +21,11 @@ import {
   type VoiceKind,
   type Tuning,
 } from '@mousique/core';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { Player } from './audio/player.ts';
 import { exportSettings, loadWordSettings, saveLocalSettings, settingFor, type WordSetting, type WordSettings } from './audio/rhythmVoice.ts';
 import { VoiceBank } from './audio/voice.ts';
+import { NumberField } from './editor/NumberField.tsx';
 import { VoiceLab } from './editor/VoiceLab.tsx';
 import { Palette } from './editor/Palette.tsx';
 import { BarPanel, describeEvent, NotePanel, ScorePanel } from './editor/Panels.tsx';
@@ -60,6 +61,8 @@ export function App() {
 
   const [speed, setSpeed] = useState(1);
   const [zoom, setZoom] = useState(60);
+  // The score is laid out again at a new zoom when the browser has time; dragging the slider never waits for it.
+  const deferredZoom = useDeferredValue(zoom);
   const [metronome, setMetronome] = useState(false);
   const [countIn, setCountIn] = useState(false);
   const [playing, setPlaying] = useState(false);
@@ -354,12 +357,12 @@ export function App() {
         <Position getQ={getQ} timeline={timeline} bpm={bpm * speed} />
         <label className="m-field">
           Tempo
-          <input type="number" min={20} max={300} value={bpm} onChange={(e) => setBpm(clamp(+e.target.value, 20, 300))} />
+          <NumberField min={20} max={300} value={bpm} onChange={setBpm} />
           <span className="m-unit">♩/min</span>
         </label>
         <label className="m-field">
           Speed
-          <input type="range" min={0.25} max={1.25} step={0.05} value={speed} onChange={(e) => setSpeed(+e.target.value)} />
+          <input type="range" min={0.25} max={1.25} step={0.01} value={speed} onChange={(e) => setSpeed(+e.target.value)} />
           <span className="m-unit m-num">{speed.toFixed(2)}×</span>
         </label>
         <label className="m-check">
@@ -413,7 +416,8 @@ export function App() {
         </label>
         <label className="m-field">
           Zoom
-          <input type="range" min={30} max={90} step={5} value={zoom} onChange={(e) => setZoom(+e.target.value)} />
+          <input type="range" min={30} max={90} step={1} value={zoom} onChange={(e) => setZoom(+e.target.value)} />
+          <span className="m-unit m-num">{zoom}</span>
         </label>
       </section>
 
@@ -454,7 +458,7 @@ export function App() {
             score={score}
             timeline={timeline}
             getQ={getQ}
-            zoom={zoom}
+            zoom={deferredZoom}
             selection={state.selection}
             badMeasures={badMeasures}
             words={words}
@@ -506,25 +510,25 @@ export function App() {
             <label className="m-row">
               A4
               <span>
-                <input type="number" step={0.1} value={t.a4Hz} onChange={(e) => setTuning({ a4Hz: +e.target.value || 440 })} /> <span className="m-unit">Hz</span>
+                <NumberField step={0.1} min={200} max={600} value={t.a4Hz} onChange={(v) => setTuning({ a4Hz: v })} /> <span className="m-unit">Hz</span>
               </span>
             </label>
             <label className="m-row">
               Offset
               <span>
-                <input type="number" step={1} value={t.offsetCents} onChange={(e) => setTuning({ offsetCents: +e.target.value })} /> <span className="m-unit">cents</span>
+                <NumberField min={-1200} max={1200} value={t.offsetCents} onChange={(v) => setTuning({ offsetCents: v })} /> <span className="m-unit">cents</span>
               </span>
             </label>
             <label className="m-row">
               Koron
               <span>
-                <input type="number" step={1} max={0} value={t.koronCents} onChange={(e) => setTuning({ koronCents: +e.target.value })} /> <span className="m-unit">cents</span>
+                <NumberField min={-100} max={0} value={t.koronCents} onChange={(v) => setTuning({ koronCents: v })} /> <span className="m-unit">cents</span>
               </span>
             </label>
             <label className="m-row">
               Sori
               <span>
-                <input type="number" step={1} min={0} value={t.soriCents} onChange={(e) => setTuning({ soriCents: +e.target.value })} /> <span className="m-unit">cents</span>
+                <NumberField min={0} max={100} value={t.soriCents} onChange={(v) => setTuning({ soriCents: v })} /> <span className="m-unit">cents</span>
               </span>
             </label>
             <button className="m-button" onClick={tuningCheck}>
@@ -536,10 +540,6 @@ export function App() {
       </main>
     </div>
   );
-}
-
-function clamp(v: number, lo: number, hi: number): number {
-  return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : lo;
 }
 
 /** Bar, beat position and tempo, updated every frame without re-rendering React. */
