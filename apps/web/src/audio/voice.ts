@@ -13,9 +13,27 @@ interface Variant {
   lead: number;
 }
 
+interface Candidate {
+  params: { length: number; noise: number };
+  /** How far the take's natural syllable spacing is from the word's note pattern (lower = less warped). */
+  cost: number;
+  variants: Variant[];
+}
+
 interface Clip {
   text: string;
-  variants: Variant[];
+  /** Note names: one rendering at several lengths. */
+  variants?: Variant[];
+  /** Rhythm words: several candidate takes, each rendered at several beat lengths. */
+  units?: number[];
+  candidates?: Candidate[];
+}
+
+export interface CandidateInfo {
+  word: string;
+  text: string;
+  units: number[];
+  candidates: Array<{ params: Candidate['params']; cost: number }>;
 }
 
 interface VoiceIndex {
@@ -24,6 +42,10 @@ interface VoiceIndex {
 }
 
 const BASE = `${import.meta.env.BASE_URL}voice/`;
+
+function allVariants(c: Clip): Variant[] {
+  return [...(c.variants ?? []), ...(c.candidates ?? []).flatMap((k) => k.variants)];
+}
 
 /** How much the playback rate may move to close the gap between two stored lengths (it shifts pitch). */
 const RATE_MIN = 0.87;
@@ -55,7 +77,7 @@ export class VoiceBank {
    * where the index says it begins. Every clip in the bank moves by the same amount.
    */
   private static measureShift(buffer: AudioBuffer, clips: Record<string, Clip>, firstSound?: number): number {
-    const first = Math.min(...Object.values(clips).flatMap((c) => c.variants.map((v) => v.start)));
+    const first = Math.min(...Object.values(clips).flatMap((c) => allVariants(c).map((v) => v.start)));
     // Compare like with like: the generator recorded where the same crossing happens before encoding.
     const reference = firstSound ?? first;
     const data = buffer.getChannelData(0);
@@ -91,21 +113,29 @@ export class VoiceBank {
     return key in this.clips;
   }
 
+  /** The rhythm words this bank holds and their candidates, for the voice lab. */
+  words(): CandidateInfo[] {
+    return Object.entries(this.clips)
+      .filter(([, c]) => c.candidates)
+      .map(([word, c]) => ({ word, text: c.text, units: c.units ?? [], candidates: c.candidates!.map(({ params, cost }) => ({ params, cost })) }));
+  }
+
   /**
    * Speak a note name so that its vowel onset falls on `t0`, fitted to a note `seconds` long: the stored
    * length nearest the target is chosen, the rate nudged toward it, and any overrun faded at the note's end.
    */
   speak(ctx: BaseAudioContext, out: AudioNode, key: string, t0: number, seconds: number, gain = 1): AudioScheduledSourceNode | undefined {
     let clip = this.clips[key];
-    if (!clip || seconds <= 0.02) return undefined;
+    if (!clip?.variants || seconds <= 0.02) return undefined;
     const target = seconds * FILL;
     // A name with its accidental ("لا کرن") that cannot fit even at its shortest is said without it ("لا"),
     // rather than cut off mid-word.
     const shortest = Math.min(...clip.variants.map((v) => v.duration)) / RATE_MAX;
     const base = key.split('-')[0]!;
-    if (key.includes('-') && shortest > target * 1.25 && this.clips[base]) clip = this.clips[base]!;
-    let best = clip.variants[0]!;
-    for (const v of clip.variants) {
+    if (key.includes('-') && shortest > target * 1.25 && this.clips[base]?.variants) clip = this.clips[base]!;
+    const variants = clip.variants!;
+    let best = variants[0]!;
+    for (const v of variants) {
       if (Math.abs(Math.log(v.duration / target)) < Math.abs(Math.log(best.duration / target))) best = v;
     }
     const rate = Math.min(RATE_MAX, Math.max(RATE_MIN, best.duration / target));
@@ -117,11 +147,23 @@ export class VoiceBank {
    * its syllables' vowel onsets exactly on the sixteenths of several beat lengths; the nearest is chosen and
    * its rate adjusted so those onsets fall on this beat's grid, the first one on `t0` itself.
    */
-  speakBeat(ctx: BaseAudioContext, out: AudioNode, key: string, t0: number, beatSeconds: number, gain = 1): AudioScheduledSourceNode | undefined {
+  speakBeat(
+    ctx: BaseAudioContext,
+    out: AudioNode,
+    key: string,
+    t0: number,
+    beatSeconds: number,
+    gain = 1,
+    setting: { candidate: number; gainDb: number; nudgeMs: number } = { candidate: 0, gainDb: 0, nudgeMs: 0 },
+  ): AudioScheduledSourceNode | undefined {
     const clip = this.clips[key];
-    if (!clip || beatSeconds <= 0.05) return undefined;
-    let best = clip.variants[0]!;
-    for (const v of clip.variants) {
+    const candidates = clip?.candidates;
+    if (!candidates?.length || beatSeconds <= 0.05) return undefined;
+    const chosen = candidates[Math.min(Math.max(0, setting.candidate), candidates.length - 1)]!;
+    t0 += setting.nudgeMs / 1000;
+    gain *= 10 ** (setting.gainDb / 20);
+    let best = chosen.variants[0]!;
+    for (const v of chosen.variants) {
       if (Math.abs(Math.log(v.beat! / beatSeconds)) < Math.abs(Math.log(best.beat! / beatSeconds))) best = v;
     }
     // The rate that maps this rendering's beat onto the real one; beyond the nudge range, the grid wins.

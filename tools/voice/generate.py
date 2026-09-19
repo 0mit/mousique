@@ -78,11 +78,10 @@ def banks() -> dict[str, tuple[str, dict[str, str]]]:
         return out
 
     return {
-        "names-persian": ("fa", names(FA_STEP, FA_ACC, "fa")),
+        "names-persian": ("fa-ganji", names(FA_STEP, FA_ACC, "fa")),
         "names-solfege": ("en", names(SOLFEGE, EN_ACC, "en")),
         "names-letters": ("en", names(LETTER, EN_ACC, "en")),
-        "rhythm-words": ("fa", dict(WORDS)),
-        "rhythm-words-ganji": ("fa-ganji", dict(WORDS)),
+        "rhythm-words": ("fa-ganji", dict(WORDS)),
     }
 
 
@@ -138,6 +137,43 @@ def speak(model: Path, text: str, wav: Path, tmp: Path, expected: float | None =
     if best is None:
         raise RuntimeError(f"no usable take for {text!r}")
     shutil.copy(best[1], wav)
+
+
+# Takes tried for every rhythm word: speaking rate (length scale) × variation (noise scale). The best few,
+# by how close their natural syllable spacing is to the word's note pattern, are kept as candidates for the
+# operator to choose between by ear in the app's voice lab.
+WORD_TAKES = [(ls, ns) for ls in (0.9, 1.0, 1.12, 1.25) for ns in (0.33, 0.5, 0.667, 0.85)]
+CANDIDATES = 5
+
+
+def word_candidates(model: Path, text: str, units: list[int], tmp: Path) -> list[dict]:
+    from piper import PiperVoice, SynthesisConfig
+
+    voice = _loaded.get(model) or PiperVoice.load(str(model))
+    _loaded[model] = voice
+    found = []
+    for i, (length, noise) in enumerate(WORD_TAKES):
+        raw, norm = tmp / f"cand{i}.wav", tmp / f"cand{i}.norm.wav"
+        with wave.open(str(raw), "wb") as w:
+            voice.synthesize_wav(text + ".", w, syn_config=SynthesisConfig(length_scale=length, noise_scale=noise))
+        run("sox", str(raw), "-r", str(RATE), "-c", "1", str(norm), "norm", "-3")
+        a = analyse(norm, len(units))
+        if a:
+            found.append({"take": norm, "analysis": a, "params": {"length": length, "noise": noise},
+                          "cost": round(warp_cost(a["onsets"], units), 3)})
+    if not found:
+        raise RuntimeError(f"no take of {text!r} with {len(units)} clear syllables")
+    # Candidates are chosen to be worth comparing by ear: the best take at each speaking rate, then the best
+    # of the rest. Ties (every take of a one- or two-syllable word fits its pattern perfectly) go to middling
+    # variation, which sounds neither flat nor erratic.
+    rank = lambda c: (c["cost"], abs(c["params"]["noise"] - 0.6))
+    chosen = []
+    for length in sorted({c["params"]["length"] for c in found}):
+        group = [c for c in found if c["params"]["length"] == length]
+        chosen.append(min(group, key=rank))
+    rest = sorted((c for c in found if c not in chosen), key=rank)
+    chosen = sorted(chosen, key=rank) + rest
+    return chosen[:CANDIDATES]
 
 
 def best_word_take(model: Path, text: str, units: list[int], tmp: Path) -> tuple[Path, dict]:
@@ -413,21 +449,8 @@ def stretch(src: Path, dst: Path, factor: float) -> None:
         run("rubberband", "-3", "-t", str(factor), str(src), str(dst))
 
 
-# ---- voice colours --------------------------------------------------------------------------------
-#
-# Derived banks: the same clips with the pitch raised (formants kept, so it is the same voice speaking higher,
-# not sped up) and a softer colour — the harsh 3–5 kHz presence dipped, the top rolled off, gentle compression,
-# a little quieter. Pitch shifting keeps every clip's timing (measured: 0–1 ms), so a derived bank shares its
-# source's index and its grid positions.
-
-# Tried and rejected by the operator (2026-09-19): +3 and +5 semitones — "higher pitches are not good".
-STYLES = {
-    "soft": {"semitones": 0, "warmth": 0},
-    "warm": {"semitones": -2, "warmth": 2},
-}
-STYLED_BANKS = ["rhythm-words"]
-SOFTEN = ["highpass", "110", "equalizer", "3500", "1.2q", "-4", "lowpass", "7000",
-          "compand", "0.01,0.15", "-40,-40,-20,-16,0,-10", "-3", "-12", "0.02", "gain", "-n", "-4"]
+# Voice colours (softened, pitched up, pitched down) and the amir voice were tried for the rhythm words on
+# 2026-09-19; the operator chose the ganji voice as it is ("second voice is way better, remove others").
 
 
 def first_sound(wav: Path, first_clip: float) -> float:
@@ -441,39 +464,16 @@ def first_sound(wav: Path, first_clip: float) -> float:
     return round((i0 + hits[0]) / sr, 5) if hits.size else first_clip
 
 
+def all_variants(bank: dict):
+    for c in bank["clips"].values():
+        for v in c.get("variants", []):
+            yield v
+        for cand in c.get("candidates", []):
+            yield from cand["variants"]
+
+
 def first_clip_start(bank: dict) -> float:
-    return min(v["start"] for c in bank["clips"].values() for v in c["variants"])
-
-
-def derive_styles(bank: str, packed_wav: Path, index: dict, tmp: Path) -> None:
-    for style, spec in STYLES.items():
-        shifted, soft = tmp / f"{bank}-{style}-p.wav", tmp / f"{bank}-{style}.wav"
-        if spec["semitones"]:
-            run("rubberband", "-3", "-p", str(spec["semitones"]), "--formant", str(packed_wav), str(shifted))
-        else:
-            shutil.copy(packed_wav, shifted)
-        warmth = ["bass", str(spec["warmth"]), "250"] if spec["warmth"] else []
-        run("sox", str(shifted), str(soft), *warmth, *SOFTEN)
-        name = f"{bank}-{style}"
-        run("ffmpeg", "-y", "-i", str(soft), "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1", str(OUT / f"{name}.mp3"))
-        index["banks"][name] = {**index["banks"][bank], "file": f"{name}.mp3", "style": style,
-                                "derived_from": bank, **spec,
-                                "firstSound": first_sound(soft, first_clip_start(index["banks"][bank]))}
-        print(f"{name}: derived ({spec['semitones']:+d} semitones, warmth {spec['warmth']} dB, softened)")
-
-
-def styles_only() -> None:
-    """Derive the colours again from the existing banks, without re-synthesizing any speech."""
-    index = json.loads((OUT / "index.json").read_text())
-    with tempfile.TemporaryDirectory() as tmp_s:
-        tmp = Path(tmp_s)
-        for bank in STYLED_BANKS:
-            packed = HERE / "out" / f"{bank}.wav"
-            if not packed.exists():
-                packed = tmp / f"{bank}.wav"
-                run("ffmpeg", "-y", "-i", str(OUT / index["banks"][bank]["file"]), "-ar", str(RATE), "-ac", "1", str(packed))
-            derive_styles(bank, packed, index, tmp)
-    (OUT / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
+    return min(v["start"] for v in all_variants(bank))
 
 
 def main(only: str | None = None) -> None:
@@ -502,18 +502,21 @@ def main(only: str | None = None) -> None:
             for key, text in clips.items():
                 if bank.startswith("rhythm-words"):
                     units = PATTERN[key]
-                    take, a = best_word_take(model, text, units, tmp)
-                    variants, report = [], []
-                    for b in BEATS:
-                        v = tmp / f"{bank}-{len(entries)}-{b}.wav"
-                        info = render_word(take, a, units, b, v, tmp)
-                        d = seconds(v)
-                        report.append(probe_error_ms(take, a, units, b, tmp))
-                        variants.append({"beat": b, "start": round(cursor, 4), "duration": round(d, 4), "lead": info["lead"]})
-                        parts += [v, silence]
-                        cursor += d + GAP_S
-                    entries[key] = {"text": text, "units": units, "variants": variants}
-                    print(f"  {key}: onset error ms per beat length {report}")
+                    candidates = []
+                    for ci, cand in enumerate(word_candidates(model, text, units, tmp)):
+                        take, a = cand["take"], cand["analysis"]
+                        variants, worst = [], 0
+                        for b in BEATS:
+                            v = tmp / f"{bank}-{len(entries)}-{ci}-{b}.wav"
+                            info = render_word(take, a, units, b, v, tmp)
+                            d = seconds(v)
+                            worst = max(worst, max(abs(e) for e in probe_error_ms(take, a, units, b, tmp)))
+                            variants.append({"beat": b, "start": round(cursor, 4), "duration": round(d, 4), "lead": info["lead"]})
+                            parts += [v, silence]
+                            cursor += d + GAP_S
+                        candidates.append({"params": cand["params"], "cost": cand["cost"], "variants": variants})
+                        print(f"  {key} candidate {ci + 1}: {cand['params']}, pattern distance {cand['cost']}, worst grid error {worst} ms")
+                    entries[key] = {"text": text, "units": units, "candidates": candidates}
                     continue
                 raw, base = tmp / "raw.wav", tmp / f"{bank}-{len(entries)}.wav"
                 speak(model, text, raw, tmp)
@@ -534,20 +537,17 @@ def main(only: str | None = None) -> None:
             packed = tmp / f"{bank}.wav"
             run("sox", *map(str, parts), str(packed))
             (HERE / "out").mkdir(exist_ok=True)
-            shutil.copy(packed, HERE / "out" / f"{bank}.wav")   # kept (git-ignored) so colours can be re-derived
+            shutil.copy(packed, HERE / "out" / f"{bank}.wav")   # kept (git-ignored) for inspection
             run("ffmpeg", "-y", "-i", str(packed), "-codec:a", "libmp3lame", "-b:a", "64k", "-ac", "1",
                 str(OUT / f"{bank}.mp3"))
             index["banks"][bank] = {"file": f"{bank}.mp3", "voice": voice, "clips": entries}
             index["banks"][bank]["firstSound"] = first_sound(packed, first_clip_start(index["banks"][bank]))
             print(f"{bank}: {len(entries)} clips, {cursor:.1f}s packed")
-            if bank in STYLED_BANKS:
-                derive_styles(bank, packed, index, tmp)
     (OUT / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1) + "\n")
 
 
 if __name__ == "__main__":
     import sys
-    if "--styles-only" in sys.argv:
-        styles_only()
-    else:
-        main("rhythm" if "--rhythm-only" in sys.argv else None)
+    # --only <prefix>: rebuild just the banks whose names start with it, keeping the others as they are.
+    only = sys.argv[sys.argv.index("--only") + 1] if "--only" in sys.argv else None
+    main(only)

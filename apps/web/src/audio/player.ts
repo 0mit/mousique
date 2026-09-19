@@ -1,5 +1,6 @@
 import type { Beat, PlayNote, VoiceCue } from '@mousique/core';
 import { Synth } from './synth.ts';
+import type { WordSetting } from './rhythmVoice.ts';
 import type { VoiceBank } from './voice.ts';
 
 const LOOKAHEAD_S = 0.12;
@@ -38,12 +39,12 @@ export class Player {
   private graceScheduledQ = 0;
   private timer: number | undefined;
   private onEnd: (() => void) | undefined;
-  private voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean } | undefined;
+  private voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean; setting?: (word: string) => WordSetting } | undefined;
   /** Speech starts before its note (the consonants before the vowel), so it is scheduled further ahead. */
   private voiceScheduledQ = 0;
 
   /** Speak these cues from this bank while playing (note names or rhythm words); undefined for silence. */
-  setVoice(voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean } | undefined): void {
+  setVoice(voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean; setting?: (word: string) => WordSetting } | undefined): void {
     this.voice = voice;
   }
 
@@ -203,13 +204,13 @@ export class Player {
 
   private scheduleVoice(fromQ: number, toQ: number): void {
     if (!this.voice) return;
-    const { bank, cues, perBeat } = this.voice;
+    const { bank, cues, perBeat, setting } = this.voice;
     const ctx = this.synth.ctx;
     const spq = 1 / this.qps();
     for (const c of cues) {
       if (c.q < fromQ - 1e-9 || c.q >= toQ - 1e-9 || c.q < this.anchorQ - 1e-9) continue;
       const node = perBeat
-        ? bank.speakBeat(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1)
+        ? bank.speakBeat(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1, setting?.(c.key))
         : bank.speak(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1);
       if (node) this.synth.adopt(node);
     }

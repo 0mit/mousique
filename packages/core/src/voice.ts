@@ -19,16 +19,9 @@ export interface VoiceCue {
   eventId: string;
 }
 
-/**
- * A colour of the rhythm-word voice: as synthesized (amir); softened at its own pitch; warmer (2 semitones
- * lower, formants kept, more low-mid body) and softened; or the other free Persian voice (ganji).
- */
-export type VoiceColour = 'natural' | 'soft' | 'warm' | 'ganji';
-
-/** The voice bank that holds the clips for a kind of cue. Colours exist for the rhythm words. */
-export function voiceBank(kind: VoiceKind, system: NameSystem, colour: VoiceColour = 'natural'): string {
-  if (kind === 'words') return colour === 'natural' ? 'rhythm-words' : `rhythm-words-${colour}`;
-  return `names-${system}`;
+/** The voice bank that holds the clips for a kind of cue. */
+export function voiceBank(kind: VoiceKind, system: NameSystem): string {
+  return kind === 'words' ? 'rhythm-words' : `names-${system}`;
 }
 
 const SPOKEN_ACC: Partial<Record<Accidental, string>> = { sharp: 'sharp', flat: 'flat', koron: 'koron', sori: 'sori' };

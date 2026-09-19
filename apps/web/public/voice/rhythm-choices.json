@@ -1,0 +1,46 @@
+{
+ "chosen": null,
+ "note": "Defaults for the voice lab. Replace with the file the lab exports once the words are chosen by ear.",
+ "words": {
+  "راست": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "راستُ": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "رُباب": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "میزد": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "میزَدُ": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "بِزَدَم": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "بِزَدَمُ": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  },
+  "رُبابُ": {
+   "candidate": 0,
+   "gainDb": 0,
+   "nudgeMs": 0
+  }
+ }
+}

@@ -18,13 +18,14 @@ import {
   type Score,
   type Selection,
   type NameSystem,
-  type VoiceColour,
   type VoiceKind,
   type Tuning,
 } from '@mousique/core';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Player } from './audio/player.ts';
+import { exportSettings, loadWordSettings, saveLocalSettings, settingFor, type WordSetting, type WordSettings } from './audio/rhythmVoice.ts';
 import { VoiceBank } from './audio/voice.ts';
+import { VoiceLab } from './editor/VoiceLab.tsx';
 import { Palette } from './editor/Palette.tsx';
 import { BarPanel, describeEvent, NotePanel, ScorePanel } from './editor/Panels.tsx';
 import { Shortcuts } from './editor/Shortcuts.tsx';
@@ -119,21 +120,23 @@ export function App() {
     }
   });
   const [instrument, setInstrument] = useState(true);
-  const [voiceColour, setVoiceColour] = useState<VoiceColour>(() => {
-    try {
-      const saved = localStorage.getItem('mousique.voiceColour') as VoiceColour | null;
-      return saved && ['natural', 'soft', 'warm', 'ganji'].includes(saved) ? saved : 'natural';
-    } catch {
-      return 'natural';
-    }
-  });
+  const [labOpen, setLabOpen] = useState(false);
+  const [wordDefaults, setWordDefaults] = useState<WordSettings>({});
+  const [wordLocal, setWordLocal] = useState<WordSettings>({});
+  const [rhythmBank, setRhythmBank] = useState<VoiceBank>();
   useEffect(() => {
-    try {
-      localStorage.setItem('mousique.voiceColour', voiceColour);
-    } catch {
-      // A per-viewer preference only.
-    }
-  }, [voiceColour]);
+    void loadWordSettings().then(({ defaults, local }) => {
+      setWordDefaults(defaults);
+      setWordLocal(local);
+    });
+  }, []);
+  const wordSetting = useCallback((w: string) => settingFor(w, wordDefaults, wordLocal), [wordDefaults, wordLocal]);
+  const changeWord = (w: string, st: WordSetting) =>
+    setWordLocal((cur) => {
+      const next = { ...cur, [w]: st };
+      saveLocalSettings(next);
+      return next;
+    });
   const [voiceState, setVoiceState] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle');
   useEffect(() => {
     try {
@@ -185,12 +188,13 @@ export function App() {
       return;
     }
     let cancelled = false;
-    const bankName = voiceBank(voiceKind, nameSystem === 'off' ? 'persian' : nameSystem, voiceColour);
+    const bankName = voiceBank(voiceKind, nameSystem === 'off' ? 'persian' : nameSystem);
     setVoiceState('loading');
     VoiceBank.load(player.synth.ctx, bankName).then(
       (bank) => {
         if (cancelled) return;
-        player.setVoice({ bank, cues: voiceCues(score, voiceKind, timeline), perBeat: voiceKind === 'words' });
+        player.setVoice({ bank, cues: voiceCues(score, voiceKind, timeline), perBeat: voiceKind === 'words', setting: wordSetting });
+        if (voiceKind === 'words') setRhythmBank(bank);
         setVoiceState('ready');
       },
       () => !cancelled && setVoiceState('failed'),
@@ -198,7 +202,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [player, voiceKind, nameSystem, voiceColour, score, timeline]);
+  }, [player, voiceKind, nameSystem, score, timeline, wordSetting]);
 
   const getQ = useCallback(() => player.q(), [player]);
 
@@ -348,12 +352,9 @@ export function App() {
             <option value="words">rhythm words (وزن‌خوانی)</option>
           </select>
           {voiceKind === 'words' && (
-            <select value={voiceColour} onChange={(e) => setVoiceColour(e.target.value as VoiceColour)} title="Voice colour: as synthesized; softer; warmer and a little lower; or a second voice">
-              <option value="natural">natural</option>
-              <option value="soft">soft</option>
-              <option value="warm">warm</option>
-              <option value="ganji">second voice</option>
-            </select>
+            <button className="m-button" onClick={() => setLabOpen(true)} title="Choose how each rhythm word is spoken">
+              Voice lab
+            </button>
           )}
           {voiceState === 'loading' && <span className="m-unit">loading…</span>}
           {voiceState === 'failed' && <span className="m-unit">not available</span>}
@@ -376,6 +377,29 @@ export function App() {
         </label>
       </section>
 
+      {labOpen && (
+        <VoiceLab
+          bank={rhythmBank}
+          player={player}
+          bpm={bpm * speed}
+          setting={wordSetting}
+          onChange={changeWord}
+          onClose={() => setLabOpen(false)}
+          onReset={() => {
+            setWordLocal({});
+            saveLocalSettings({});
+          }}
+          onExport={() => {
+            const words = rhythmBank?.words().map((w) => w.word) ?? [];
+            const blob = new Blob([exportSettings(words, wordDefaults, wordLocal)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'rhythm-choices.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+          }}
+        />
+      )}
       <Palette api={api} event={event} />
 
       <main className="m-main">
