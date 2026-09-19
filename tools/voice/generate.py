@@ -37,7 +37,9 @@ VOICES = {
 }
 
 # Time-stretch factors (pitch preserved). Between two of them the app nudges the playback rate by a few percent.
-FACTORS = [0.5, 0.7, 1.0, 1.4, 2.0]
+# Note names are never stretched longer than they are spoken (the operator: "keep them as short as
+# possible"); these shorter renderings are used only when a note is too short for the natural one.
+FACTORS = [0.5, 0.6, 0.7, 0.85, 1.0]
 GAP_S = 0.15  # silence between clips in a packed file, larger than any MP3 encoder offset
 RATE = 22050
 
@@ -54,6 +56,10 @@ SOLFEGE = {"C": "Do", "D": "Re", "E": "Mi", "F": "Fa", "G": "Sol", "A": "La", "B
 # the phonemizer the voice uses (espeak-ng -v fr --ipa).
 FR_STEP = {"C": "Dô", "D": "Ré", "E": "Mi", "F": "Fa", "G": "Sol", "A": "La", "B": "Si"}
 FR_ACC = {"sharp": "dièse", "flat": "bémol", "koron": "koronne", "sori": "sori"}
+# Syllables in each spoken name: the step (one) plus its accidental. Used to find the FIRST syllable's vowel
+# onset, which is the moment that goes on the grid — not the strongest vowel, which in "Ré dièse" or
+# "La koronne" can be the second.
+FR_ACC_SYLLABLES = {"": 0, "sharp": 1, "flat": 2, "koron": 2, "sori": 2}
 EN_ACC = {"sharp": "sharp", "flat": "flat", "koron": "koron", "sori": "sori"}
 LETTER = {"C": "C", "D": "D", "E": "E", "F": "F", "G": "G", "A": "A", "B": "B"}
 
@@ -529,11 +535,13 @@ def main(only: str | None = None) -> None:
                 speak(model, text, raw, tmp)
                 clean(raw, base)
                 variants = []
+                acc = key.split("-")[1] if "-" in key else ""
+                syllables = 1 + FR_ACC_SYLLABLES.get(acc, 0)
                 for f in FACTORS:
                     v = tmp / f"{bank}-{len(entries)}-{f}.wav"
                     stretch(base, v, f)
                     d = seconds(v)
-                    a = analyse(v, 1)
+                    a = analyse(v, syllables) or analyse(v, 1)
                     lead = round(a["onsets"][0], 4) if a else 0.0
                     variants.append({"factor": f, "start": round(cursor, 4), "duration": round(d, 4), "lead": lead})
                     parts += [v, silence]

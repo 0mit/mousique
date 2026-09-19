@@ -121,24 +121,23 @@ export class VoiceBank {
   }
 
   /**
-   * Speak a note name so that its vowel onset falls on `t0`, fitted to a note `seconds` long: the stored
-   * length nearest the target is chosen, the rate nudged toward it, and any overrun faded at the note's end.
+   * Speak a note name so that its first syllable's vowel onset falls on `t0`. A name is never drawn out to
+   * fill its note (the operator: "keep them as short as possible"): it is said at its natural length, and
+   * compressed — to one of the stored shorter renderings, then by the rate — only when the note is too short.
+   * A name with an accidental that cannot fit even then is said without it ("Ré" for "Ré dièse").
    */
   speak(ctx: BaseAudioContext, out: AudioNode, key: string, t0: number, seconds: number, gain = 1): AudioScheduledSourceNode | undefined {
     let clip = this.clips[key];
     if (!clip?.variants || seconds <= 0.02) return undefined;
-    const target = seconds * FILL;
-    // A name with its accidental ("لا کرن") that cannot fit even at its shortest is said without it ("لا"),
-    // rather than cut off mid-word.
-    const shortest = Math.min(...clip.variants.map((v) => v.duration)) / RATE_MAX;
+    const room = seconds * FILL;
+    const fits = (v: Variant) => v.duration / RATE_MAX <= room;
+    const longestFirst = (c: Clip) => [...c.variants!].sort((a, b) => b.duration - a.duration);
     const base = key.split('-')[0]!;
-    if (key.includes('-') && shortest > target * 1.25 && this.clips[base]?.variants) clip = this.clips[base]!;
-    const variants = clip.variants!;
-    let best = variants[0]!;
-    for (const v of variants) {
-      if (Math.abs(Math.log(v.duration / target)) < Math.abs(Math.log(best.duration / target))) best = v;
-    }
-    const rate = Math.min(RATE_MAX, Math.max(RATE_MIN, best.duration / target));
+    if (key.includes('-') && !clip.variants.some(fits) && this.clips[base]?.variants) clip = this.clips[base]!;
+    const ordered = longestFirst(clip);
+    const best = ordered.find(fits) ?? ordered[ordered.length - 1]!;
+    // Natural speed when it fits; otherwise just fast enough to finish within the note.
+    const rate = Math.min(RATE_MAX, Math.max(1, best.duration / room));
     return this.play(ctx, out, best, rate, t0, seconds, gain);
   }
 
