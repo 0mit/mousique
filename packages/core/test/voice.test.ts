@@ -26,3 +26,30 @@ describe('voice cues', () => {
     expect(voiceBank('names', 'letters')).toBe('names-french'); // spoken names are French whatever is shown
   });
 });
+
+describe('metric accent', () => {
+  it('ranks positions in the bar: downbeat, beat, half beat, finer', async () => {
+    const { metricStrength } = await import('../src/index.ts');
+    expect([0, 1, 0.5, 0.25, 1.75].map((p) => metricStrength(p, 1))).toEqual(['downbeat', 'beat', 'half', 'weak', 'weak']);
+    expect(metricStrength(1.5, 1.5)).toBe('beat'); // compound meter: the beat is a dotted quarter
+  });
+
+  it('gives each spoken name the strength of its place in the bar', () => {
+    const cues = voiceCues(demoScore, 'names');
+    const at = (id: string) => cues.find((c) => c.eventId === id)!.strength;
+    expect([at('e1'), at('e2'), at('e3'), at('e4')]).toEqual(['downbeat', 'half', 'beat', 'half']);
+    expect(at('e9')).toBe('weak'); // the second note of a triplet
+  });
+
+  it('feels a dotted-quarter beat in 6/8 and counts a pickup from the end of its bar', async () => {
+    const { newScore } = await import('../src/index.ts');
+    const s = newScore();
+    s.measures[0]!.time = { beats: 6, beatType: 8 };
+    s.measures[0]!.events = ['C', 'D', 'E', 'F', 'G', 'A'].map((step, i) => ({ id: `n${i}`, duration: { base: 'eighth' as const }, pitches: [{ step: step as 'C', octave: 5 }] }));
+    expect(voiceCues(s, 'names').map((c) => c.strength)).toEqual(['downbeat', 'weak', 'weak', 'beat', 'weak', 'weak']);
+    const p = newScore();
+    p.measures[0]!.time = { beats: 2, beatType: 4 };
+    p.measures[0]!.events = [{ id: 'up', duration: { base: 'quarter' }, pitches: [{ step: 'G', octave: 4 }] }];
+    expect(voiceCues(p, 'names')[0]!.strength).toBe('beat'); // the second beat of an incomplete 2/4 bar
+  });
+});

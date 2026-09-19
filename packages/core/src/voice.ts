@@ -5,7 +5,7 @@ import type { Accidental, Score } from './model.ts';
 import type { NameSystem } from './names.ts';
 import { playbackNotes } from './playback.ts';
 import { rhythmWords, type RhythmDictionary, TAHMASBI_WORDS } from './rhythm.ts';
-import { buildTimeline, type Timeline } from './timeline.ts';
+import { buildTimeline, type Timeline, type TimelineEvent } from './timeline.ts';
 
 export type VoiceKind = 'names' | 'words';
 
@@ -17,6 +17,25 @@ export interface VoiceCue {
   /** Clip key in the voice bank: "A-koron", "F-sharp", "C" for names; the whole word for rhythm words. */
   key: string;
   eventId: string;
+  /** Where the note falls in the bar, which decides how strongly it is said. */
+  strength: MetricStrength;
+}
+
+/**
+ * Metric position of an onset: the bar's first beat, another beat, the half of a beat, or anything finer.
+ * A voice says a word more strongly the stronger its position — the accent follows the meter.
+ */
+export type MetricStrength = 'downbeat' | 'beat' | 'half' | 'weak';
+
+/** Loudness in dB for each metric position. */
+export const METRIC_ACCENT_DB: Record<MetricStrength, number> = { downbeat: 3, beat: 1.5, half: 0, weak: -2.5 };
+
+export function metricStrength(posInBar: number, beatQ: number): MetricStrength {
+  const on = (unit: number) => Math.abs(posInBar / unit - Math.round(posInBar / unit)) < 1e-6;
+  if (Math.abs(posInBar) < 1e-6) return 'downbeat';
+  if (on(beatQ)) return 'beat';
+  if (on(beatQ / 2)) return 'half';
+  return 'weak';
 }
 
 /**
@@ -49,6 +68,26 @@ export function voiceCues(score: Score, kind: VoiceKind, timeline: Timeline = bu
     held.set(k, Math.max(held.get(k) ?? 0, n.dq));
   }
   const words = kind === 'words' ? rhythmWords(score, dictionary) : undefined;
+  // The bar each event sounds in (in play order), for its metric position.
+  const barOf = new Map<TimelineEvent, { q: number; beatQ: number }>();
+  {
+    let mi = 0;
+    for (const e of timeline.events) {
+      while (mi + 1 < timeline.measures.length && timeline.measures[mi + 1]!.q <= e.q + 1e-9) mi++;
+      const m = timeline.measures[mi]!;
+      const t = m.time;
+      // The felt beat: a dotted quarter in compound meters (6/8, 9/8, 12/8), otherwise the beat unit.
+      const beatQ = !t ? 1 : t.beatType === 8 && t.beats % 3 === 0 && t.beats > 3 ? 1.5 : 4 / t.beatType;
+      // A short first bar is a pickup: its positions count back from the bar's end.
+      const capacity = t ? (t.beats * 4) / t.beatType : m.dq;
+      const start = m.index === 0 && m.dq < capacity - 1e-9 ? m.q - (capacity - m.dq) : m.q;
+      barOf.set(e, { q: start, beatQ });
+    }
+  }
+  const strengthOf = (e: TimelineEvent): MetricStrength => {
+    const b = barOf.get(e)!;
+    return metricStrength(e.q - b.q, b.beatQ);
+  };
   const cues: VoiceCue[] = [];
   let beat: VoiceCue | undefined;
   let beatKey = '';
@@ -65,7 +104,7 @@ export function voiceCues(score: Score, kind: VoiceKind, timeline: Timeline = bu
       if (beat && k === beatKey && Math.abs(beat.q + beat.dq - e.q) < 1e-9) {
         beat.dq += e.dq;
       } else {
-        beat = { q: e.q, dq: e.dq, key: w.word, eventId: e.id };
+        beat = { q: e.q, dq: e.dq, key: w.word, eventId: e.id, strength: strengthOf(e) };
         beatKey = k;
         cues.push(beat);
       }
@@ -75,7 +114,7 @@ export function voiceCues(score: Score, kind: VoiceKind, timeline: Timeline = bu
     if (e.rest || fresh.length === 0) continue;
     // In a chord, the top note is named.
     const top = fresh.reduce((a, b) => (b.midi > a.midi ? b : a));
-    cues.push({ q: e.q, dq: held.get(`${e.id}@${e.q}`) ?? e.dq, key: nameKey(top.step, top.sounding), eventId: e.id });
+    cues.push({ q: e.q, dq: held.get(`${e.id}@${e.q}`) ?? e.dq, key: nameKey(top.step, top.sounding), eventId: e.id, strength: strengthOf(e) });
   }
   return cues;
 }

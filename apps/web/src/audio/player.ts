@@ -1,4 +1,4 @@
-import type { Beat, PlayNote, VoiceCue } from '@mousique/core';
+import { METRIC_ACCENT_DB, type Beat, type PlayNote, type VoiceCue } from '@mousique/core';
 import { Synth } from './synth.ts';
 import type { WordSetting } from './rhythmVoice.ts';
 import type { VoiceBank } from './voice.ts';
@@ -22,6 +22,16 @@ export interface PlayerOptions {
  * Plays the score from the AudioContext clock with a lookahead scheduler. With no recording attached
  * this clock is the master: the cursor reads `q()`.
  */
+export interface VoiceTrack {
+  bank: VoiceBank;
+  cues: VoiceCue[];
+  /** Rhythm words: one clip per beat, syllables on the grid. Note names: one clip per note. */
+  perBeat: boolean;
+  setting?: (word: string) => WordSetting;
+  /** Stereo position, −1 (left) to +1 (right). */
+  pan: number;
+}
+
 export class Player {
   readonly synth = new Synth();
   private notes: PlayNote[] = [];
@@ -39,13 +49,22 @@ export class Player {
   private graceScheduledQ = 0;
   private timer: number | undefined;
   private onEnd: (() => void) | undefined;
-  private voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean; setting?: (word: string) => WordSetting } | undefined;
+  private voices: Array<VoiceTrack & { out: AudioNode }> = [];
   /** Speech starts before its note (the consonants before the vowel), so it is scheduled further ahead. */
   private voiceScheduledQ = 0;
 
-  /** Speak these cues from this bank while playing (note names or rhythm words); undefined for silence. */
-  setVoice(voice: { bank: VoiceBank; cues: VoiceCue[]; perBeat: boolean; setting?: (word: string) => WordSetting } | undefined): void {
-    this.voice = voice;
+  /**
+   * Speak these tracks while playing — note names, rhythm words, or both — each placed in the stereo field
+   * (−1 left … +1 right). An empty list is silence.
+   */
+  setVoices(tracks: VoiceTrack[]): void {
+    const ctx = this.synth.ctx;
+    this.voices = tracks.map((t) => {
+      const panner = ctx.createStereoPanner();
+      panner.pan.value = t.pan;
+      panner.connect(this.synth.output);
+      return { ...t, out: panner };
+    });
   }
 
   setMaterial(
@@ -94,7 +113,7 @@ export class Player {
     this.onEnd = onEnd;
     if (fromQ >= this.totalQ - 1e-9) fromQ = 0;
     // With a voice on, a short pre-roll lets the first word's consonants start before its grid point.
-    const now = this.synth.ctx.currentTime + (this.voice ? 0.2 : 0.05);
+    const now = this.synth.ctx.currentTime + (this.voices.length ? 0.2 : 0.05);
     let lead = 0;
     if (this.opts.countIn) {
       // One bar of the meter in force where playback starts.
@@ -141,7 +160,7 @@ export class Player {
   private restartAt(q: number): void {
     this.synth.stopAll();
     this.anchorQ = q;
-    this.anchorT = this.synth.ctx.currentTime + (this.voice ? 0.2 : 0.03);
+    this.anchorT = this.synth.ctx.currentTime + (this.voices.length ? 0.2 : 0.03);
     this.scheduledQ = q;
     this.graceScheduledQ = q;
     this.voiceScheduledQ = q;
@@ -203,16 +222,18 @@ export class Player {
   }
 
   private scheduleVoice(fromQ: number, toQ: number): void {
-    if (!this.voice) return;
-    const { bank, cues, perBeat, setting } = this.voice;
     const ctx = this.synth.ctx;
     const spq = 1 / this.qps();
-    for (const c of cues) {
-      if (c.q < fromQ - 1e-9 || c.q >= toQ - 1e-9 || c.q < this.anchorQ - 1e-9) continue;
-      const node = perBeat
-        ? bank.speakBeat(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1, setting?.(c.key))
-        : bank.speak(ctx, this.synth.output, c.key, this.timeOf(c.q), c.dq * spq, 1.1);
-      if (node) this.synth.adopt(node);
+    for (const { bank, cues, perBeat, setting, out } of this.voices) {
+      for (const c of cues) {
+        if (c.q < fromQ - 1e-9 || c.q >= toQ - 1e-9 || c.q < this.anchorQ - 1e-9) continue;
+        // The accent follows the meter: a downbeat is said most strongly, an off-beat sixteenth most lightly.
+        const gain = 1.1 * 10 ** (METRIC_ACCENT_DB[c.strength] / 20);
+        const node = perBeat
+          ? bank.speakBeat(ctx, out, c.key, this.timeOf(c.q), c.dq * spq, gain, setting?.(c.key))
+          : bank.speak(ctx, out, c.key, this.timeOf(c.q), c.dq * spq, gain);
+        if (node) this.synth.adopt(node);
+      }
     }
   }
 

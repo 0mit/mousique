@@ -33,6 +33,9 @@ import { handleEditorKey, useEditor } from './editor/useEditor.ts';
 import { ScoreView } from './score/ScoreView.tsx';
 import { loadAutosave, saveAutosave } from './storage.ts';
 
+/** Which voices speak: none, one of them, or both (one each side of the stereo field). */
+type VoiceChoice = VoiceKind | 'off' | 'both';
+
 export function App() {
   const playerRef = useRef<Player>(undefined);
   const player = (playerRef.current ??= new Player());
@@ -112,14 +115,30 @@ export function App() {
   const strokes = useMemo(() => mezrabs(score, suggestMezrab), [score, suggestMezrab]);
 
   // A voice that speaks each note's name or each beat's rhythm word while the score plays.
-  const [voiceKind, setVoiceKind] = useState<VoiceKind | 'off'>(() => {
+  const [voiceKind, setVoiceKind] = useState<VoiceChoice>(() => {
     try {
-      return (localStorage.getItem('mousique.voice') as VoiceKind | 'off' | null) ?? 'off';
+      const saved = localStorage.getItem('mousique.voice') as VoiceChoice | null;
+      return saved && ['off', 'names', 'words', 'both'].includes(saved) ? saved : 'off';
     } catch {
       return 'off';
     }
   });
   const [instrument, setInstrument] = useState(true);
+  // With both voices on: names on the left and rhythm words on the right, unless swapped.
+  const [swapSides, setSwapSides] = useState(() => {
+    try {
+      return localStorage.getItem('mousique.voiceSwap') === '1';
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('mousique.voiceSwap', swapSides ? '1' : '0');
+    } catch {
+      // A per-viewer preference only.
+    }
+  }, [swapSides]);
   const [labOpen, setLabOpen] = useState(false);
   const [wordDefaults, setWordDefaults] = useState<WordSettings>({});
   const [wordLocal, setWordLocal] = useState<WordSettings>({});
@@ -180,21 +199,32 @@ export function App() {
   const bpm = score.tempo.bpm;
   useEffect(() => player.setOptions({ bpm, speed, metronome, countIn, synth: instrument }), [player, bpm, speed, metronome, countIn, instrument]);
 
-  // Load the voice bank once (it is cached for the page) and give the player its cues.
+  // Load the voice banks once (each is cached for the page) and give the player its tracks. With both
+  // voices on, the note names and the rhythm words sit on opposite sides of the stereo field.
   useEffect(() => {
-    if (voiceKind === 'off') {
-      player.setVoice(undefined);
+    const kinds: VoiceKind[] = voiceKind === 'off' ? [] : voiceKind === 'both' ? ['names', 'words'] : [voiceKind];
+    if (kinds.length === 0) {
+      player.setVoices([]);
       setVoiceState('idle');
       return;
     }
     let cancelled = false;
-    const bankName = voiceBank(voiceKind, nameSystem === 'off' ? 'persian' : nameSystem);
     setVoiceState('loading');
-    VoiceBank.load(player.synth.ctx, bankName).then(
-      (bank) => {
+    const side = (kind: VoiceKind) => (kinds.length < 2 ? 0 : (kind === 'names') !== swapSides ? -0.8 : 0.8);
+    Promise.all(kinds.map((k) => VoiceBank.load(player.synth.ctx, voiceBank(k)))).then(
+      (banks) => {
         if (cancelled) return;
-        player.setVoice({ bank, cues: voiceCues(score, voiceKind, timeline), perBeat: voiceKind === 'words', setting: wordSetting });
-        if (voiceKind === 'words') setRhythmBank(bank);
+        player.setVoices(
+          kinds.map((k, i) => ({
+            bank: banks[i]!,
+            cues: voiceCues(score, k, timeline),
+            perBeat: k === 'words',
+            setting: wordSetting,
+            pan: side(k),
+          })),
+        );
+        const words = kinds.indexOf('words');
+        if (words >= 0) setRhythmBank(banks[words]);
         setVoiceState('ready');
       },
       () => !cancelled && setVoiceState('failed'),
@@ -202,7 +232,7 @@ export function App() {
     return () => {
       cancelled = true;
     };
-  }, [player, voiceKind, nameSystem, score, timeline, wordSetting]);
+  }, [player, voiceKind, swapSides, score, timeline, wordSetting]);
 
   const getQ = useCallback(() => player.q(), [player]);
 
@@ -346,12 +376,22 @@ export function App() {
         </label>
         <label className="m-field" title="A voice speaks each note's name, or each beat's rhythm word, fitted to the notes">
           Voice
-          <select value={voiceKind} onChange={(e) => setVoiceKind(e.target.value as VoiceKind | 'off')}>
+          <select value={voiceKind} onChange={(e) => setVoiceKind(e.target.value as VoiceChoice)}>
             <option value="off">off</option>
             <option value="names">note names (French)</option>
             <option value="words">rhythm words (وزن‌خوانی)</option>
+            <option value="both">both, one each side</option>
           </select>
-          {voiceKind === 'words' && (
+          {voiceKind === 'both' && (
+            <button
+              className="m-button"
+              onClick={() => setSwapSides((v) => !v)}
+              title="Which side each voice is on; click to swap"
+            >
+              {swapSides ? 'words L · names R' : 'names L · words R'}
+            </button>
+          )}
+          {(voiceKind === 'words' || voiceKind === 'both') && (
             <button className="m-button" onClick={() => setLabOpen(true)} title="Choose how each rhythm word is spoken">
               Voice lab
             </button>
