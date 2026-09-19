@@ -1,46 +1,45 @@
 {
- "chosen": null,
- "note": "Defaults for the voice lab. Replace with the file the lab exports once the words are chosen by ear.",
+ "chosen": "2026-09-19",
  "words": {
   "راست": {
-   "candidate": 0,
+   "candidate": 2,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   },
   "راستُ": {
    "candidate": 0,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   },
   "رُباب": {
    "candidate": 0,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   },
   "میزد": {
    "candidate": 0,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   },
   "میزَدُ": {
-   "candidate": 0,
+   "candidate": 4,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   },
   "بِزَدَم": {
-   "candidate": 0,
+   "candidate": 2,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   },
   "بِزَدَمُ": {
-   "candidate": 0,
-   "gainDb": 0,
-   "nudgeMs": 0
+   "candidate": 1,
+   "gainDb": 1.5,
+   "nudgeMs": -40
   },
   "رُبابُ": {
-   "candidate": 0,
+   "candidate": 4,
    "gainDb": 0,
-   "nudgeMs": 0
+   "nudgeMs": -40
   }
  }
 }

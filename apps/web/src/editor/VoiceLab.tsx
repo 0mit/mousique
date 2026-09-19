@@ -2,10 +2,10 @@
 // each is auditioned in context — on the beat, four times, against the metronome at the score's tempo — and
 // can be trimmed in loudness and nudged against the grid. Choices apply at once and can be exported.
 import { TAHMASBI_WORDS } from '@mousique/core';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Player } from '../audio/player.ts';
 import type { WordSetting } from '../audio/rhythmVoice.ts';
-import type { VoiceBank } from '../audio/voice.ts';
+import { VoiceBank } from '../audio/voice.ts';
 
 interface Props {
   bank: VoiceBank | undefined;
@@ -17,18 +17,41 @@ interface Props {
   onExport: () => void;
   onReset: () => void;
   onClose: () => void;
+  /** Called before a word is auditioned, so the score is not playing underneath it. */
+  onAudition: () => void;
 }
 
 const syllablesOf = (units: number[]) => TAHMASBI_WORDS[units.join('-')] ?? [];
 
-export function VoiceLab({ bank, player, bpm, setting, onChange, onExport, onReset, onClose }: Props) {
+export function VoiceLab({ bank: given, player, bpm, setting, onChange, onExport, onReset, onClose, onAudition }: Props) {
   const [playing, setPlaying] = useState<string>();
+  const [problem, setProblem] = useState<string>();
+  // The lab does not depend on the page's voice setting: it loads the rhythm words itself (cached, so this
+  // is the same bank the player uses when it has one).
+  const [loaded, setLoaded] = useState<VoiceBank>();
+  const bank = given ?? loaded;
+  useEffect(() => {
+    if (given) return;
+    let live = true;
+    VoiceBank.load(player.synth.ctx, 'rhythm-words').then(
+      (b) => live && setLoaded(b),
+      (e: unknown) => live && setProblem(`The voice could not be loaded: ${String(e)}`),
+    );
+    return () => {
+      live = false;
+    };
+  }, [given, player]);
   const timer = useRef<number>(undefined);
   const words = bank?.words() ?? [];
 
   /** Play words on consecutive beats after a bar of clicks; each entry is one beat. */
-  const audition = async (label: string, beats: Array<{ word: string; s: WordSetting }>) => {
+  const audition = (label: string, beats: Array<{ word: string; s: WordSetting }>) =>
+    play(label, beats).catch((e: unknown) => setProblem(`Could not play: ${String(e)}`));
+
+  const play = async (label: string, beats: Array<{ word: string; s: WordSetting }>) => {
     if (!bank) return;
+    setProblem(undefined);
+    onAudition();
     const synth = player.synth;
     await synth.resume();
     synth.stopAll();
@@ -36,10 +59,14 @@ export function VoiceLab({ bank, player, bpm, setting, onChange, onExport, onRes
     const t0 = synth.ctx.currentTime + 0.3;
     const lead = 4;
     for (let i = 0; i < lead + beats.length; i++) synth.click(t0 + i * beat, i % 4 === 0);
+    let silent = 0;
     beats.forEach(({ word, s }, i) => {
       const node = bank.speakBeat(synth.ctx, synth.output, word, t0 + (lead + i) * beat, beat, 1.1, s);
       if (node) synth.adopt(node);
+      else silent++;
     });
+    if (synth.ctx.state !== 'running') setProblem('The browser has not allowed sound on this page yet; click ▶ again.');
+    else if (silent) setProblem(`${silent} of ${beats.length} beats have no clip at ${Math.round(bpm)} ♩/min.`);
     setPlaying(label);
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setPlaying(undefined), (0.3 + (lead + beats.length) * beat) * 1000);
@@ -78,7 +105,12 @@ export function VoiceLab({ bank, player, bpm, setting, onChange, onExport, onRes
           </button>
         </div>
       </header>
-      {!bank && <p className="m-hint">Loading the voice…</p>}
+      {!bank && !problem && <p className="m-hint">Loading the voice…</p>}
+      {problem && (
+        <p className="m-hint" role="alert">
+          {problem}
+        </p>
+      )}
       <div className="m-lab-words">
         {words.map((w) => {
           const s = setting(w.word);
@@ -129,7 +161,7 @@ export function VoiceLab({ bank, player, bpm, setting, onChange, onExport, onRes
               <label className="m-row">
                 Timing
                 <span>
-                  <input type="range" min={-40} max={40} step={2} value={s.nudgeMs} onChange={(e) => onChange(w.word, { ...s, nudgeMs: +e.target.value })} />
+                  <input type="range" min={-80} max={80} step={2} value={s.nudgeMs} onChange={(e) => onChange(w.word, { ...s, nudgeMs: +e.target.value })} />
                   <span className="m-unit m-num">{s.nudgeMs > 0 ? '+' : ''}{s.nudgeMs} ms</span>
                 </span>
               </label>

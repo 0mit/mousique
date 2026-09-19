@@ -181,18 +181,21 @@ export class VoiceBank {
       offset += (now - start) * rate;
       start = now;
     }
-    const end = Math.min(grid - v.lead / rate + heard, grid + maxSeconds);
+    const natural = grid - v.lead / rate + heard;
+    const end = Math.min(natural, grid + maxSeconds);
     const src = ctx.createBufferSource();
     src.buffer = this.buffer;
     src.playbackRate.value = rate;
+    // Silent until the attack (see Synth.envelope), and always faded out before the source stops: a clip cut
+    // short fades as its note ends rather than spill into the next one, and one that runs its natural length
+    // fades over its last milliseconds, so no clip edge ever cuts a waveform.
     const env = ctx.createGain();
+    env.gain.value = 0;
     env.gain.setValueAtTime(0, start);
     env.gain.linearRampToValueAtTime(gain, start + 0.006);
-    if (end < grid - v.lead / rate + heard) {
-      // Still too long: fade out as the note ends rather than spill into the next one.
-      env.gain.setValueAtTime(gain, Math.max(start + 0.01, end - 0.04));
-      env.gain.linearRampToValueAtTime(0, end);
-    }
+    const fade = end < natural ? 0.04 : 0.012;
+    env.gain.setValueAtTime(gain, Math.max(start + 0.007, end - fade));
+    env.gain.linearRampToValueAtTime(0, Math.max(start + 0.008, end));
     src.connect(env).connect(out);
     src.start(start, offset, Math.max(0.01, v.duration - (offset - v.start - this.shift)));
     src.stop(end + 0.01);

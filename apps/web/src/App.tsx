@@ -425,6 +425,12 @@ export function App() {
           setting={wordSetting}
           onChange={changeWord}
           onClose={() => setLabOpen(false)}
+          onAudition={() => {
+            if (player.isPlaying) {
+              player.pause();
+              setPlaying(false);
+            }
+          }}
           onReset={() => {
             setWordLocal({});
             saveLocalSettings({});

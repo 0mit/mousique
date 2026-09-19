@@ -59,6 +59,9 @@ export class Player {
    */
   setVoices(tracks: VoiceTrack[]): void {
     const ctx = this.synth.ctx;
+    // The old tracks' panners go once whatever they are still saying has finished.
+    const old = this.voices.map((v) => v.out);
+    window.setTimeout(() => old.forEach((p) => p.disconnect()), 5000);
     this.voices = tracks.map((t) => {
       const panner = ctx.createStereoPanner();
       panner.pan.value = t.pan;
@@ -160,7 +163,7 @@ export class Player {
   private restartAt(q: number): void {
     this.synth.stopAll();
     this.anchorQ = q;
-    this.anchorT = this.synth.ctx.currentTime + (this.voices.length ? 0.2 : 0.03);
+    this.anchorT = this.synth.ctx.currentTime + (this.voices.length ? 0.2 : 0.04);
     this.scheduledQ = q;
     this.graceScheduledQ = q;
     this.voiceScheduledQ = q;

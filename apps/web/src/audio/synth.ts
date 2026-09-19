@@ -1,17 +1,23 @@
 // A small plucked-string voice. The point is pitch and rhythm reference, not realism: pitch comes in
 // as an exact frequency, so koron and sori need no detune tricks here.
 
+/** How long stopping takes: the fade out, after which new sounds may start. */
+export const STOP_FADE_S = 0.025;
+
 export class Synth {
   readonly ctx: AudioContext;
   private master: GainNode;
+  /** Everything passes through this, so stopping can fade out instead of cutting a waveform mid-swing. */
+  private duck: GainNode;
   private live = new Set<AudioScheduledSourceNode>();
 
   constructor() {
     this.ctx = new AudioContext({ latencyHint: 'interactive' });
     this.master = this.ctx.createGain();
     this.master.gain.value = 0.6;
+    this.duck = this.ctx.createGain();
     const comp = this.ctx.createDynamicsCompressor();
-    this.master.connect(comp).connect(this.ctx.destination);
+    this.master.connect(this.duck).connect(comp).connect(this.ctx.destination);
   }
 
   setVolume(v: number): void {
@@ -22,10 +28,21 @@ export class Synth {
     if (this.ctx.state !== 'running') await this.ctx.resume();
   }
 
+  /**
+   * A gain node that is silent until its automation says otherwise. A new GainNode starts at 1, and a source
+   * starting between two samples is rendered from the sample before its start, ahead of a setValueAtTime(0)
+   * there — one full-level sample, heard as a tick.
+   */
+  envelope(): GainNode {
+    const env = this.ctx.createGain();
+    env.gain.value = 0;
+    return env;
+  }
+
   /** Pluck at `hz` from context time `t0`, releasing after `dur` seconds. */
   pluck(hz: number, t0: number, dur: number, velocity = 1): void {
     const ctx = this.ctx;
-    const env = ctx.createGain();
+    const env = this.envelope();
     const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.setValueAtTime(Math.min(hz * 8, 12000), t0);
@@ -62,7 +79,7 @@ export class Synth {
     const osc = ctx.createOscillator();
     osc.type = 'square';
     osc.frequency.value = accent ? 1760 : 1175;
-    const env = ctx.createGain();
+    const env = this.envelope();
     env.gain.setValueAtTime(0, t0);
     env.gain.linearRampToValueAtTime(accent ? 0.18 : 0.11, t0 + 0.001);
     env.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.04);
@@ -70,12 +87,20 @@ export class Synth {
     this.track(osc, t0, t0 + 0.05);
   }
 
-  /** Silence everything already scheduled, e.g. on seek or pause. */
+  /**
+   * Silence everything already scheduled, e.g. on seek or pause: fade the whole output out over a few
+   * milliseconds, stop the sources once it is silent, and open it again for what is scheduled next (which
+   * never starts sooner than STOP_FADE_S from now).
+   */
   stopAll(): void {
     const now = this.ctx.currentTime;
+    const g = this.duck.gain;
+    g.cancelScheduledValues(now);
+    g.setTargetAtTime(0, now, STOP_FADE_S / 5);
+    g.setValueAtTime(1, now + STOP_FADE_S);
     for (const n of this.live) {
       try {
-        n.stop(now);
+        n.stop(now + STOP_FADE_S * 0.9);
       } catch {
         // Already stopped.
       }
